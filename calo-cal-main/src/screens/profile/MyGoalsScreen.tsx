@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext"; // Assuming we have getUserProf
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
+import { updateUserProfile } from "@/services/profileService";
 
 export default function MyGoalsScreen() {
     const navigate = useNavigate();
@@ -61,7 +62,6 @@ export default function MyGoalsScreen() {
         const newTarget = calculateCalories();
 
         try {
-            const { updateUserProfile } = await import("@/services/profileService");
             await updateUserProfile({
                 goal_type: goalType,
                 activity_level: activityLevel,
