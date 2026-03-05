@@ -4,19 +4,19 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 const banners = [
     {
         id: 1,
-        image: '/banners/banner-1.jpg', // User will add these
+        image: '/banners/banner-1.png', // User will add these
         title: 'Discover Tunisian Flavors',
         subtitle: 'Track traditional dishes with AI'
     },
     {
         id: 2,
-        image: '/banners/banner-2.jpg',
+        image: '/banners/banner-2.png',
         title: 'Reach Your Goals',
         subtitle: 'Smart tracking, real results'
     },
     {
         id: 3,
-        image: '/banners/banner-3.jpg',
+        image: '/banners/banner-3.png',
         title: 'AI-Powered Recognition',
         subtitle: 'Just snap and track instantly'
     }
@@ -78,8 +78,8 @@ export default function HomeBanners() {
                         key={index}
                         onClick={() => setCurrentIndex(index)}
                         className={`h-2 rounded-full transition-all ${index === currentIndex
-                                ? 'bg-white w-6'
-                                : 'bg-white/50 w-2'
+                            ? 'bg-white w-6'
+                            : 'bg-white/50 w-2'
                             }`}
                     />
                 ))}

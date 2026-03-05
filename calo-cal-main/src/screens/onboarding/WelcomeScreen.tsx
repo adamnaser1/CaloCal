@@ -27,7 +27,7 @@ const WelcomeScreen = () => {
                     <div className="space-y-2 text-center">
                         <h2 className="font-display text-2xl font-bold text-foreground">Track smarter, eat better</h2>
                         <p className="font-body text-sm text-muted-foreground">
-                            Powered by AI — built for Tunisian and North African cuisine
+                            Powered by Adam NASR — built for Tunisian and North African cuisine
                         </p>
                     </div>
 
