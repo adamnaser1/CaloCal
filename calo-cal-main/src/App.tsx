@@ -32,6 +32,7 @@ import HelpScreen from "./screens/profile/HelpScreen";
 // Auth & Onboarding
 import LoginScreen from "./screens/auth/LoginScreen";
 import SignupScreen from "./screens/auth/SignupScreen";
+import AuthCallbackScreen from "./screens/auth/AuthCallbackScreen";
 import WelcomeScreen from "./screens/onboarding/WelcomeScreen";
 import GoalScreen from "./screens/onboarding/GoalScreen";
 import CalorieTargetScreen from "./screens/onboarding/CalorieTargetScreen";
@@ -61,6 +62,7 @@ const AppContent = () => {
           <Route path="/welcome" element={!user ? <WelcomeScreen /> : <Navigate to="/" replace />} />
           <Route path="/login" element={!user ? <LoginScreen /> : <Navigate to="/" replace />} />
           <Route path="/signup" element={!user ? <SignupScreen /> : <Navigate to="/" replace />} />
+          <Route path="/auth/callback" element={<AuthCallbackScreen />} />
 
           {/* Onboarding - Requires Auth but not completion */}
           <Route path="/onboarding/goal" element={<ProtectedRoute requireOnboarding={false}><GoalScreen /></ProtectedRoute>} />

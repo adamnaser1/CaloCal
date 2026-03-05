@@ -15,6 +15,7 @@ const CalorieTargetScreen = () => {
     const [isAnimating, setIsAnimating] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [macros, setMacros] = useState({ p: 30, c: 45, f: 25 });
+    const [breakdown, setBreakdown] = useState({ bmr: 0, activityMultiplier: 0, tdee: 0, adjustment: 0 });
 
     useEffect(() => {
         calculateGoal();
@@ -30,33 +31,50 @@ const CalorieTargetScreen = () => {
         }
 
         const profile = JSON.parse(profileStr);
-        const weight = parseFloat(profile.currentWeightKg);
-        const height = parseFloat(profile.heightCm);
+        const weight = parseFloat(profile.current_weight_kg) || parseFloat(profile.currentWeightKg);
+        const height = parseFloat(profile.height_cm) || parseFloat(profile.heightCm);
         const age = parseInt(profile.age);
         const sex = profile.sex;
+        const activityLevel = profile.activity_level || 'moderately_active';
 
         // Mifflin-St Jeor Equation
         let bmr = 10 * weight + 6.25 * height - 5 * age;
         bmr += sex === "male" ? 5 : -161;
 
-        // TDEE (Moderate activity)
-        const tdee = bmr * 1.55;
+        // Activity multiplier
+        const activityMultipliers: Record<string, number> = {
+            sedentary: 1.2,
+            lightly_active: 1.375,
+            moderately_active: 1.55,
+            very_active: 1.725,
+            extremely_active: 1.9
+        };
+        const multiplier = activityMultipliers[activityLevel] || 1.55;
+        const tdee = Math.round(bmr * multiplier);
 
         // Goal Adjustment
-        let target = tdee;
-        if (goalType === "lose") target -= 500;
-        if (goalType === "gain") target += 300;
+        let adjustment = 0;
+        if (goalType === "lose" || goalType === "lose_weight") adjustment = -500;
+        if (goalType === "gain" || goalType === "gain_muscle") adjustment = 300;
+
+        const target = tdee + adjustment;
 
         // Round to nearest 10
         const finalGoal = Math.round(target / 10) * 10;
 
+        setBreakdown({
+            bmr: Math.round(bmr),
+            activityMultiplier: multiplier,
+            tdee: tdee,
+            adjustment: adjustment
+        });
         setDailyGoal(finalGoal);
         setInitialGoal(0);
 
         // Set macros based on goal
-        if (goalType === "lose") setMacros({ p: 35, c: 40, f: 25 });
-        else if (goalType === "maintain") setMacros({ p: 30, c: 45, f: 25 });
-        else if (goalType === "gain") setMacros({ p: 35, c: 45, f: 20 });
+        if (goalType === "lose" || goalType === "lose_weight") setMacros({ p: 35, c: 40, f: 25 });
+        else if (goalType === "maintain" || goalType === "maintain_weight") setMacros({ p: 30, c: 45, f: 25 });
+        else if (goalType === "gain" || goalType === "gain_muscle") setMacros({ p: 35, c: 45, f: 20 });
 
         // Start count up animation
         setTimeout(() => setIsAnimating(false), 1200);
@@ -76,11 +94,13 @@ const CalorieTargetScreen = () => {
             const profile = JSON.parse(profileStr);
 
             await updateUserProfile({
+                full_name: profile.full_name,
                 age: parseInt(profile.age),
                 sex: profile.sex,
-                height_cm: Math.round(parseFloat(profile.heightCm)),
-                current_weight_kg: parseFloat(profile.currentWeightKg),
-                target_weight_kg: parseFloat(profile.targetWeightKg),
+                height_cm: Math.round(parseFloat(profile.height_cm || profile.heightCm)),
+                current_weight_kg: parseFloat(profile.current_weight_kg || profile.currentWeightKg),
+                target_weight_kg: parseFloat(profile.target_weight_kg || profile.targetWeightKg),
+                activity_level: profile.activity_level,
                 daily_calorie_goal: dailyGoal,
                 goal_type: goalType ?? 'maintain',
                 onboarding_completed: true
@@ -190,7 +210,7 @@ const CalorieTargetScreen = () => {
                 </div>
 
                 {/* Manual Adjust */}
-                <div className="flex items-center justify-center gap-4">
+                <div className="mb-8 flex items-center justify-center gap-4">
                     <button
                         onClick={() => adjustGoal(-50)}
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground hover:bg-secondary/80"
@@ -204,6 +224,33 @@ const CalorieTargetScreen = () => {
                     >
                         <Plus className="h-4 w-4" />
                     </button>
+                </div>
+
+                {/* Breakdown */}
+                <div className="rounded-2xl bg-gray-50 p-5 text-left text-sm mb-4 border border-gray-100">
+                    <h3 className="font-bold text-foreground mb-3 text-base">Calculation Breakdown</h3>
+                    <div className="flex justify-between mb-2">
+                        <span className="text-muted-foreground">Basal Metabolic Rate (BMR)</span>
+                        <span className="font-medium">{breakdown.bmr} kcal</span>
+                    </div>
+                    <div className="flex justify-between mb-2">
+                        <span className="text-muted-foreground">Activity Multiplier</span>
+                        <span className="font-medium">x {breakdown.activityMultiplier}</span>
+                    </div>
+                    <div className="flex justify-between mb-3 pb-3 border-b border-gray-200">
+                        <span className="text-muted-foreground">Total Daily Energy Disp. (TDEE)</span>
+                        <span className="font-medium">{breakdown.tdee} kcal</span>
+                    </div>
+                    <div className="flex justify-between mb-2 font-medium">
+                        <span className="text-muted-foreground">Goal Adjustment</span>
+                        <span className={`${breakdown.adjustment > 0 ? "text-green-600" : breakdown.adjustment < 0 ? "text-orange-500" : "text-gray-500"}`}>
+                            {breakdown.adjustment > 0 ? "+" : ""}{breakdown.adjustment} kcal
+                        </span>
+                    </div>
+                    <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-gray-200">
+                        <span>Final Calorie Goal</span>
+                        <span className="text-[#dcb015]">{dailyGoal} kcal/day</span>
+                    </div>
                 </div>
             </div>
 

@@ -10,6 +10,7 @@ import FAB from "@/components/FAB";
 import { User, RefreshCw } from "lucide-react";
 import { SkeletonLoader as Skeleton } from "@/components/SkeletonLoader"; // Using alias to match prev code usage or just replace
 import BottomNav from "@/components/BottomNav";
+import HomeBanners from "@/components/HomeBanners";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatCalories } from "@/lib/utils";
 
@@ -119,6 +120,11 @@ const HomeScreen = () => {
           </button>
         </div>
       </header>
+
+      {/* Banners */}
+      <div className="px-5 pt-4 pb-2">
+        <HomeBanners />
+      </div>
 
       {/* Calorie ring */}
       <div className="flex justify-center py-4">
