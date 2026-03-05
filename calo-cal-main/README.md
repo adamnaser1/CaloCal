@@ -71,3 +71,15 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Deployment to Vercel
+
+1. Push code to GitHub
+2. Connect Vercel to your repo
+3. Add environment variables in Vercel:
+   - VITE_SUPABASE_URL
+   - VITE_SUPABASE_ANON_KEY
+4. Deploy
+
+Environment variables must be added in:
+Vercel Dashboard → Project Settings → Environment Variables
