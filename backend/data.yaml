@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 17
+names: ['Baklawa', 'Brik', 'Chakchouka', 'Couscous', 'Frecasse', 'Harissa', 'Kafteji', 'Kamouniya', 'Lablabi', 'Liftiyya', 'Melloukhia', 'Pasta', 'Salade mechweya', 'Sandwitch tounsi', 'asida-zkoukou', 'brik', 'kamouniya']
+
+roboflow:
+  workspace: pfa-cpnnl
+  project: detection-tunisian-food
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/pfa-cpnnl/detection-tunisian-food/dataset/3

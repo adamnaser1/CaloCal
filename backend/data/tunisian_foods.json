@@ -1,0 +1,1878 @@
+{
+    "version": "1.0",
+    "dishes": [
+        {
+            "id": "couscous_poulet",
+            "names": [
+                "couscous au poulet",
+                "كسكسي بالدجاج",
+                "kosksi",
+                "couscous"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "semoule de couscous",
+                "poulet",
+                "carottes",
+                "navets",
+                "courgettes",
+                "pois chiches",
+                "oignons"
+            ],
+            "visual_cues": [
+                "yellow grains",
+                "chicken pieces visible",
+                "vegetable chunks",
+                "stew on top",
+                "orange/yellow color dominant"
+            ],
+            "nutrition_per_100g": {
+                "calories": 139,
+                "proteins": 5.8,
+                "carbs": 23.2,
+                "fats": 2.1,
+                "fiber": 1.8
+            },
+            "typical_portion_g": 350,
+            "serving_style": "plate with grain base, stew on top",
+            "roboflow_labels": [
+                "couscous",
+                "كسكسي_بالدجاج",
+                "couscous_au_poulet",
+                "couscous au poulet",
+                "couscous_poulet",
+                "kosksi",
+                "كسكسي بالدجاج"
+            ]
+        },
+        {
+            "id": "brik_oeuf",
+            "names": [
+                "brik à l'œuf",
+                "بريك بالبيض",
+                "brick",
+                "brik"
+            ],
+            "category": "entree",
+            "typical_ingredients": [
+                "pâte brik",
+                "œuf",
+                "thon",
+                "persil",
+                "câpres",
+                "fromage"
+            ],
+            "visual_cues": [
+                "triangular shape",
+                "golden fried pastry",
+                "crispy edges",
+                "visible egg yolk if cut",
+                "brown crispy texture"
+            ],
+            "nutrition_per_100g": {
+                "calories": 280,
+                "proteins": 8.4,
+                "carbs": 22,
+                "fats": 16,
+                "fiber": 0.8
+            },
+            "typical_portion_g": 120,
+            "serving_style": "triangular fried pastry, single serving",
+            "roboflow_labels": [
+                "brik_à_l'œuf",
+                "brik_oeuf",
+                "brik",
+                "brik à l'œuf",
+                "بريك_بالبيض",
+                "بريك بالبيض",
+                "brick"
+            ]
+        },
+        {
+            "id": "lablabi",
+            "names": [
+                "lablabi",
+                "لبلابي",
+                "leblebi"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "pois chiches",
+                "pain rassis",
+                "harissa",
+                "cumin",
+                "œuf",
+                "huile d'olive",
+                "citron"
+            ],
+            "visual_cues": [
+                "chickpeas in broth",
+                "bread pieces soaked",
+                "poached egg on top",
+                "orange/red from harissa",
+                "soup-like presentation"
+            ],
+            "nutrition_per_100g": {
+                "calories": 160,
+                "proteins": 9,
+                "carbs": 22.5,
+                "fats": 4.2,
+                "fiber": 6.2
+            },
+            "typical_portion_g": 300,
+            "serving_style": "bowl with chickpeas, bread, egg",
+            "roboflow_labels": [
+                "leblebi",
+                "لبلابي",
+                "lablabi"
+            ]
+        },
+        {
+            "id": "ojja_merguez",
+            "names": [
+                "ojja merguez",
+                "عجة مرقاز",
+                "ojja",
+                "ouja"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "merguez",
+                "tomates",
+                "œufs",
+                "poivrons",
+                "oignons",
+                "harissa"
+            ],
+            "visual_cues": [
+                "tomato sauce base",
+                "sausages visible",
+                "eggs cooked in sauce",
+                "red/orange color",
+                "tagine or pan presentation"
+            ],
+            "nutrition_per_100g": {
+                "calories": 240,
+                "proteins": 14,
+                "carbs": 8,
+                "fats": 16.5,
+                "fiber": 2.1
+            },
+            "typical_portion_g": 280,
+            "serving_style": "served in cooking dish with bread",
+            "roboflow_labels": [
+                "عجة مرقاز",
+                "ojja_merguez",
+                "عجة_مرقاز",
+                "ojja",
+                "ouja",
+                "ojja merguez"
+            ]
+        },
+        {
+            "id": "fricasse",
+            "names": [
+                "fricassé",
+                "فريكاسي",
+                "fricasse"
+            ],
+            "category": "sandwich",
+            "typical_ingredients": [
+                "pain frit",
+                "thon",
+                "harissa",
+                "œuf dur",
+                "olives",
+                "pommes de terre"
+            ],
+            "visual_cues": [
+                "fried bread sandwich",
+                "golden puffy bread",
+                "stuffed appearance",
+                "round sandwich shape"
+            ],
+            "nutrition_per_100g": {
+                "calories": 220,
+                "proteins": 6.2,
+                "carbs": 28,
+                "fats": 9,
+                "fiber": 1.5
+            },
+            "typical_portion_g": 150,
+            "serving_style": "hand-held sandwich",
+            "roboflow_labels": [
+                "fricasse",
+                "فريكاسي",
+                "fricassé"
+            ]
+        },
+        {
+            "id": "chorba_frik",
+            "names": [
+                "chorba frik",
+                "شربة فريك",
+                "chorba",
+                "chourba"
+            ],
+            "category": "soupe",
+            "typical_ingredients": [
+                "frik (blé vert)",
+                "viande d'agneau",
+                "tomates",
+                "pois chiches",
+                "coriandre",
+                "menthe"
+            ],
+            "visual_cues": [
+                "soup with visible grains",
+                "reddish broth",
+                "meat pieces",
+                "herbs floating",
+                "thick consistency"
+            ],
+            "nutrition_per_100g": {
+                "calories": 93,
+                "proteins": 3.5,
+                "carbs": 14,
+                "fats": 2.8,
+                "fiber": 2.4
+            },
+            "typical_portion_g": 350,
+            "serving_style": "bowl with lemon wedge",
+            "roboflow_labels": [
+                "شربة_فريك",
+                "chourba",
+                "chorba frik",
+                "شربة فريك",
+                "chorba_frik",
+                "chorba"
+            ]
+        },
+        {
+            "id": "mechouia",
+            "names": [
+                "salade mechouia",
+                "سلطة مشوية",
+                "mechouia",
+                "slata mechouia"
+            ],
+            "category": "salade",
+            "typical_ingredients": [
+                "poivrons grillés",
+                "tomates grillées",
+                "oignons",
+                "ail",
+                "huile d'olive",
+                "thon"
+            ],
+            "visual_cues": [
+                "charred vegetables",
+                "chunky texture",
+                "dark pieces",
+                "oily appearance",
+                "served with bread"
+            ],
+            "nutrition_per_100g": {
+                "calories": 65,
+                "proteins": 2.1,
+                "carbs": 10.2,
+                "fats": 2.5,
+                "fiber": 3.1
+            },
+            "typical_portion_g": 200,
+            "serving_style": "side dish or appetizer",
+            "roboflow_labels": [
+                "salade_mechouia",
+                "mechouia",
+                "salade mechouia",
+                "سلطة مشوية",
+                "slata_mechouia",
+                "slata mechouia",
+                "سلطة_مشوية"
+            ]
+        },
+        {
+            "id": "makroudh",
+            "names": [
+                "makroudh",
+                "مقروض",
+                "makroud"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "semoule",
+                "dattes",
+                "miel",
+                "huile",
+                "eau de fleur d'oranger"
+            ],
+            "visual_cues": [
+                "diamond shaped pastry",
+                "golden brown",
+                "date filling visible",
+                "honey glazed",
+                "geometric pattern"
+            ],
+            "nutrition_per_100g": {
+                "calories": 380,
+                "proteins": 4.2,
+                "carbs": 58,
+                "fats": 15,
+                "fiber": 3.5
+            },
+            "typical_portion_g": 60,
+            "serving_style": "individual pieces on plate",
+            "roboflow_labels": [
+                "makroud",
+                "makroudh",
+                "مقروض"
+            ]
+        },
+        {
+            "id": "kafteji",
+            "names": [
+                "kafteji",
+                "كفتاجي",
+                "kaftaji"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "pommes de terre frites",
+                "poivrons frits",
+                "piment",
+                "œufs",
+                "fromage"
+            ],
+            "visual_cues": [
+                "fried vegetables",
+                "eggs mixed in",
+                "golden/brown color",
+                "chunky texture",
+                "served hot in pan"
+            ],
+            "nutrition_per_100g": {
+                "calories": 165,
+                "proteins": 7,
+                "carbs": 12,
+                "fats": 9.5,
+                "fiber": 2.8
+            },
+            "typical_portion_g": 250,
+            "serving_style": "shared dish with bread",
+            "roboflow_labels": [
+                "kafteji",
+                "kaftaji",
+                "كفتاجي"
+            ]
+        },
+        {
+            "id": "bambalouni",
+            "names": [
+                "bambalouni",
+                "بمبالوني",
+                "beignet tunisien"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "farine",
+                "levure",
+                "sucre",
+                "huile de friture"
+            ],
+            "visual_cues": [
+                "ring shaped donut",
+                "golden fried",
+                "sugar coated",
+                "fluffy texture",
+                "hole in center"
+            ],
+            "nutrition_per_100g": {
+                "calories": 325,
+                "proteins": 4.8,
+                "carbs": 42,
+                "fats": 15.5,
+                "fiber": 1.2
+            },
+            "typical_portion_g": 80,
+            "serving_style": "street food, hand-held",
+            "roboflow_labels": [
+                "beignet tunisien",
+                "bambalouni",
+                "beignet_tunisien",
+                "بمبالوني"
+            ]
+        },
+        {
+            "id": "ojja_fruits_mer",
+            "names": [
+                "ojja aux fruits de mer",
+                "عجة فواكه البحر",
+                "seafood ojja"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "crevettes",
+                "calamars",
+                "tomates",
+                "œufs",
+                "poivrons",
+                "ail"
+            ],
+            "visual_cues": [
+                "red tomato sauce",
+                "visible shrimp/squid",
+                "eggs poached in sauce",
+                "seafood aroma",
+                "pan presentation"
+            ],
+            "nutrition_per_100g": {
+                "calories": 180,
+                "proteins": 15,
+                "carbs": 6,
+                "fats": 10,
+                "fiber": 1.5
+            },
+            "typical_portion_g": 250,
+            "serving_style": "served with bread",
+            "roboflow_labels": [
+                "عجة فواكه البحر",
+                "ojja_fruits_mer",
+                "ojja_aux_fruits_de_mer",
+                "ojja aux fruits de mer",
+                "seafood_ojja",
+                "seafood ojja",
+                "عجة_فواكه_البحر"
+            ]
+        },
+        {
+            "id": "chorba_aadess",
+            "names": [
+                "chorba aadess",
+                "شربة عدس",
+                "lentil soup"
+            ],
+            "category": "soupe",
+            "typical_ingredients": [
+                "lentilles corail",
+                "oignons",
+                "carottes",
+                "cumin",
+                "citron"
+            ],
+            "visual_cues": [
+                "yellow/orange thick soup",
+                "smooth texture",
+                "lemon wedge on side"
+            ],
+            "nutrition_per_100g": {
+                "calories": 75,
+                "proteins": 5,
+                "carbs": 12,
+                "fats": 0.5,
+                "fiber": 4
+            },
+            "typical_portion_g": 300,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "chorba aadess",
+                "شربة عدس",
+                "lentil soup",
+                "chorba_aadess",
+                "شربة_عدس",
+                "lentil_soup"
+            ]
+        },
+        {
+            "id": "makloub",
+            "names": [
+                "makloub",
+                "مقلوب",
+                "makloub escalope"
+            ],
+            "category": "sandwich",
+            "typical_ingredients": [
+                "pâte à pizza",
+                "escalope de poulet",
+                "fromage",
+                "salade",
+                "frites",
+                "mayonnaise"
+            ],
+            "visual_cues": [
+                "folded pizza dough",
+                "charred bread spots",
+                "melted cheese",
+                "stuffed filling"
+            ],
+            "nutrition_per_100g": {
+                "calories": 250,
+                "proteins": 12,
+                "carbs": 25,
+                "fats": 11,
+                "fiber": 1
+            },
+            "typical_portion_g": 350,
+            "serving_style": "sandwich wrap",
+            "roboflow_labels": [
+                "مقلوب",
+                "makloub_escalope",
+                "makloub",
+                "makloub escalope"
+            ]
+        },
+        {
+            "id": "mloukhiya",
+            "names": [
+                "mloukhiya",
+                "ملوخية",
+                "mouloukhia"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "poudre de corète",
+                "viande de bœuf",
+                "huile d'olive",
+                "ail",
+                "laurier"
+            ],
+            "visual_cues": [
+                "dark green almost black sauce",
+                "thick oily consistency",
+                "tender meat chunks",
+                "earthy look"
+            ],
+            "nutrition_per_100g": {
+                "calories": 210,
+                "proteins": 13,
+                "carbs": 5,
+                "fats": 15,
+                "fiber": 4
+            },
+            "typical_portion_g": 250,
+            "serving_style": "small bowl with lots of bread",
+            "roboflow_labels": [
+                "mouloukhia",
+                "ملوخية",
+                "mloukhiya"
+            ]
+        },
+        {
+            "id": "chakchouka",
+            "names": [
+                "chakchouka",
+                "شكشوكة",
+                "shakshuka"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "poivrons",
+                "tomates",
+                "oignons",
+                "œufs",
+                "huile d'olive"
+            ],
+            "visual_cues": [
+                "chunky tomato/pepper mix",
+                "eggs on top",
+                "red/green/yellow colors"
+            ],
+            "nutrition_per_100g": {
+                "calories": 110,
+                "proteins": 5.5,
+                "carbs": 8,
+                "fats": 6.5,
+                "fiber": 2.5
+            },
+            "typical_portion_g": 300,
+            "serving_style": "skillet or plate",
+            "roboflow_labels": [
+                "chakchouka",
+                "شكشوكة",
+                "shakshuka"
+            ]
+        },
+        {
+            "id": "tajine_tunisien",
+            "names": [
+                "tajine tunisien",
+                "طاجين تونسي",
+                "tajine"
+            ],
+            "category": "entree",
+            "typical_ingredients": [
+                "œufs",
+                "pommes de terre",
+                "poulet",
+                "persil",
+                "fromage"
+            ],
+            "visual_cues": [
+                "cake-like square",
+                "yellow/green inside",
+                "brown crust",
+                "firm texture"
+            ],
+            "nutrition_per_100g": {
+                "calories": 190,
+                "proteins": 11,
+                "carbs": 12,
+                "fats": 10,
+                "fiber": 1.2
+            },
+            "typical_portion_g": 150,
+            "serving_style": "cut into squares",
+            "roboflow_labels": [
+                "tajine",
+                "طاجين تونسي",
+                "tajine_tunisien",
+                "tajine tunisien",
+                "طاجين_تونسي"
+            ]
+        },
+        {
+            "id": "kammounia",
+            "names": [
+                "kammounia",
+                "كمونية",
+                "kamounia"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "viande de bœuf",
+                "foie",
+                "cumin",
+                "tomate",
+                "ail"
+            ],
+            "visual_cues": [
+                "dark brown sauce",
+                "meat and liver pieces",
+                "visible oil",
+                "cumin aroma"
+            ],
+            "nutrition_per_100g": {
+                "calories": 230,
+                "proteins": 18,
+                "carbs": 4,
+                "fats": 16,
+                "fiber": 1
+            },
+            "typical_portion_g": 200,
+            "serving_style": "small plate with bread",
+            "roboflow_labels": [
+                "kamounia",
+                "كمونية",
+                "kammounia"
+            ]
+        },
+        {
+            "id": "marqa_bel_khodhra",
+            "names": [
+                "marqa bel khodhra",
+                "مرقة بالخضرة",
+                "stew with vegetables"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "viande",
+                "épinards",
+                "blette",
+                "pois chiches",
+                "persil"
+            ],
+            "visual_cues": [
+                "green herb-heavy stew",
+                "meat chunks",
+                "dark green color"
+            ],
+            "nutrition_per_100g": {
+                "calories": 150,
+                "proteins": 10,
+                "carbs": 7,
+                "fats": 9,
+                "fiber": 3.5
+            },
+            "typical_portion_g": 300,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "مرقة بالخضرة",
+                "marqa bel khodhra",
+                "stew with vegetables",
+                "مرقة_بالخضرة",
+                "stew_with_vegetables",
+                "marqa_bel_khodhra"
+            ]
+        },
+        {
+            "id": "osban",
+            "names": [
+                "osban",
+                "عصبان",
+                "usban"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "panse de mouton",
+                "riz",
+                "herbes",
+                "foie",
+                "viande hachée"
+            ],
+            "visual_cues": [
+                "stuffed tripe bags",
+                "oval shape",
+                "herbs visible through skin",
+                "brownish gray"
+            ],
+            "nutrition_per_100g": {
+                "calories": 250,
+                "proteins": 15,
+                "carbs": 15,
+                "fats": 14,
+                "fiber": 2
+            },
+            "typical_portion_g": 150,
+            "serving_style": "usually served in couscous or soup",
+            "roboflow_labels": [
+                "usban",
+                "osban",
+                "عصبان"
+            ]
+        },
+        {
+            "id": "rechta",
+            "names": [
+                "rechta",
+                "رشتة",
+                "reshta"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "fines nouilles",
+                "poulet",
+                "pois chiches",
+                "pois",
+                "navets"
+            ],
+            "visual_cues": [
+                "tangled thin noodles",
+                "white/light brown",
+                "poulet on top",
+                "clearer sauce"
+            ],
+            "nutrition_per_100g": {
+                "calories": 180,
+                "proteins": 9,
+                "carbs": 28,
+                "fats": 4,
+                "fiber": 2.5
+            },
+            "typical_portion_g": 300,
+            "serving_style": "plate of noodles",
+            "roboflow_labels": [
+                "رشتة",
+                "rechta",
+                "reshta"
+            ]
+        },
+        {
+            "id": "slata_tunisienne",
+            "names": [
+                "slata tunisienne",
+                "سلطة تونسية",
+                "tunisian salad"
+            ],
+            "category": "salade",
+            "typical_ingredients": [
+                "concombre",
+                "tomate",
+                "oignon",
+                "piment",
+                "pomme",
+                "menthe séchée"
+            ],
+            "visual_cues": [
+                "finely chopped vegetables",
+                "multi-colored cubes",
+                "green mint specks"
+            ],
+            "nutrition_per_100g": {
+                "calories": 45,
+                "proteins": 1,
+                "carbs": 6,
+                "fats": 2,
+                "fiber": 2
+            },
+            "typical_portion_g": 150,
+            "serving_style": "side small bowl",
+            "roboflow_labels": [
+                "tunisian_salad",
+                "tunisian salad",
+                "slata tunisienne",
+                "سلطة_تونسية",
+                "slata_tunisienne",
+                "سلطة تونسية"
+            ]
+        },
+        {
+            "id": "houria",
+            "names": [
+                "slata houria",
+                "سلطة حورية",
+                "carrot salad"
+            ],
+            "category": "salade",
+            "typical_ingredients": [
+                "carottes bouillies",
+                "ail",
+                "harissa",
+                "huile d'olive",
+                "thon",
+                "œufs dur"
+            ],
+            "visual_cues": [
+                "mashed orange carrots",
+                "garnished with thon and eggs",
+                "bright orange color"
+            ],
+            "nutrition_per_100g": {
+                "calories": 85,
+                "proteins": 2.5,
+                "carbs": 9,
+                "fats": 4.5,
+                "fiber": 3
+            },
+            "typical_portion_g": 150,
+            "serving_style": "plate appetizer",
+            "roboflow_labels": [
+                "carrot_salad",
+                "slata_houria",
+                "houria",
+                "سلطة حورية",
+                "carrot salad",
+                "slata houria",
+                "سلطة_حورية"
+            ]
+        },
+        {
+            "id": "baklawa",
+            "names": [
+                "baklawa",
+                "بقلاوة",
+                "baklawa tunisienne"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "pâte phyllo",
+                "amandes",
+                "noisettes",
+                "miel",
+                "beurre"
+            ],
+            "visual_cues": [
+                "layered pastry",
+                "golden top",
+                "nut layers visible",
+                "syrup dripping",
+                "diamond shape"
+            ],
+            "nutrition_per_100g": {
+                "calories": 450,
+                "proteins": 7,
+                "carbs": 48,
+                "fats": 26,
+                "fiber": 3
+            },
+            "typical_portion_g": 40,
+            "serving_style": "small piece",
+            "roboflow_labels": [
+                "baklawa tunisienne",
+                "baklawa_tunisienne",
+                "بقلاوة",
+                "baklawa"
+            ]
+        },
+        {
+            "id": "yo_yo",
+            "names": [
+                "yo-yo",
+                "يو يو",
+                "yoyo"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "farine",
+                "œufs",
+                "sucre",
+                "miel",
+                "jus d'orange"
+            ],
+            "visual_cues": [
+                "round donut-like",
+                "smaller than bambalouni",
+                "darker gold",
+                "shiny syrup",
+                "no hole sometimes"
+            ],
+            "nutrition_per_100g": {
+                "calories": 360,
+                "proteins": 5,
+                "carbs": 55,
+                "fats": 14,
+                "fiber": 1
+            },
+            "typical_portion_g": 50,
+            "serving_style": "snack",
+            "roboflow_labels": [
+                "yo_yo",
+                "yo-yo",
+                "يو يو",
+                "يو_يو",
+                "yoyo"
+            ]
+        },
+        {
+            "id": "kaak_warka",
+            "names": [
+                "kaak warka",
+                "كعك ورقة",
+                "kaak el warka"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "farine",
+                "beurre",
+                "pâte d'amande",
+                "eau de rose"
+            ],
+            "visual_cues": [
+                "pure white ring",
+                "smooth surface",
+                "soft texture",
+                "delicate look"
+            ],
+            "nutrition_per_100g": {
+                "calories": 410,
+                "proteins": 6,
+                "carbs": 50,
+                "fats": 21,
+                "fiber": 2
+            },
+            "typical_portion_g": 30,
+            "serving_style": "tea time sweet",
+            "roboflow_labels": [
+                "kaak warka",
+                "كعك_ورقة",
+                "كعك ورقة",
+                "kaak_warka",
+                "kaak_el_warka",
+                "kaak el warka"
+            ]
+        },
+        {
+            "id": "zrir",
+            "names": [
+                "zrir",
+                "زرير",
+                "zreer"
+            ],
+            "category": "dessert",
+            "typical_ingredients": [
+                "noisettes",
+                "graines de sésame",
+                "beurre",
+                "miel"
+            ],
+            "visual_cues": [
+                "thick brown paste",
+                "grainy texture",
+                "oil on top",
+                "served in small cups"
+            ],
+            "nutrition_per_100g": {
+                "calories": 520,
+                "proteins": 9,
+                "carbs": 35,
+                "fats": 40,
+                "fiber": 5
+            },
+            "typical_portion_g": 50,
+            "serving_style": "small decorative cup",
+            "roboflow_labels": [
+                "zreer",
+                "زرير",
+                "zrir"
+            ]
+        },
+        {
+            "id": "assida",
+            "names": [
+                "assida",
+                "عصيدة",
+                "assida bidha"
+            ],
+            "category": "petit_dejeuner",
+            "typical_ingredients": [
+                "semoule ou farine",
+                "eau",
+                "huile d'olive",
+                "miel or sucre"
+            ],
+            "visual_cues": [
+                "white/pale dough mound",
+                "well in center for oil/honey",
+                "smooth rubbery look"
+            ],
+            "nutrition_per_100g": {
+                "calories": 180,
+                "proteins": 4,
+                "carbs": 32,
+                "fats": 4,
+                "fiber": 1.5
+            },
+            "typical_portion_g": 200,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "عصيدة",
+                "assida bidha",
+                "assida_bidha",
+                "assida"
+            ]
+        },
+        {
+            "id": "ftayer",
+            "names": [
+                "ftayer",
+                "فطاير",
+                "fetaier"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "pâte levée",
+                "huile de friture",
+                "sucre or miel"
+            ],
+            "visual_cues": [
+                "flat fried dough",
+                "golden brown bubbles",
+                "irregular shape",
+                "large and puffy"
+            ],
+            "nutrition_per_100g": {
+                "calories": 310,
+                "proteins": 5,
+                "carbs": 45,
+                "fats": 13,
+                "fiber": 1.2
+            },
+            "typical_portion_g": 100,
+            "serving_style": "street breakfast",
+            "roboflow_labels": [
+                "فطاير",
+                "fetaier",
+                "ftayer"
+            ]
+        },
+        {
+            "id": "bsissa",
+            "names": [
+                "bsissa",
+                "بسيسة",
+                "bziza"
+            ],
+            "category": "petit_dejeuner",
+            "typical_ingredients": [
+                "orge grillé",
+                "pois chiches",
+                "épices",
+                "huile d'olive",
+                "dattes"
+            ],
+            "visual_cues": [
+                "dark brown thick paste or drink",
+                "earthy color",
+                "often topped with nuts/dates"
+            ],
+            "nutrition_per_100g": {
+                "calories": 420,
+                "proteins": 12,
+                "carbs": 50,
+                "fats": 18,
+                "fiber": 10
+            },
+            "typical_portion_g": 100,
+            "serving_style": "bowl or cup",
+            "roboflow_labels": [
+                "بسيسة",
+                "bziza",
+                "bsissa"
+            ]
+        },
+        {
+            "id": "droo",
+            "names": [
+                "droo",
+                "درع",
+                "mhalbi droo"
+            ],
+            "category": "petit_dejeuner",
+            "typical_ingredients": [
+                "sorgho",
+                "lait",
+                "sucre",
+                "fruits secs"
+            ],
+            "visual_cues": [
+                "grayish creamy porridge",
+                "thick consistency",
+                "nut garnish"
+            ],
+            "nutrition_per_100g": {
+                "calories": 110,
+                "proteins": 3.5,
+                "carbs": 20,
+                "fats": 2,
+                "fiber": 2
+            },
+            "typical_portion_g": 250,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "درع",
+                "mhalbi_droo",
+                "droo",
+                "mhalbi droo"
+            ]
+        },
+        {
+            "id": "madfouna",
+            "names": [
+                "madfouna",
+                "مدفونة",
+                "madfouna aux herbes"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "viande de bœuf",
+                "pied de bœuf",
+                "épinards frits",
+                "haricots secs"
+            ],
+            "visual_cues": [
+                "black/dark green stew",
+                "bones visible",
+                "thick texture",
+                "very oily"
+            ],
+            "nutrition_per_100g": {
+                "calories": 260,
+                "proteins": 16,
+                "carbs": 8,
+                "fats": 18,
+                "fiber": 3
+            },
+            "typical_portion_g": 250,
+            "serving_style": "bowl with bread",
+            "roboflow_labels": [
+                "مدفونة",
+                "madfouna",
+                "madfouna_aux_herbes",
+                "madfouna aux herbes"
+            ]
+        },
+        {
+            "id": "couscous_poisson",
+            "names": [
+                "couscous au poisson",
+                "كسكسي بالحوت",
+                "fish couscous"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "semoule",
+                "poisson (mérou/mulet)",
+                "potiron",
+                "piments"
+            ],
+            "visual_cues": [
+                "yellow grain",
+                "whole or sectioned fish",
+                "bright red piments",
+                "orange pumpkin"
+            ],
+            "nutrition_per_100g": {
+                "calories": 125,
+                "proteins": 9,
+                "carbs": 18,
+                "fats": 1.8,
+                "fiber": 1.5
+            },
+            "typical_portion_g": 350,
+            "serving_style": "plate",
+            "roboflow_labels": [
+                "fish couscous",
+                "fish_couscous",
+                "كسكسي_بالحوت",
+                "couscous au poisson",
+                "couscous_poisson",
+                "couscous_au_poisson",
+                "كسكسي بالحوت"
+            ]
+        },
+        {
+            "id": "brik_thon",
+            "names": [
+                "brik au thon",
+                "بريك بالتن",
+                "tuna brik"
+            ],
+            "category": "entree",
+            "typical_ingredients": [
+                "pâte brik",
+                "thon",
+                "œuf haché",
+                "persil",
+                "pomme de terre"
+            ],
+            "visual_cues": [
+                "crescent or triangle shape",
+                "fried golden",
+                "flat unlike egg brik"
+            ],
+            "nutrition_per_100g": {
+                "calories": 260,
+                "proteins": 10,
+                "carbs": 24,
+                "fats": 14,
+                "fiber": 1
+            },
+            "typical_portion_g": 100,
+            "serving_style": "appetizer",
+            "roboflow_labels": [
+                "brik au thon",
+                "brik_thon",
+                "بريك_بالتن",
+                "بريك بالتن",
+                "tuna brik",
+                "brik_au_thon",
+                "tuna_brik"
+            ]
+        },
+        {
+            "id": "tajine_malsouka",
+            "names": [
+                "tajine malsouka",
+                "طاجين ملسوقة",
+                "layered tajine"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "feuilles de brik",
+                "poulet",
+                "œufs",
+                "fromage",
+                "persil"
+            ],
+            "visual_cues": [
+                "crusty flaky top",
+                "layered cross-section",
+                "golden brown pastry"
+            ],
+            "nutrition_per_100g": {
+                "calories": 240,
+                "proteins": 14,
+                "carbs": 15,
+                "fats": 13,
+                "fiber": 1
+            },
+            "typical_portion_g": 200,
+            "serving_style": "pie slice",
+            "roboflow_labels": [
+                "tajine malsouka",
+                "tajine_malsouka",
+                "طاجين ملسوقة",
+                "layered_tajine",
+                "طاجين_ملسوقة",
+                "layered tajine"
+            ]
+        },
+        {
+            "id": "masfouf",
+            "names": [
+                "masfouf",
+                "مسفوف",
+                "sweet couscous"
+            ],
+            "category": "dessert",
+            "typical_ingredients": [
+                "fines graines de couscous",
+                "fruits secs",
+                "grenade",
+                "dattes",
+                "sucre"
+            ],
+            "visual_cues": [
+                "fluffy white/yellow grain",
+                "bright red pomegranate seeds",
+                "nuts on top"
+            ],
+            "nutrition_per_100g": {
+                "calories": 210,
+                "proteins": 4,
+                "carbs": 42,
+                "fats": 4,
+                "fiber": 3
+            },
+            "typical_portion_g": 200,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "sweet_couscous",
+                "مسفوف",
+                "masfouf",
+                "sweet couscous"
+            ]
+        },
+        {
+            "id": "hrissa_helwa",
+            "names": [
+                "hrissa helwa",
+                "هريسة حلوة",
+                "chamia"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "semoule",
+                "sucre",
+                "amandes",
+                "sirop"
+            ],
+            "visual_cues": [
+                "rectangular cake",
+                "moist texture",
+                "browned top",
+                "almond in center"
+            ],
+            "nutrition_per_100g": {
+                "calories": 340,
+                "proteins": 5,
+                "carbs": 62,
+                "fats": 10,
+                "fiber": 2.2
+            },
+            "typical_portion_g": 80,
+            "serving_style": "cake square",
+            "roboflow_labels": [
+                "hrissa_helwa",
+                "هريسة_حلوة",
+                "هريسة حلوة",
+                "chamia",
+                "hrissa helwa"
+            ]
+        },
+        {
+            "id": "zgougou",
+            "names": [
+                "assidat zgougou",
+                "عصيدة الزقوقو",
+                "pine seed pudding"
+            ],
+            "category": "dessert",
+            "typical_ingredients": [
+                "graines de pin d'Alep",
+                "farine",
+                "sucre",
+                "crème pâtissière",
+                "fruits secs"
+            ],
+            "visual_cues": [
+                "black/dark brown pudding layer",
+                "topped with yellow custard",
+                "colorful nut decoration"
+            ],
+            "nutrition_per_100g": {
+                "calories": 280,
+                "proteins": 5,
+                "carbs": 38,
+                "fats": 12,
+                "fiber": 3.5
+            },
+            "typical_portion_g": 150,
+            "serving_style": "glass bowl",
+            "roboflow_labels": [
+                "assidat_zgougou",
+                "عصيدة_الزقوقو",
+                "assidat zgougou",
+                "pine_seed_pudding",
+                "عصيدة الزقوقو",
+                "pine seed pudding",
+                "zgougou"
+            ]
+        },
+        {
+            "id": "samsa",
+            "names": [
+                "samsa",
+                "صامصة",
+                "samsa amandes"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "feuilles de brik",
+                "amandes or noisettes",
+                "sirop",
+                "graines de sésame"
+            ],
+            "visual_cues": [
+                "triangular small pastry",
+                "very crispy",
+                "nut filling",
+                "syrup glaze"
+            ],
+            "nutrition_per_100g": {
+                "calories": 420,
+                "proteins": 8,
+                "carbs": 45,
+                "fats": 24,
+                "fiber": 2.5
+            },
+            "typical_portion_g": 30,
+            "serving_style": "small piece",
+            "roboflow_labels": [
+                "صامصة",
+                "samsa",
+                "samsa amandes",
+                "samsa_amandes"
+            ]
+        },
+        {
+            "id": "bouza",
+            "names": [
+                "bouza",
+                "بوزة",
+                "bouza noisettes"
+            ],
+            "category": "dessert",
+            "typical_ingredients": [
+                "noisettes",
+                "lait",
+                "amidon",
+                "sucre"
+            ],
+            "visual_cues": [
+                "beige creamy pudding",
+                "thick liquid",
+                "nut garnish",
+                "warm color"
+            ],
+            "nutrition_per_100g": {
+                "calories": 160,
+                "proteins": 4,
+                "carbs": 22,
+                "fats": 7,
+                "fiber": 1.5
+            },
+            "typical_portion_g": 150,
+            "serving_style": "glass or bowl",
+            "roboflow_labels": [
+                "bouza noisettes",
+                "bouza_noisettes",
+                "bouza",
+                "بوزة"
+            ]
+        },
+        {
+            "id": "ghraiba",
+            "names": [
+                "ghraiba",
+                "غريبة",
+                "ghraiba pois chiche"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "farine de pois chiche",
+                "sucre glace",
+                "huile / beurre"
+            ],
+            "visual_cues": [
+                "small thick cylinders",
+                "pale yellow/beige",
+                "crumbly texture",
+                "no glaze"
+            ],
+            "nutrition_per_100g": {
+                "calories": 480,
+                "proteins": 8,
+                "carbs": 55,
+                "fats": 26,
+                "fiber": 4
+            },
+            "typical_portion_g": 40,
+            "serving_style": "cookie",
+            "roboflow_labels": [
+                "ghraiba",
+                "ghraiba_pois_chiche",
+                "غريبة",
+                "ghraiba pois chiche"
+            ]
+        },
+        {
+            "id": "kaftaji_sandwich",
+            "names": [
+                "sandwich kaftaji",
+                "سندويتش كفتاجي",
+                "lablebi sandwich"
+            ],
+            "category": "sandwich",
+            "typical_ingredients": [
+                "pain italien",
+                "kafteji (légumes frits)",
+                "foie or merguez",
+                "frites"
+            ],
+            "visual_cues": [
+                "long bread loaf",
+                "stuffed with mashed vegetables",
+                "red harissa stains"
+            ],
+            "nutrition_per_100g": {
+                "calories": 240,
+                "proteins": 8,
+                "carbs": 28,
+                "fats": 11,
+                "fiber": 3
+            },
+            "typical_portion_g": 300,
+            "serving_style": "wrapped sandwich",
+            "roboflow_labels": [
+                "lablebi sandwich",
+                "sandwich_kaftaji",
+                "سندويتش_كفتاجي",
+                "sandwich kaftaji",
+                "lablebi_sandwich",
+                "سندويتش كفتاجي",
+                "kaftaji_sandwich"
+            ]
+        },
+        {
+            "id": "kabkabou",
+            "names": [
+                "kabkabou",
+                "كبكبو",
+                "fish tagine"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "poisson",
+                "tomates",
+                "câpres",
+                "olives",
+                "citron confit"
+            ],
+            "visual_cues": [
+                "fish in red sauce",
+                "lots of olives/capers",
+                "yellow lemon slices"
+            ],
+            "nutrition_per_100g": {
+                "calories": 140,
+                "proteins": 12,
+                "carbs": 5,
+                "fats": 8,
+                "fiber": 1.5
+            },
+            "typical_portion_g": 250,
+            "serving_style": "plate",
+            "roboflow_labels": [
+                "kabkabou",
+                "fish tagine",
+                "fish_tagine",
+                "كبكبو"
+            ]
+        },
+        {
+            "id": "marqa_loubia",
+            "names": [
+                "marqa loubia",
+                "مرقة لوبيا",
+                "bean stew"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "haricots blancs",
+                "viande",
+                "tomate",
+                "harissa"
+            ],
+            "visual_cues": [
+                "white beans in red sauce",
+                "meat chunks",
+                "thick sauce"
+            ],
+            "nutrition_per_100g": {
+                "calories": 170,
+                "proteins": 11,
+                "carbs": 18,
+                "fats": 6,
+                "fiber": 7
+            },
+            "typical_portion_g": 300,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "marqa loubia",
+                "مرقة لوبيا",
+                "مرقة_لوبيا",
+                "marqa_loubia",
+                "bean stew",
+                "bean_stew"
+            ]
+        },
+        {
+            "id": "marqa_jelbana",
+            "names": [
+                "marqa jelbana",
+                "مرقة جلبانة",
+                "pea stew"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "petits pois",
+                "viande",
+                "artichauts",
+                "tomate"
+            ],
+            "visual_cues": [
+                "green peas dominant",
+                "reddish sauce",
+                "meat pieces"
+            ],
+            "nutrition_per_100g": {
+                "calories": 155,
+                "proteins": 10,
+                "carbs": 14,
+                "fats": 7,
+                "fiber": 5
+            },
+            "typical_portion_g": 300,
+            "serving_style": "bowl",
+            "roboflow_labels": [
+                "marqa jelbana",
+                "marqa_jelbana",
+                "مرقة_جلبانة",
+                "pea stew",
+                "pea_stew",
+                "مرقة جلبانة"
+            ]
+        },
+        {
+            "id": "mderbel",
+            "names": [
+                "mderbel aubergine",
+                "مدربل",
+                "mderbel"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "aubergines frites",
+                "viande d'agneau",
+                "pois chiches",
+                "vinaigre"
+            ],
+            "visual_cues": [
+                "dark fried aubergine slices",
+                "lamb stew",
+                "pois chiches base"
+            ],
+            "nutrition_per_100g": {
+                "calories": 190,
+                "proteins": 12,
+                "carbs": 9,
+                "fats": 12,
+                "fiber": 4
+            },
+            "typical_portion_g": 250,
+            "serving_style": "plate",
+            "roboflow_labels": [
+                "mderbel",
+                "mderbel_aubergine",
+                "mderbel aubergine",
+                "مدربل"
+            ]
+        },
+        {
+            "id": "borghol",
+            "names": [
+                "borghol tunisien",
+                "برغل",
+                "bulgur tunisien"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "boulgour",
+                "viande",
+                "pois chiches",
+                "légumes",
+                "tomate"
+            ],
+            "visual_cues": [
+                "coarse grains",
+                "reddish stew mixed in",
+                "similar to couscous but larger grains"
+            ],
+            "nutrition_per_100g": {
+                "calories": 130,
+                "proteins": 6,
+                "carbs": 21,
+                "fats": 2.5,
+                "fiber": 4.5
+            },
+            "typical_portion_g": 350,
+            "serving_style": "plate",
+            "roboflow_labels": [
+                "borghol_tunisien",
+                "borghol",
+                "bulgur_tunisien",
+                "برغل",
+                "borghol tunisien",
+                "bulgur tunisien"
+            ]
+        },
+        {
+            "id": "nwasser",
+            "names": [
+                "nwasser",
+                "نواصر",
+                "nouacer"
+            ],
+            "category": "plat_principal",
+            "typical_ingredients": [
+                "pâte carrée",
+                "poulet",
+                "pois chiches",
+                "piment"
+            ],
+            "visual_cues": [
+                "small square thin pasta",
+                "poulet on top",
+                "steamed appearance"
+            ],
+            "nutrition_per_100g": {
+                "calories": 175,
+                "proteins": 8,
+                "carbs": 30,
+                "fats": 3,
+                "fiber": 2
+            },
+            "typical_portion_g": 300,
+            "serving_style": "plate",
+            "roboflow_labels": [
+                "nouacer",
+                "nwasser",
+                "نواصر"
+            ]
+        },
+        {
+            "id": "mlewi",
+            "names": [
+                "mlewi",
+                "ملاوي",
+                "melaoui"
+            ],
+            "category": "pain",
+            "typical_ingredients": [
+                "semoule fine",
+                "farine",
+                "huile"
+            ],
+            "visual_cues": [
+                "flat bread",
+                "oily surface",
+                "folded layers visible",
+                "round/stretched shape"
+            ],
+            "nutrition_per_100g": {
+                "calories": 290,
+                "proteins": 7,
+                "carbs": 48,
+                "fats": 8,
+                "fiber": 2.5
+            },
+            "typical_portion_g": 120,
+            "serving_style": "as sandwich or with stew",
+            "roboflow_labels": [
+                "melaoui",
+                "ملاوي",
+                "mlewi"
+            ]
+        },
+        {
+            "id": "tabouna",
+            "names": [
+                "pain tabouna",
+                "خبز طابونة",
+                "tabouna"
+            ],
+            "category": "pain",
+            "typical_ingredients": [
+                "farine/semoule",
+                "levure",
+                "graines de nigelle"
+            ],
+            "visual_cues": [
+                "round thick bread",
+                "charred bottom",
+                "black seeds on top",
+                "puffy inside"
+            ],
+            "nutrition_per_100g": {
+                "calories": 250,
+                "proteins": 8,
+                "carbs": 52,
+                "fats": 1.5,
+                "fiber": 3
+            },
+            "typical_portion_g": 150,
+            "serving_style": "whole loaf",
+            "roboflow_labels": [
+                "tabouna",
+                "خبز_طابونة",
+                "pain_tabouna",
+                "خبز طابونة",
+                "pain tabouna"
+            ]
+        },
+        {
+            "id": "mkhariq",
+            "names": [
+                "mkhariq",
+                "مخارق",
+                "mkharek"
+            ],
+            "category": "patisserie",
+            "typical_ingredients": [
+                "farine",
+                "levure",
+                "miel",
+                "beurre clarifié (smen)"
+            ],
+            "visual_cues": [
+                "elongated brain-like shape",
+                "deep golden brown",
+                "soaked in syrup",
+                "pitted surface"
+            ],
+            "nutrition_per_100g": {
+                "calories": 390,
+                "proteins": 4,
+                "carbs": 58,
+                "fats": 16,
+                "fiber": 1
+            },
+            "typical_portion_g": 70,
+            "serving_style": "beja specialty snack",
+            "roboflow_labels": [
+                "mkhariq",
+                "mkharek",
+                "مخارق"
+            ]
+        }
+    ]
+}
