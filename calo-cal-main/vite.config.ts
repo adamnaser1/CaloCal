@@ -14,11 +14,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['lucide-react', 'framer-motion']
+          'ui-vendor': ['lucide-react', 'framer-motion', 'recharts'],
+          'supabase': ['@supabase/supabase-js'],
+          'radix-ui': ['@radix-ui/react-dialog', '@radix-ui/react-slot', '@radix-ui/react-toast']
         }
       }
     }
