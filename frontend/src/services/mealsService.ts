@@ -128,8 +128,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 export async function analyzePhotoWithAI(
     imageBase64: string
 ): Promise<MealAnalysisResult> {
-    const API_URL = import.meta.env.VITE_API_URL ||
-        'http://localhost:8000'
+    const API_URL = import.meta.env.NEXT_PUBLIC_API_URL ||
+        'http://localhost:8001'
 
     try {
         // Convert base64 to blob

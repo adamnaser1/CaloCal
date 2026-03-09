@@ -36,6 +36,10 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+origins = [
+    "https://https://calocal-self.vercel.app",
+    "http://localhost:8001"
+]
 
 # CORS configuration
 app.add_middleware(
