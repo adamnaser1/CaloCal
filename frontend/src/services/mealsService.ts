@@ -123,7 +123,6 @@ export function getMealType(hour: number = new Date().getHours()): 'breakfast' |
     return 'snack'
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export async function analyzePhotoWithAI(
     imageBase64: string
