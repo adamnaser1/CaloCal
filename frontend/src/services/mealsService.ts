@@ -151,7 +151,7 @@ export async function analyzePhotoWithAI(
 
         // Call backend
         const apiResponse = await fetch(
-            `${API_URL}/api/analyze-meal`,
+            `${API_URL}/api/analyze-meal-hybrid`,
             {
                 method: 'POST',
                 body: formData

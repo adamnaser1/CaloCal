@@ -5,6 +5,7 @@ import tempfile
 import os
 import logging
 from ..ml.gemini_vision import gemini_vision
+from ..ml.roboflow_detector import detect_tunisian_food
 from ..utils.image import preprocess_image
 
 logger = logging.getLogger(__name__)
@@ -124,6 +125,96 @@ async def analyze_meal(image: UploadFile = File(...)):
                 "message": "Gemini analysis failed - check backend logs"
             }
         )
+
+@router.post("/analyze-meal-hybrid")
+async def analyze_meal_hybrid(image: UploadFile = File(...)):
+    """
+    Hybrid analysis:
+    1. Try Roboflow for Tunisian food detection
+    2. If detected, use Gemini for macro calculation
+    3. If not detected, use full Gemini analysis
+    """
+    temp_file = None
+    pil_image = None
+    
+    try:
+        # Save image temporarily
+        image_bytes = await image.read()
+        pil_image = Image.open(io.BytesIO(image_bytes))
+        pil_image = preprocess_image(pil_image)
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg', mode='wb') as temp:
+            pil_image.save(temp, format='JPEG', quality=85)
+            temp_file = temp.name
+        
+        pil_image.close()
+        pil_image = None
+        
+        # STEP 1: Try Roboflow detection
+        logger.info("=== Trying Roboflow detection ===")
+        roboflow_result = detect_tunisian_food(temp_file)
+        
+        if roboflow_result and roboflow_result.get('confidence', 0) > 0.6:
+            # Tunisian food detected!
+            dish_name = roboflow_result.get('dish_name')
+            logger.info(f"✅ Roboflow detected: {dish_name}")
+            
+            # STEP 2: Ask Gemini to calculate macros for this specific dish
+            gemini_result = gemini_vision.calculate_macros_for_dish(
+                image_path=temp_file,
+                dish_name=dish_name,
+                portion_g=roboflow_result.get('portion_g', 250)
+            )
+            
+            # Combine results
+            result = {
+                'success': True,
+                'meal_name': dish_name,
+                'confidence': roboflow_result.get('confidence'),
+                'source': 'roboflow_gemini_hybrid',
+                'total_calories': gemini_result.get('total_calories'),
+                'total_proteins': gemini_result.get('total_proteins'),
+                'total_carbs': gemini_result.get('total_carbs'),
+                'total_fats': gemini_result.get('total_fats'),
+                'portion_g': roboflow_result.get('portion_g'),
+                'items': gemini_result.get('items', [])
+            }
+        else:
+            # Not Tunisian food, use full Gemini
+            logger.info("⚠️ Roboflow confidence low, using full Gemini")
+            gemini_result = gemini_vision.analyze_image(temp_file)
+            
+            result = {
+                'success': True,
+                'meal_name': gemini_result.get('dish_name'),
+                'confidence': gemini_result.get('confidence'),
+                'source': 'gemini_full',
+                'total_calories': gemini_result.get('total_calories'),
+                'total_proteins': sum(i.get('proteins', 0) for i in gemini_result.get('items', [])),
+                'total_carbs': sum(i.get('carbs', 0) for i in gemini_result.get('items', [])),
+                'total_fats': sum(i.get('fats', 0) for i in gemini_result.get('items', [])),
+                'portion_g': sum(i.get('quantity_g', 0) for i in gemini_result.get('items', [])),
+                'items': gemini_result.get('items', [])
+            }
+        
+        # Cleanup
+        try:
+            if temp_file and os.path.exists(temp_file):
+                os.remove(temp_file)
+        except:
+            pass
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Hybrid analysis failed: {e}")
+        if pil_image:
+            try: pil_image.close()
+            except: pass
+        if temp_file:
+            try: os.remove(temp_file)
+            except: pass
+        raise HTTPException(500, detail=str(e))
 
 @router.get("/test")
 async def test_api():

@@ -156,5 +156,66 @@ Respond with ONLY valid JSON (no markdown):
                 except:
                     pass
 
+    def calculate_macros_for_dish(self, image_path: str, dish_name: str, portion_g: int) -> Dict:
+        """
+        Calculate macros for a specific Tunisian dish
+        """
+        if self.model is None:
+            raise RuntimeError("Gemini not available")
+        
+        img = None
+        try:
+            img = Image.open(image_path)
+            
+            prompt = f"""You are a nutrition expert. I have detected this dish: "{dish_name}"
+
+The portion size is approximately {portion_g}g.
+
+Calculate the detailed nutritional breakdown for this SPECIFIC dish.
+
+Respond with ONLY valid JSON:
+{{
+  "total_calories": number,
+  "total_proteins": number,
+  "total_carbs": number,
+  "total_fats": number,
+  "items": [
+    {{
+      "name": "ingredient name",
+      "quantity_g": grams,
+      "calories": kcal,
+      "proteins": g,
+      "carbs": g,
+      "fats": g
+    }}
+  ]
+}}"""
+            
+            response = self.model.generate_content([prompt, img])
+            img.close()
+            img = None
+            
+            response_text = response.text
+            
+            # Clean markdown
+            if "```json" in response_text:
+                response_text = response_text.split("```json")[1].split("```")[0]
+            elif "```" in response_text:
+                response_text = response_text.split("```")[1].split("```")[0]
+            
+            result = json.loads(response_text.strip())
+            
+            logger.info(f"✅ Gemini calculated macros for {dish_name}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Gemini macro calculation failed: {e}")
+            raise
+        finally:
+            if img:
+                try: img.close()
+                except: pass
+
 # Global instance
 gemini_vision = GeminiVisionAnalyzer()
