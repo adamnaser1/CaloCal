@@ -1,11 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { supabase } from '@/lib/supabase'
 import { getCurrentUser } from '@/services/authService'
-import { translations, Language, translate as t } from '@/i18n/translations'
+import { translate as t, Language } from '@/i18n/translations'
 
 interface LanguageContextType {
     language: Language
-    setLanguage: (lang: Language) => void
+    setLanguage: (lang: Language) => Promise<void>
     t: (key: string, params?: Record<string, any>) => string
 }
 

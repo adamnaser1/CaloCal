@@ -191,33 +191,46 @@ const DiaryScreen = () => {
                                         key={meal.id}
                                         onClick={() => navigate(`/diary/meal/${meal.id}`)}
                                         className="bg-white p-4 rounded-xl shadow-sm 
-                                hover:shadow-md transition-shadow cursor-pointer flex flex-col gap-3"
+                                            hover:shadow-md transition-shadow cursor-pointer"
                                     >
-                                        <div className="flex justify-between items-start">
-                                            <div className="flex items-center gap-3">
-                                                <div className="text-2xl">{mealTypeDisplay.icon}</div>
-                                                <div>
-                                                    <h4 className="font-bold text-gray-900">{meal.meal_name || 'Meal'}</h4>
-                                                    <p className="text-xs text-muted-foreground">{mealTypeDisplay.label} • {new Date(meal.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                </div>
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="flex-1">
+                                                <h4 className="font-semibold text-gray-900 mb-1">
+                                                    {meal.meal_name || 'Meal'}
+                                                </h4>
+                                                <p className="text-sm text-gray-600">
+                                                    {mealTypeDisplay.icon}{' '}
+                                                    {mealTypeDisplay.label} •{' '}
+                                                    {new Date(meal.logged_at).toLocaleTimeString('en-US', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </p>
                                             </div>
+
                                             <div className="text-right">
-                                                <span className="font-bold text-primary-foreground bg-primary px-3 py-1 rounded-xl block mb-1">
-                                                    {meal.total_calories} <span className="text-[10px] font-normal">kcal</span>
-                                                </span>
+                                                <p className="text-lg font-bold text-gray-900">
+                                                    {meal.total_calories}
+                                                </p>
+                                                <p className="text-xs text-gray-500">kcal</p>
                                             </div>
                                         </div>
 
-                                        {meal.meal_items && meal.meal_items.length > 0 && (
-                                            <div className="mt-2 pl-2 border-l-2 border-muted space-y-1">
-                                                {meal.meal_items.map((item: any) => (
-                                                    <div key={item.id} className="flex justify-between text-xs text-muted-foreground">
-                                                        <span>{item.quantity_g}g {item.custom_name}</span>
-                                                        <span>{item.calories} kcal</span>
-                                                    </div>
-                                                ))}
+                                        {/* Macros breakdown */}
+                                        <div className="flex gap-4 text-xs font-medium">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                                <span className="text-gray-600">P: {meal.total_proteins}g</span>
                                             </div>
-                                        )}
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                                <span className="text-gray-600">C: {meal.total_carbs}g</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-green-500" />
+                                                <span className="text-gray-600">F: {meal.total_fats}g</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 )
                             })}
