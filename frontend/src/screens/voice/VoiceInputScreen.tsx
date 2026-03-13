@@ -1,359 +1,221 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Mic, Square, Check, X, Loader2, AlertTriangle, Keyboard } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { VoiceRecorder } from "@/services/voiceService";
-// import { analyseTextMeal } from "@/services/mealsService"; // Not used anymore
-import { useToast } from "@/hooks/use-toast";
+import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, Mic, Square, Send } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { useToast } from '@/hooks/use-toast'
 
-// Types
-type VoiceState = 'idle' | 'recording' | 'processing' | 'done' | 'error';
-type Language = 'fr-FR' | 'ar-TN' | 'en-US';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-const LANGUAGES: { code: Language; label: string; flag: string }[] = [
-    { code: 'fr-FR', label: 'FR', flag: '🇫🇷' },
-    { code: 'ar-TN', label: 'TN', flag: '🇹🇳' },
-    { code: 'en-US', label: 'EN', flag: '🇬🇧' }
-];
+export default function VoiceInputScreen() {
+    const navigate = useNavigate()
+    const { toast } = useToast()
 
-const VoiceInputScreen = () => {
-    const navigate = useNavigate();
-    const { toast } = useToast();
-    const [state, setState] = useState<VoiceState>('idle');
-    const [transcript, setTranscript] = useState("");
-    const [elapsed, setElapsed] = useState(0);
-    const [currentLang, setCurrentLang] = useState<Language>('fr-FR');
-    const [isSupported, setIsSupported] = useState(true);
+    const [isRecording, setIsRecording] = useState(false)
+    const [isProcessing, setIsProcessing] = useState(false)
+    const [transcription, setTranscription] = useState('')
+    const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
 
-    const recorderRef = useRef<VoiceRecorder>(new VoiceRecorder());
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+    const chunksRef = useRef<Blob[]>([])
 
-    useEffect(() => {
-        // Check support on mount
-        if (!recorderRef.current.isSupported()) {
-            setIsSupported(false);
-            setState('error'); // or handled via UI check
-        }
-    }, []);
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
 
-    useEffect(() => {
-        // Timer logic
-        if (state === 'recording') {
-            timerRef.current = setInterval(() => {
-                setElapsed(prev => prev + 1);
-            }, 1000);
-        } else {
-            if (timerRef.current) clearInterval(timerRef.current);
-            setElapsed(0);
-        }
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        }
-    }, [state]);
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'audio/webm'
+            })
 
-    const handleStartRecording = () => {
-        setTranscript("");
-        setState('recording');
-        recorderRef.current.setLanguage(currentLang);
+            chunksRef.current = []
 
-        recorderRef.current.start(
-            (text, isFinal) => {
-                setTranscript(text);
-            },
-            (finalText) => {
-                // This is called when recognition stops automatically or manually
-                // But if we stop manually, we might set state to processing first
-                if (state === 'recording') {
-                    // automatic stop (silence)
-                    handleStopRecording();
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunksRef.current.push(event.data)
                 }
-            },
-            (error) => {
-                console.error("Voice error:", error);
-                setState('error');
             }
-        );
-    };
 
-    const handleStopRecording = () => {
-        recorderRef.current.stop();
-        setState('processing');
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
+                setAudioBlob(blob)
+                stream.getTracks().forEach(track => track.stop())
+            }
 
-        // Simulate processing delay
-        setTimeout(() => {
-            setState('done');
-        }, 1500);
-    };
+            mediaRecorder.start()
+            mediaRecorderRef.current = mediaRecorder
+            setIsRecording(true)
 
-    const handleCleanup = () => {
-        setTranscript("");
-        setState('idle');
-    };
+        } catch (error) {
+            console.error('Microphone access denied:', error)
+            toast({
+                title: "Microphone Error",
+                description: "Could not access microphone. Please allow microphone permission.",
+                variant: "destructive"
+            })
+        }
+    }
 
-    const handleAnalyse = async () => {
-        // Pass transcript to results screen via router state
-        // We can do analysis here or just pass text. 
-        // Plan said: "After analysis -> navigate to ResultsScreen passing result"
-        // AND "Call existing AI analysis logic... in services/mealsService.ts"
-        // So we should call it here.
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop()
+            setIsRecording(false)
+        }
+    }
 
-        setState('processing'); // Show loading again? Or keep 'done' but with loader?
-        // Let's us 'processing' state again or local loading.
+    const analyzeVoice = async () => {
+        if (!audioBlob) return
+
+        setIsProcessing(true)
 
         try {
-            // const result = await analyseTextMeal(transcript);
-            // toast({
-            //     title: "Meal analysed! Check your results.",
-            //     duration: 3000,
-            // });
-            // navigate('/results', {
-            //     state: {
-            //         analysisResult: result,
-            //         inputMethod: 'voice',
-            //         transcript: transcript
-            //     }
-            // });
+            const formData = new FormData()
+            formData.append('audio', audioBlob, 'voice.webm')
 
+            const response = await fetch(`${API_URL}/api/analyze-voice`, {
+                method: 'POST',
+                body: formData
+            })
+
+            if (!response.ok) throw new Error('Voice analysis failed')
+
+            const data = await response.json()
+
+            setTranscription(data.transcription)
+
+            // Navigate to results with data
+            navigate('/results', {
+                state: {
+                    analysisResult: {
+                        mealName: data.meal_name,
+                        totalCalories: data.total_calories,
+                        totalProteins: data.total_proteins,
+                        totalCarbs: data.total_carbs,
+                        totalFats: data.total_fats,
+                        items: data.items
+                    },
+                    source: 'voice',
+                    language: data.detected_language
+                }
+            })
+
+        } catch (error) {
+            console.error('Voice analysis error:', error)
             toast({
-                title: "Voice input currently disabled",
-                description: "Text analysis has been replaced with image recognition.",
-                duration: 3000,
-            });
-            setState('idle');
-        } catch (e) {
-            console.error(e);
-            setState('error');
-            toast({
-                variant: "destructive",
-                title: "Something went wrong.",
-                description: "Please try again.",
-                duration: 5000,
-            });
+                title: "Analysis Failed",
+                description: "Could not analyze voice input. Please try again.",
+                variant: "destructive"
+            })
+        } finally {
+            setIsProcessing(false)
         }
-    };
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    };
-
-    // Unsupported UI
-    if (!isSupported) {
-        return (
-            <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
-                <div className="mb-6 rounded-full bg-yellow-100 p-6">
-                    <AlertTriangle className="h-10 w-10 text-yellow-600" />
-                </div>
-                <h2 className="mb-2 font-display text-xl font-bold">Voice not supported</h2>
-                <p className="mb-8 text-muted-foreground">
-                    Your browser doesn't support voice input. Please try Chrome or Safari.
-                </p>
-                <button
-                    onClick={() => navigate('/diary')}
-                    className="w-full rounded-2xl bg-[#F5C518] py-4 font-bold text-foreground"
-                >
-                    Type manually instead
-                </button>
-            </div>
-        );
     }
 
     return (
-        <div className="flex min-h-screen flex-col bg-background transition-colors duration-500">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pt-6">
-                <button onClick={() => navigate(-1)} className="rounded-full bg-secondary p-2">
-                    <ArrowLeft className="h-6 w-6 text-foreground" />
+            <header className="bg-white border-b px-6 py-4 flex items-center gap-4">
+                <button onClick={() => navigate(-1)}>
+                    <ArrowLeft className="w-6 h-6" />
                 </button>
-                {state === 'recording' && (
-                    <div className="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-600 font-mono">
-                        {formatTime(elapsed)}
-                    </div>
-                )}
-                <div className="w-10" /> {/* spacer */}
-            </div>
+                <h1 className="text-xl font-bold">Voice Input</h1>
+            </header>
 
-            {/* Main Content */}
-            <div className="flex flex-1 flex-col items-center justify-center px-6">
+            <div className="p-6 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+                {/* Recording Animation */}
+                {!audioBlob ? (
+                    <div className="flex flex-col items-center gap-8">
+                        <div className="relative">
+                            {isRecording && (
+                                <>
+                                    <motion.div
+                                        className="absolute inset-0 bg-red-500 rounded-full opacity-20"
+                                        animate={{ scale: [1, 1.5, 1] }}
+                                        transition={{ repeat: Infinity, duration: 1.5 }}
+                                    />
+                                    <motion.div
+                                        className="absolute inset-0 bg-red-500 rounded-full opacity-10"
+                                        animate={{ scale: [1, 2, 1] }}
+                                        transition={{ repeat: Infinity, duration: 2 }}
+                                    />
+                                </>
+                            )}
 
-                {/* Transcript Bubble */}
-                <AnimatePresence mode="wait">
-                    {(state === 'recording' || state === 'processing' || state === 'done') && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="mb-12 w-full max-w-sm rounded-3xl bg-secondary/50 p-6 backdrop-blur-sm"
-                        >
-                            <p className="text-center font-display text-lg font-medium leading-relaxed text-foreground">
-                                "{transcript || "Listening..."}"
-                            </p>
-                        </motion.div>
-                    )}
-                    {state === 'error' && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mb-12 w-full max-w-sm rounded-3xl bg-red-50 p-6"
-                        >
-                            <p className="text-center font-display text-lg font-medium text-red-600">
-                                Could not understand. Please try again.
-                            </p>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Visualizer / Mic Area */}
-                <div className="relative mb-12 flex items-center justify-center">
-                    {/* Rings */}
-                    {state === 'recording' && (
-                        <>
-                            <motion.div
-                                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                                transition={{ repeat: Infinity, duration: 2 }}
-                                className="absolute h-64 w-64 rounded-full bg-[#F5C518]/20"
-                            />
-                            <motion.div
-                                animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0, 0.6] }}
-                                transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}
-                                className="absolute h-48 w-48 rounded-full bg-[#F5C518]/30"
-                            />
-                            <motion.div
-                                animate={{ scale: [1, 1.1, 1], opacity: [0.8, 0.2, 0.8] }}
-                                transition={{ repeat: Infinity, duration: 1, delay: 0.1 }}
-                                className="absolute h-32 w-32 rounded-full bg-[#F5C518]/40"
-                            />
-                        </>
-                    )}
-
-                    {state === 'processing' && (
-                        <div className="absolute h-40 w-40 rounded-full bg-[#F5C518]/20" />
-                    )}
-
-                    {/* Center Button */}
-                    <motion.div
-                        layout
-                        className={`relative z-10 flex h-24 w-24 items-center justify-center rounded-full shadow-lg transition-colors duration-300 ${state === 'recording' ? 'bg-[#F5C518]' :
-                            state === 'error' ? 'bg-red-500' :
-                                state === 'done' ? 'bg-green-500' :
-                                    state === 'processing' ? 'bg-white border-4 border-[#F5C518]' :
-                                        'bg-white border-2 border-secondary'
-                            }`}
-                        animate={state === 'recording' ? { scale: [1, 1.05, 1] } : { scale: 1 }}
-                        transition={{ repeat: Infinity, duration: 1.2 }}
-                        onClick={() => {
-                            if (state === 'idle') handleStartRecording();
-                        }}
-                    >
-                        {state === 'idle' && <Mic className="h-8 w-8 text-foreground" />}
-                        {state === 'recording' && <Mic className="h-8 w-8 text-foreground" />}
-                        {state === 'processing' && <Loader2 className="h-8 w-8 animate-spin text-[#F5C518]" />}
-                        {state === 'done' && <Check className="h-10 w-10 text-white" />}
-                        {state === 'error' && <X className="h-10 w-10 text-white" />}
-                    </motion.div>
-                </div>
-
-                {/* Text Status */}
-                <div className="mb-8 min-h-[24px] text-center">
-                    {state === 'idle' && <p className="text-muted-foreground">Tap the mic to start</p>}
-                    {state === 'recording' && <p className="animate-pulse font-medium text-[#F5C518]">Listening...</p>}
-                    {state === 'processing' && <p className="text-muted-foreground">Analysing your meal...</p>}
-                    {/* Done/Error states handle text in buttons or specific areas */}
-                </div>
-
-                {/* Language Selector (only idle) */}
-                {state === 'idle' && (
-                    <div className="flex gap-2 rounded-full bg-secondary/50 p-1">
-                        {LANGUAGES.map(lang => (
                             <button
-                                key={lang.code}
-                                onClick={() => setCurrentLang(lang.code)}
-                                className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${currentLang === lang.code
-                                    ? 'bg-[#F5C518] text-foreground shadow-sm'
-                                    : 'text-muted-foreground hover:bg-white/50'
+                                onClick={isRecording ? stopRecording : startRecording}
+                                className={`relative w-32 h-32 rounded-full flex items-center justify-center
+                           transition-all ${isRecording
+                                        ? 'bg-red-500 hover:bg-red-600'
+                                        : 'bg-[#F5C518] hover:bg-yellow-500'
                                     }`}
                             >
-                                <span className="mr-1">{lang.flag}</span>
-                                {lang.label}
+                                {isRecording ? (
+                                    <Square className="w-12 h-12 text-white fill-white" />
+                                ) : (
+                                    <Mic className="w-12 h-12 text-white" />
+                                )}
                             </button>
-                        ))}
+                        </div>
+
+                        <div className="text-center">
+                            <p className="text-lg font-semibold mb-2">
+                                {isRecording ? '🎙️ Recording...' : '🎤 Tap to start recording'}
+                            </p>
+                            <p className="text-sm text-gray-600 max-w-md">
+                                Describe your meal in English, French, or Tunisian Arabic
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center gap-6 w-full max-w-md">
+                        <div className="w-full p-6 bg-white rounded-2xl shadow-lg">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-semibold text-gray-900">Recording Ready</h3>
+                                <button
+                                    onClick={() => {
+                                        setAudioBlob(null)
+                                        setTranscription('')
+                                    }}
+                                    className="text-sm text-red-500 hover:text-red-600"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+
+                            <audio controls className="w-full mb-4">
+                                <source src={URL.createObjectURL(audioBlob)} type="audio/webm" />
+                            </audio>
+
+                            {transcription && (
+                                <div className="mt-4 p-4 bg-gray-50 rounded-xl">
+                                    <p className="text-sm text-gray-600 mb-1">Transcription:</p>
+                                    <p className="text-gray-900">{transcription}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            onClick={analyzeVoice}
+                            disabled={isProcessing}
+                            className="w-full py-4 bg-[#F5C518] text-white rounded-xl
+                       font-semibold hover:bg-yellow-500 transition-colors
+                       disabled:opacity-50 disabled:cursor-not-allowed
+                       flex items-center justify-center gap-2"
+                        >
+                            {isProcessing ? (
+                                <>
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent 
+                                rounded-full animate-spin" />
+                                    Analyzing...
+                                </>
+                            ) : (
+                                <>
+                                    <Send className="w-5 h-5" />
+                                    Analyze Meal
+                                </>
+                            )}
+                        </button>
                     </div>
                 )}
-
-                {/* Actions */}
-                <div className="fixed bottom-12 left-0 w-full px-6">
-                    <AnimatePresence mode="wait">
-                        {state === 'idle' && (
-                            <motion.button
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="w-full rounded-2xl bg-[#F5C518] py-4 font-display font-bold text-foreground shadow-lg shadow-yellow-500/20 active:scale-[0.98]"
-                                onClick={handleStartRecording}
-                            >
-                                Start recording
-                            </motion.button>
-                        )}
-
-                        {state === 'recording' && (
-                            <div className="flex flex-col gap-4">
-                                <motion.button
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="w-full rounded-2xl bg-red-500 py-4 font-bold text-white shadow-lg shadow-red-500/20 active:scale-[0.98]"
-                                    onClick={handleStopRecording}
-                                >
-                                    <div className="flex items-center justify-center gap-2">
-                                        <Square className="h-4 w-4 fill-current" />
-                                        Stop recording
-                                    </div>
-                                </motion.button>
-
-                                <button
-                                    onClick={() => navigate('/diary')} // Or capture? 'Type instead' usually goes to text input or manual add
-                                    className="flex w-full items-center justify-center gap-2 text-sm font-medium text-muted-foreground"
-                                >
-                                    <Keyboard className="h-4 w-4" />
-                                    Type instead
-                                </button>
-                            </div>
-                        )}
-
-                        {state === 'done' && (
-                            <div className="flex flex-col gap-3">
-                                <motion.button
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="w-full rounded-2xl bg-[#F5C518] py-4 font-display font-bold text-foreground shadow-lg shadow-yellow-500/20 active:scale-[0.98]"
-                                    onClick={handleAnalyse}
-                                >
-                                    Analyse this meal →
-                                </motion.button>
-                                <button
-                                    onClick={handleCleanup}
-                                    className="w-full py-4 text-sm font-bold text-muted-foreground hover:text-foreground"
-                                >
-                                    Re-record
-                                </button>
-                            </div>
-                        )}
-
-                        {state === 'error' && (
-                            <motion.button
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="w-full rounded-2xl bg-[#F5C518] py-4 font-display font-bold text-foreground active:scale-[0.98]"
-                                onClick={handleCleanup}
-                            >
-                                Try again
-                            </motion.button>
-                        )}
-                    </AnimatePresence>
-                </div>
-
             </div>
         </div>
-    );
-};
-
-export default VoiceInputScreen;
+    )
+}

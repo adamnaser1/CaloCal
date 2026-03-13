@@ -216,6 +216,54 @@ async def analyze_meal_hybrid(image: UploadFile = File(...)):
             except: pass
         raise HTTPException(500, detail=str(e))
 
+@router.post("/analyze-voice")
+async def analyze_voice(audio: UploadFile = File(...)):
+    """
+    Analyze meal from voice input (multilingual)
+    Supports: English, French, Tunisian Arabic
+    """
+    temp_file = None
+    
+    try:
+        # Save audio temporarily
+        audio_bytes = await audio.read()
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.webm', mode='wb') as temp:
+            temp.write(audio_bytes)
+            temp_file = temp.name
+        
+        logger.info("=== Processing voice input ===")
+        
+        # Use Gemini to transcribe and analyze
+        result = gemini_vision.analyze_voice_meal(temp_file)
+        
+        # Cleanup
+        try:
+            if temp_file and os.path.exists(temp_file):
+                os.remove(temp_file)
+        except:
+            pass
+        
+        return {
+            'success': True,
+            'transcription': result.get('transcription'),
+            'detected_language': result.get('language'),
+            'meal_name': result.get('dish_name'),
+            'total_calories': result.get('total_calories', 0),
+            'total_proteins': result.get('total_proteins', 0),
+            'total_carbs': result.get('total_carbs', 0),
+            'total_fats': result.get('total_fats', 0),
+            'portion_g': result.get('portion_g', 250),
+            'items': result.get('items', [])
+        }
+        
+    except Exception as e:
+        logger.error(f"Voice analysis failed: {e}")
+        if temp_file:
+            try: os.remove(temp_file)
+            except: pass
+        raise HTTPException(500, detail=str(e))
+
 @router.get("/test")
 async def test_api():
     """Test if Gemini is ready"""

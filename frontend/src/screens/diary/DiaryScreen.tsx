@@ -1,18 +1,13 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { format, addDays, subDays, isSameDay, startOfDay } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Plus, Trash2, RefreshCw } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMealLogsForDate, deleteMealItem, MealLog, MealItem } from "@/services/diaryService";
-import { getUserProfile } from "@/services/profileService";
-import { Link } from "react-router-dom";
-import EmptyState from "@/components/EmptyState";
+import { motion } from "framer-motion";
+import { RefreshCw, Trash2, Loader2, Plus } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 import BottomNav from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
-import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { formatCalories } from "@/lib/utils";
-import FAB from "@/components/FAB"; // Reusing FAB component
+import FAB from "@/components/FAB";
+import { deleteMealItem } from "@/services/diaryService";
 
 // Helper to get emoji for meal item
 const getEmoji = (name: string) => {
@@ -29,70 +24,138 @@ const getEmoji = (name: string) => {
     return "🍽️";
 };
 
+const getMealTypeDisplay = (mealType: string) => {
+    const types: Record<string, { icon: string, label: string }> = {
+        breakfast: { icon: '🌅', label: 'Breakfast' },
+        lunch: { icon: '☀️', label: 'Lunch' },
+        dinner: { icon: '🌙', label: 'Dinner' },
+        snack: { icon: '🍎', label: 'Snack' }
+    }
+    return types[mealType?.toLowerCase()] || types.snack
+}
+
 const DiaryScreen = () => {
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const { toast } = useToast();
-    const [selectedDate, setSelectedDate] = useState(new Date());
 
-    // Date strip generation
-    const dates = useMemo(() => Array.from({ length: 7 }, (_, i) => {
-        const d = subDays(new Date(), 3 - i);
-        return d;
-    }), []);
-
-    // Fetch meals
-    const { data: mealLogs, isLoading: mealsLoading, refetch } = useQuery({
-        queryKey: ["meals", startOfDay(selectedDate).toISOString()],
-        queryFn: () => getMealLogsForDate(selectedDate),
-    });
-
-    // Fetch profile for goals
-    const { data: profile } = useQuery({
-        queryKey: ["profile"],
-        queryFn: getUserProfile,
-    });
-
-    // Delete mutation
-    const deleteItemMutation = useMutation({
-        mutationFn: deleteMealItem,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["meals"] });
-            toast({ description: "Item deleted", duration: 3000 });
-        },
-        onError: () => {
-            toast({ variant: "destructive", description: "Failed to delete item", duration: 5000 });
-        },
-    });
-
+    const [allMeals, setAllMeals] = useState<any[]>([]);
+    const [displayedMeals, setDisplayedMeals] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+
+    const MEALS_PER_PAGE = 20;
+
+    // Load all meals
+    useEffect(() => {
+        loadAllMeals();
+    }, []);
+
+    const loadAllMeals = async () => {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data, error } = await supabase
+                .from('meal_logs')
+                .select(`
+            *,
+            meal_items (*)
+          `)
+                .eq('user_id', user.id)
+                .order('logged_at', { ascending: false });
+
+            if (error) throw error;
+
+            setAllMeals(data || []);
+            setDisplayedMeals(data?.slice(0, MEALS_PER_PAGE) || []);
+            setHasMore(data && data.length > MEALS_PER_PAGE);
+
+        } catch (error) {
+            console.error('Error loading meals:', error);
+        }
+    };
+
     const handleRefresh = async () => {
         setRefreshing(true);
-        await refetch();
+        await loadAllMeals();
         setTimeout(() => setRefreshing(false), 1000);
     };
 
-    // Calculate totals
-    const totals = useMemo(() => mealLogs?.reduce(
-        (acc, log) => ({
-            calories: acc.calories + log.total_calories,
-            proteins: acc.proteins + log.total_proteins,
-            carbs: acc.carbs + log.total_carbs,
-            fats: acc.fats + log.total_fats,
-        }),
-        { calories: 0, proteins: 0, carbs: 0, fats: 0 }
-    ) || { calories: 0, proteins: 0, carbs: 0, fats: 0 }, [mealLogs]);
+    // Load more meals on scroll
+    const loadMore = () => {
+        if (loading || !hasMore) return;
 
-    const dailyGoal = profile?.daily_calorie_goal || 2000;
-    const progress = Math.min(totals.calories / dailyGoal, 1) * 100;
-    const ringColor = totals.calories > dailyGoal ? "border-orange-500" : (totals.calories / dailyGoal >= 0.8 ? "border-yellow-400" : "border-green-500");
+        setLoading(true);
 
-    // Meal sections
-    const sections = ["Breakfast", "Lunch", "Dinner", "Snack"];
+        const nextPage = page + 1;
+        const startIndex = (nextPage - 1) * MEALS_PER_PAGE;
+        const endIndex = startIndex + MEALS_PER_PAGE;
+
+        const newMeals = allMeals.slice(0, endIndex);
+
+        setDisplayedMeals(newMeals);
+        setPage(nextPage);
+        setHasMore(endIndex < allMeals.length);
+        setLoading(false);
+    };
+
+    // Infinite scroll detection
+    const observerTarget = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    loadMore();
+                }
+            },
+            { threshold: 1 }
+        );
+
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
+        }
+
+        return () => {
+            if (observerTarget.current) {
+                observer.unobserve(observerTarget.current);
+            }
+        };
+    }, [loading, hasMore, page]);
+
+    // Group meals by date
+    const groupedMeals = displayedMeals.reduce((groups, meal) => {
+        const date = new Date(meal.logged_at).toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        if (!groups[date]) {
+            groups[date] = [];
+        }
+
+        groups[date].push(meal);
+
+        return groups;
+    }, {} as Record<string, any[]>);
+
+    const handleDelete = async (itemId: string) => {
+        try {
+            await deleteMealItem(itemId);
+            toast({ description: "Item deleted", duration: 3000 });
+            loadAllMeals(); // Reload to refresh list and totals
+        } catch (error) {
+            toast({ variant: "destructive", description: "Failed to delete item", duration: 5000 });
+        }
+    }
 
     return (
         <motion.div
-            className="min-h-screen bg-background pb-24"
+            className="min-h-screen bg-background pb-20"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
@@ -100,197 +163,89 @@ const DiaryScreen = () => {
             onClick={() => (document.activeElement as HTMLElement)?.blur()}
         >
             {/* Top Section */}
-            <div className="bg-white pb-4 pt-6 shadow-sm">
+            <div className="bg-white pb-4 pt-6 shadow-sm sticky top-0 z-10">
                 <div className="px-5 flex justify-between items-center">
-                    <h1 className="mb-4 font-display text-2xl font-bold text-foreground">My Diary</h1>
+                    <h1 className="font-display text-2xl font-bold text-foreground">My History</h1>
                     <button
                         onClick={handleRefresh}
-                        className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/80 active:scale-95"
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/80 active:scale-95"
                     >
                         <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
                     </button>
                 </div>
-
-                {/* Date Strip */}
-                <div className="flex gap-2 overflow-x-auto px-5 pb-2 scrollbar-hide">
-                    {dates.map((date) => {
-                        const isSelected = isSameDay(date, selectedDate);
-                        const isToday = isSameDay(date, new Date());
-
-                        return (
-                            <button
-                                key={date.toISOString()}
-                                onClick={() => setSelectedDate(date)}
-                                className={`flex min-w-[60px] flex-col items-center rounded-2xl py-3 transition-colors ${isSelected
-                                    ? "bg-[#F5C518] text-foreground"
-                                    : "bg-gray-50 text-muted-foreground"
-                                    }`}
-                            >
-                                <span className={`text-[10px] font-bold uppercase ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                                    {format(date, "EEE")}
-                                </span>
-                                <span className={`text-lg font-bold ${isSelected ? "text-foreground" : "text-gray-700"}`}>
-                                    {format(date, "d")}
-                                </span>
-                                {/* Dot for today/selected decoration */}
-                                {isToday && !isSelected && (
-                                    <div className="mt-1 h-1 w-1 rounded-full bg-[#F5C518]" />
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
             </div>
 
-            <div className="px-5 pt-6">
-                {/* Daily Summary Card */}
-                {mealsLoading ? (
-                    <SkeletonLoader variant="card" className="mb-8 h-28" />
-                ) : (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="mb-8 rounded-2xl bg-[#F5C518] p-5 text-foreground shadow-lg shadow-yellow-500/20"
-                    >
-                        <div className="flex items-center justify-between">
-                            {/* Simple Ring Placeholder */}
-                            <div className={`relative flex h-14 w-14 items-center justify-center rounded-full border-4 bg-white/10 ${totals.calories > dailyGoal ? 'border-orange-500/50' : 'border-white/30'}`}>
-                                <div className="text-xs font-bold">
-                                    {Math.round(progress)}%
-                                </div>
-                            </div>
+            <div className="space-y-6 pt-6 pb-24">
+                {Object.entries(groupedMeals).map(([date, meals]) => (
+                    <div key={date}>
+                        <h3 className="text-sm font-semibold text-gray-600 px-6 mb-3">
+                            {date}
+                        </h3>
 
-                            <div className="flex flex-col items-center">
-                                <span className="font-display text-xl font-bold">
-                                    {formatCalories(totals.calories)} / {formatCalories(dailyGoal)} kcal
-                                </span>
-                                <span className="text-xs font-medium opacity-80">Daily Goal</span>
-                            </div>
+                        <div className="space-y-3 px-6">
+                            {meals.map((meal) => {
+                                const mealTypeDisplay = getMealTypeDisplay(meal.meal_type)
 
-                            <div className="flex flex-col gap-1 text-xs font-medium">
-                                <span>P: {Math.round(totals.proteins)}g</span>
-                                <span>C: {Math.round(totals.carbs)}g</span>
-                                <span>F: {Math.round(totals.fats)}g</span>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-
-                {/* Meal Sections */}
-                <div className="flex flex-col gap-6">
-                    {mealsLoading ? (
-                        <div className="space-y-6">
-                            <SkeletonLoader variant="card" count={4} />
-                        </div>
-                    ) : (
-                        sections.map((section, index) => {
-                            const sectionLogs = mealLogs?.filter(
-                                (log) => log.meal_type.toLowerCase() === section.toLowerCase()
-                            );
-
-                            const sectionTotal = sectionLogs?.reduce((sum, log) => sum + log.total_calories, 0) || 0;
-                            const sectionItems = sectionLogs?.flatMap((log) => log.meal_items) || [];
-
-                            return (
-                                <motion.div
-                                    key={section}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <div className="mb-3 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-lg">
-                                                {section === "Breakfast" ? "🌅" :
-                                                    section === "Lunch" ? "☀️" :
-                                                        section === "Dinner" ? "🌙" : "🍎"}
-                                            </span>
-                                            <h2 className="font-display text-base font-bold text-foreground">{section}</h2>
+                                return (
+                                    <div
+                                        key={meal.id}
+                                        onClick={() => navigate(`/diary/meal/${meal.id}`)}
+                                        className="bg-white p-4 rounded-xl shadow-sm 
+                                hover:shadow-md transition-shadow cursor-pointer flex flex-col gap-3"
+                                    >
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex items-center gap-3">
+                                                <div className="text-2xl">{mealTypeDisplay.icon}</div>
+                                                <div>
+                                                    <h4 className="font-bold text-gray-900">{meal.meal_name || 'Meal'}</h4>
+                                                    <p className="text-xs text-muted-foreground">{mealTypeDisplay.label} • {new Date(meal.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="font-bold text-primary-foreground bg-primary px-3 py-1 rounded-xl block mb-1">
+                                                    {meal.total_calories} <span className="text-[10px] font-normal">kcal</span>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <span className={`text-sm font-bold ${sectionTotal > 0 ? "text-foreground" : "text-muted-foreground"}`}>
-                                            {sectionTotal > 0 ? `${formatCalories(sectionTotal)} kcal` : ""}
-                                        </span>
-                                    </div>
 
-                                    <div className="flex flex-col gap-3">
-                                        {sectionItems.length > 0 ? (
-                                            sectionItems.map((item, i) => (
-                                                <MealItemRow
-                                                    key={item.id}
-                                                    item={item}
-                                                    onDelete={() => deleteItemMutation.mutate(item.id)}
-                                                    onClick={() => navigate(`/diary/meal/${item.meal_log_id}`)}
-                                                />
-                                            ))
-                                        ) : (
-                                            <EmptyState
-                                                emoji="🥣"
-                                                title="Nothing logged yet"
-                                                subtitle={`Snap your first ${section.toLowerCase()} to get started!`}
-                                                primaryAction={{
-                                                    label: "📷 Snap a meal",
-                                                    onClick: () => navigate("/capture")
-                                                }}
-                                                secondaryAction={{
-                                                    label: "Log manually",
-                                                    onClick: () => { } // Stub
-                                                }}
-                                            />
+                                        {meal.meal_items && meal.meal_items.length > 0 && (
+                                            <div className="mt-2 pl-2 border-l-2 border-muted space-y-1">
+                                                {meal.meal_items.map((item: any) => (
+                                                    <div key={item.id} className="flex justify-between text-xs text-muted-foreground">
+                                                        <span>{item.quantity_g}g {item.custom_name}</span>
+                                                        <span>{item.calories} kcal</span>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         )}
                                     </div>
-                                </motion.div>
-                            );
-                        })
-                    )}
-                </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                ))}
+
+                {/* Loading indicator */}
+                {hasMore && (
+                    <div ref={observerTarget} className="py-8 flex justify-center">
+                        {(loading || allMeals.length === 0) && (
+                            <div className="w-8 h-8 border-4 border-[#F5C518] 
+                                  border-t-transparent rounded-full animate-spin" />
+                        )}
+                    </div>
+                )}
+
+                {/* End of history */}
+                {!hasMore && displayedMeals.length > 0 && (
+                    <p className="text-center text-gray-500 py-8 text-sm">
+                        📜 You've reached the beginning of your journey
+                    </p>
+                )}
             </div>
 
             <BottomNav />
             {/* FAB */}
             <FAB onClick={() => navigate("/capture")} />
-        </motion.div>
-    );
-};
-
-const MealItemRow = ({ item, onDelete, onClick }: { item: MealItem; onDelete: () => void; onClick: () => void }) => {
-    return (
-        <motion.div
-            className="relative overflow-hidden rounded-xl bg-white shadow-sm"
-            initial={false}
-            layout
-        >
-            <motion.div
-                className="absolute inset-y-0 right-0 flex w-20 items-center justify-center bg-red-500"
-            >
-                <Trash2 className="text-white" size={20} />
-            </motion.div>
-
-            <motion.div
-                drag="x"
-                dragConstraints={{ left: -80, right: 0 }}
-                dragElastic={0.1}
-                onDragEnd={(_, info) => {
-                    if (info.offset.x < -60) {
-                        onDelete();
-                    }
-                }}
-                onClick={onClick}
-                className="relative flex items-center justify-between bg-white p-4"
-                style={{ cursor: "pointer" }}
-            >
-                <div className="flex items-center gap-4">
-                    <span className="text-2xl">{getEmoji(item.custom_name)}</span>
-                    <div>
-                        <h3 className="font-display text-[15px] font-bold text-foreground truncate max-w-[150px]">{item.custom_name}</h3>
-                        <p className="font-body text-xs text-muted-foreground">
-                            {item.quantity_g}g · {formatCalories(item.calories)} kcal
-                        </p>
-                    </div>
-                </div>
-                <span className="font-display text-[15px] font-bold text-foreground">
-                    {formatCalories(item.calories)}
-                </span>
-            </motion.div>
         </motion.div>
     );
 };

@@ -217,5 +217,76 @@ Respond with ONLY valid JSON:
                 try: img.close()
                 except: pass
 
+    def analyze_voice_meal(self, audio_path: str) -> Dict:
+        """
+        Analyze meal from voice input (multilingual)
+        """
+        if self.model is None:
+            raise RuntimeError("Gemini not available")
+        
+        try:
+            # Read audio file
+            with open(audio_path, 'rb') as audio_file:
+                audio_data = audio_file.read()
+            
+            # Use Gemini with audio input
+            prompt = """You are a multilingual nutrition assistant. The user is describing a meal they ate.
+
+Listen to the audio and:
+1. Transcribe what they said
+2. Detect the language (English, French, or Tunisian Arabic)
+3. Identify the dish name
+4. Estimate portion size and nutritional values
+
+Respond with ONLY valid JSON:
+{
+  "transcription": "what the user said",
+  "language": "en/fr/ar",
+  "dish_name": "name of the dish",
+  "total_calories": number,
+  "total_proteins": number,
+  "total_carbs": number,
+  "total_fats": number,
+  "portion_g": estimated grams,
+  "items": [
+    {
+      "name": "ingredient",
+      "quantity_g": grams,
+      "calories": kcal,
+      "proteins": g,
+      "carbs": g,
+      "fats": g
+    }
+  ]
+}
+
+If the user said they ate a Tunisian dish (brik, couscous, lablabi, etc.), use Tunisian names."""
+            
+            # Create file-like object for Gemini
+            audio_part = {
+                "mime_type": "audio/webm",
+                "data": audio_data
+            }
+            
+            response = self.model.generate_content([prompt, audio_part])
+            
+            response_text = response.text
+            
+            # Clean markdown
+            if "```json" in response_text:
+                response_text = response_text.split("```json")[1].split("```")[0]
+            elif "```" in response_text:
+                response_text = response_text.split("```")[1].split("```")[0]
+            
+            result = json.loads(response_text.strip())
+            
+            logger.info(f"✅ Voice analyzed: {result.get('dish_name')} ({result.get('language')})")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Voice analysis failed: {e}")
+            raise
+
 # Global instance
 gemini_vision = GeminiVisionAnalyzer()

@@ -40,6 +40,7 @@ const ResultsScreen = () => {
   const [result, setResult] = useState<any>(state?.analysisResult || mockResultDefault);
   const [isSaving, setIsSaving] = useState(false);
   const [analyzing, setAnalyzing] = useState(!state?.analysisResult);
+  const [selectedMealType, setSelectedMealType] = useState<'snack' | 'breakfast' | 'lunch' | 'dinner'>('snack');
 
   const now = new Date();
   const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
@@ -90,7 +91,7 @@ const ResultsScreen = () => {
       }));
 
       const input: MealLogInput = {
-        meal_type: getMealType(now.getHours()),
+        meal_type: selectedMealType,
         photo_url: image,
         total_calories: result.totalCalories || result.calories,
         total_proteins: result.totalProteins || result.proteins,
@@ -224,6 +225,32 @@ const ResultsScreen = () => {
 
       {/* Actions */}
       <div className="mt-6 flex flex-col gap-3 px-5">
+        <div className="mb-6">
+          <p className="text-sm font-medium text-gray-700 mb-3">Meal Type</p>
+          <div className="grid grid-cols-4 gap-2">
+            {(
+              [
+                { id: 'breakfast', icon: '🌅', label: 'Breakfast' },
+                { id: 'lunch', icon: '☀️', label: 'Lunch' },
+                { id: 'dinner', icon: '🌙', label: 'Dinner' },
+                { id: 'snack', icon: '🍎', label: 'Snack' }
+              ] as const
+            ).map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setSelectedMealType(type.id)}
+                className={`p-3 rounded-xl border-2 transition-all ${selectedMealType === type.id
+                  ? 'border-[#F5C518] bg-yellow-50'
+                  : 'border-gray-200 hover:border-gray-300'
+                  }`}
+              >
+                <div className="text-2xl mb-1">{type.icon}</div>
+                <div className="text-xs font-medium">{type.label}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button
           onClick={handleSave}
           disabled={isSaving}

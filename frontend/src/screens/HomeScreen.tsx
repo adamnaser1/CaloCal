@@ -73,6 +73,16 @@ const HomeScreen = () => {
   const isOverBudget = totalCalories > dailyGoal;
   const ringColor = isOverBudget ? "#F97316" : (totalCalories / dailyGoal >= 0.8 ? "#F5C518" : "#22C55E");
 
+  const getMealTypeDisplay = (mealType: string) => {
+    const types: Record<string, { icon: string, label: string }> = {
+      breakfast: { icon: '🌅', label: 'Breakfast' },
+      lunch: { icon: '☀️', label: 'Lunch' },
+      dinner: { icon: '🌙', label: 'Dinner' },
+      snack: { icon: '🍎', label: 'Snack' }
+    }
+    return types[mealType] || types.snack
+  }
+
   return (
     <motion.div
       className="relative min-h-screen bg-background pb-28"
@@ -157,21 +167,42 @@ const HomeScreen = () => {
         ) : (
           <div className="flex flex-col gap-3">
             <AnimatePresence>
-              {meals.map((meal, index) => (
-                <motion.div
-                  key={meal.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <MealCard
-                    name={meal.name}
-                    time={meal.time}
-                    calories={meal.calories}
-                    image={meal.image}
-                  />
-                </motion.div>
-              ))}
+              {meals.map((meal, index) => {
+                const mealTypeDisplay = getMealTypeDisplay(meal.meal_type || 'snack')
+
+                return (
+                  <motion.div
+                    key={meal.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm"
+                  >
+                    <img
+                      src={meal.image || '/placeholder-food.png'}
+                      alt={meal.name}
+                      className="w-16 h-16 rounded-xl object-cover"
+                    />
+
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{meal.name}</h3>
+                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                        {mealTypeDisplay.icon} {mealTypeDisplay.label}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {meal.time}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-gray-900 line-clamp-1">
+                        {meal.calories}
+                      </p>
+                      <span className="text-xs text-muted-foreground">kcal</span>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </AnimatePresence>
           </div>
         )}
