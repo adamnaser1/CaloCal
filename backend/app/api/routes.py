@@ -222,7 +222,7 @@ async def test_api():
     return {
         "status": "ok",
         "gemini_available": gemini_vision.model is not None,
-        "model": "gemini-1.5-flash-latest",
+        "model": "gemini-2.5 flash",
         "free_tier": "1500 requests/day"
     }
 

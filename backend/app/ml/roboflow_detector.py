@@ -6,9 +6,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-ROBOFLOW_API_KEY = "pGOBLYVDZWdxjksqY8vJ"
-ROBOFLOW_MODEL = "detection-tunisian-food-2025/5"
-ROBOFLOW_URL = f"https://serverless.roboflow.com/detection-tunisian-food-2025/5"
+ROBOFLOW_API_KEY = "XFxHUmAe8NRmvZ2dvQJC"
+ROBOFLOW_MODEL = "pfemrds/detection-tunisian-food-2025/3"
+ROBOFLOW_URL = f"https://detect.roboflow.com/{ROBOFLOW_MODEL}"
 
 # Load Tunisian food database from JSON
 DB_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'tunisian_foods.json')
