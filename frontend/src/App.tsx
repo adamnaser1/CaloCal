@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { MealLogProvider } from "./context/MealLogContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -106,11 +107,13 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
-          <MealLogProvider>
-            <Toaster />
-            <Sonner />
-            <AppContent />
-          </MealLogProvider>
+          <LanguageProvider>
+            <MealLogProvider>
+              <Toaster />
+              <Sonner />
+              <AppContent />
+            </MealLogProvider>
+          </LanguageProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

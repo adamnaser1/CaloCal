@@ -176,7 +176,7 @@ const DiaryScreen = () => {
             </div>
 
             <div className="space-y-6 pt-6 pb-24">
-                {Object.entries(groupedMeals).map(([date, meals]) => (
+                {Object.entries(groupedMeals).map(([date, meals]: [string, any[]]) => (
                     <div key={date}>
                         <h3 className="text-sm font-semibold text-gray-600 px-6 mb-3">
                             {date}

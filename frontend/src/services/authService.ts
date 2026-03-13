@@ -15,3 +15,15 @@ export async function signInWithGoogle() {
     if (error) throw error
     return data
 }
+
+export async function getCurrentUser() {
+    const { data: { user }, error } = await supabase.auth.getUser()
+    if (error) throw error
+    if (!user) throw new Error("No authenticated user")
+    return user
+}
+
+export async function signOut() {
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+}

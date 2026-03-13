@@ -13,6 +13,8 @@ import BottomNav from "@/components/BottomNav";
 import HomeBanners from "@/components/HomeBanners";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatCalories } from "@/lib/utils";
+import { useEncouragement } from "@/utils/encouragement";
+import { getStreak } from "@/services/progressService";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -36,6 +38,9 @@ const HomeScreen = () => {
   const [firstName, setFirstName] = useState("");
   const [greeting, setGreeting] = useState("Good morning");
   const [refreshing, setRefreshing] = useState(false);
+
+  const { getStreakMessage } = useEncouragement();
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     refreshMeals();
@@ -61,6 +66,16 @@ const HomeScreen = () => {
       }
     };
     fetchProfile();
+
+    const fetchStreak = async () => {
+      try {
+        if (user) {
+          const count = await getStreak();
+          setStreak(count);
+        }
+      } catch (err) { }
+    };
+    fetchStreak();
   }, [user]);
 
   const handleRefresh = async () => {
@@ -132,7 +147,15 @@ const HomeScreen = () => {
       </header>
 
       {/* Banners */}
-      <div className="px-5 pt-4 pb-2">
+      <div className="px-5 pt-4 pb-2 flex flex-col gap-3">
+        {user && streak > 0 && (
+          <div className="p-4 bg-gradient-to-r from-yellow-400 to-orange-400 
+                        rounded-2xl text-white shadow-sm">
+            <p className="font-semibold text-center font-display">
+              {getStreakMessage(streak)}
+            </p>
+          </div>
+        )}
         <HomeBanners />
       </div>
 

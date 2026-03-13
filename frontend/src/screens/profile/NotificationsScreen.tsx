@@ -1,168 +1,121 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, Bell } from "lucide-react";
-import { getNotificationSettings, saveNotificationSettings, NotificationSettings } from "@/services/notificationsService";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, Bell } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+import { getCurrentUser } from '@/services/authService'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { useToast } from '@/hooks/use-toast'
 
-const NotificationsScreen = () => {
-    const navigate = useNavigate();
-    const { toast } = useToast();
+export default function NotificationsScreen() {
+    const navigate = useNavigate()
+    const { t } = useLanguage()
+    const { toast } = useToast()
 
-    // Initial state with matching keys to our service
-    const [settings, setSettings] = useState<NotificationSettings>({
-        breakfastReminder: { enabled: true, time: '07:30' },
-        lunchReminder: { enabled: true, time: '12:30' },
-        dinnerReminder: { enabled: false, time: '19:30' },
-        weeklyReports: true,
-        nutritionTips: false,
-        hydrationReminders: true
-    });
-    const [loading, setLoading] = useState(true);
+    const [preferences, setPreferences] = useState({
+        meal_reminders: true,
+        goal_updates: true,
+        weekly_summary: true,
+        push_enabled: false,
+    })
 
     useEffect(() => {
-        const loadSettings = async () => {
-            try {
-                const data = await getNotificationSettings();
-                setSettings(data);
-            } catch (error) {
-                console.error(error);
-                toast({ variant: "destructive", title: "Error", description: "Failed to load settings." });
-            } finally {
-                setLoading(false);
+        loadPreferences()
+    }, [])
+
+    const loadPreferences = async () => {
+        try {
+            const user = await getCurrentUser()
+
+            const { data } = await supabase
+                .from('profiles')
+                .select('notification_preferences')
+                .eq('id', user.id)
+                .single()
+
+            if (data?.notification_preferences) {
+                setPreferences(data.notification_preferences)
             }
-        };
-        loadSettings();
-    }, [toast]);
-
-    const handleToggle = (key: keyof NotificationSettings) => {
-        // Toggle boolean values directly
-        if (typeof settings[key] === 'boolean') {
-            const newSettings = { ...settings, [key]: !settings[key] };
-            setSettings(newSettings);
-            debouncedSave(newSettings);
-        } else {
-            // For objects like reminders, toggle 'enabled' property
-            // Type assertion needed as TS doesn't infer well
-            const currentVal = settings[key] as { enabled: boolean, time: string };
-            const newSettings = {
-                ...settings,
-                [key]: { ...currentVal, enabled: !currentVal.enabled }
-            };
-            setSettings(newSettings);
-            debouncedSave(newSettings);
+        } catch (error) {
+            console.error('Error loading preferences:', error)
         }
-    };
-
-    const handleTimeChange = (key: keyof NotificationSettings, newTime: string) => {
-        const currentVal = settings[key] as { enabled: boolean, time: string };
-        const newSettings = {
-            ...settings,
-            [key]: { ...currentVal, time: newTime }
-        };
-        setSettings(newSettings);
-        debouncedSave(newSettings);
-    };
-
-    // Simple debounce implementation
-    const debouncedSave = (newSettings: NotificationSettings) => {
-        // Clear any existing timer if we stored it in valid ref, 
-        // but for simple React functional component standard debouncing relies on useEffect or libraries.
-        // Here we'll just fire-and-forget but in real app use lodash.debounce or useDebounce hook.
-        // For MVP, calling save immediately is acceptable or simple timeout.
-
-        // Let's rely on optimistic UI updates + async save in background
-        saveNotificationSettings(newSettings)
-            .then(() => {
-                toast({
-                    title: "Settings saved",
-                    duration: 2000,
-                });
-            })
-            .catch(err => {
-                console.error("Save failed", err);
-                toast({
-                    variant: "destructive",
-                    title: "Something went wrong.",
-                    description: "Could not update settings.",
-                    duration: 5000
-                });
-            });
-    };
-
-    const ReminderItem = ({ label, settingKey }: { label: string, settingKey: keyof NotificationSettings }) => {
-        const item = settings[settingKey] as { enabled: boolean, time: string };
-        return (
-            <div className="flex items-center justify-between py-4">
-                <div>
-                    <div className="font-medium text-foreground">{label}</div>
-                    {item.enabled && (
-                        <input
-                            type="time"
-                            className="mt-1 bg-transparent text-2xl font-bold text-primary outline-none"
-                            value={item.time}
-                            onChange={(e) => handleTimeChange(settingKey, e.target.value)}
-                        />
-                    )}
-                </div>
-                <button
-                    onClick={() => handleToggle(settingKey)}
-                    className={`relative h-8 w-14 rounded-full transition-colors ${item.enabled ? 'bg-[#F5C518]' : 'bg-gray-200'}`}
-                >
-                    <div className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white transition-transform ${item.enabled ? 'translate-x-6' : ''}`} />
-                </button>
-            </div>
-        );
-    };
-
-    const ToggleItem = ({ label, settingKey }: { label: string, settingKey: keyof NotificationSettings }) => {
-        const isEnabled = settings[settingKey] as boolean;
-        return (
-            <div className="flex items-center justify-between py-4">
-                <span className="font-medium text-foreground">{label}</span>
-                <button
-                    onClick={() => handleToggle(settingKey)}
-                    className={`relative h-8 w-14 rounded-full transition-colors ${isEnabled ? 'bg-[#F5C518]' : 'bg-gray-200'}`}
-                >
-                    <div className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white transition-transform ${isEnabled ? 'translate-x-6' : ''}`} />
-                </button>
-            </div>
-        );
-    };
-
-    if (loading) {
-        return (
-            <div className="flex h-screen items-center justify-center bg-background">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        );
     }
 
+    const updatePreference = async (key: string, value: boolean) => {
+        try {
+            const user = await getCurrentUser()
+            const newPreferences = { ...preferences, [key]: value }
+
+            await supabase
+                .from('profiles')
+                .update({ notification_preferences: newPreferences })
+                .eq('id', user.id)
+
+            setPreferences(newPreferences)
+
+            toast({
+                title: t('common.save') !== 'common.save' ? t('common.save') : 'Saved',
+                description: 'Preferences updated',
+            })
+
+        } catch (error) {
+            console.error('Error updating preferences:', error)
+            toast({
+                title: 'Error',
+                description: 'Could not save preferences',
+                variant: 'destructive'
+            })
+        }
+    }
+
+    const notificationTypes = [
+        { key: 'meal_reminders', label: t('profile.mealReminders') !== 'profile.mealReminders' ? t('profile.mealReminders') : 'Meal reminders', icon: '🍽️' },
+        { key: 'goal_updates', label: t('profile.goalUpdates') !== 'profile.goalUpdates' ? t('profile.goalUpdates') : 'Goal updates', icon: '🎯' },
+        { key: 'weekly_summary', label: t('profile.weeklySummary') !== 'profile.weeklySummary' ? t('profile.weeklySummary') : 'Weekly summary', icon: '📊' },
+        { key: 'push_enabled', label: t('profile.pushNotifications') !== 'profile.pushNotifications' ? t('profile.pushNotifications') : 'Push notifications', icon: '🔔' },
+    ]
+
     return (
-        <div className="min-h-screen bg-background pb-10">
-            <header className="sticky top-0 z-10 flex items-center gap-4 bg-background/80 px-5 py-4 backdrop-blur-md">
-                <button onClick={() => navigate(-1)} className="rounded-full bg-secondary p-2">
-                    <ArrowLeft className="h-5 w-5 text-foreground" />
+        <div className="min-h-screen bg-gray-50 pb-10">
+            {/* Header */}
+            <header className="bg-white border-b px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
+                <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100">
+                    <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h1 className="font-display text-lg font-bold text-foreground">Notifications</h1>
+                <h1 className="text-xl font-bold font-display">{t('profile.notifications') !== 'profile.notifications' ? t('profile.notifications') : 'Notifications'}</h1>
             </header>
 
-            <div className="px-5 pt-4">
-                <div className="rounded-2xl bg-card px-4 shadow-sm divide-y divide-gray-100">
-                    <h2 className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Reminders</h2>
-                    <ReminderItem label="Breakfast" settingKey="breakfastReminder" />
-                    <ReminderItem label="Lunch" settingKey="lunchReminder" />
-                    <ReminderItem label="Dinner" settingKey="dinnerReminder" />
-                </div>
+            <div className="p-6">
+                <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+                    {notificationTypes.map((type, index) => (
+                        <div
+                            key={type.key}
+                            className={`p-5 flex items-center justify-between ${index !== notificationTypes.length - 1 ? 'border-b border-gray-100' : ''
+                                }`}
+                        >
+                            <div className="flex items-center gap-4">
+                                <span className="text-2xl">{type.icon}</span>
+                                <span className="font-medium text-gray-900">{type.label}</span>
+                            </div>
 
-                <div className="mt-6 rounded-2xl bg-card px-4 shadow-sm divide-y divide-gray-100">
-                    <h2 className="py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">General</h2>
-                    <ToggleItem label="Weekly reports" settingKey="weeklyReports" />
-                    <ToggleItem label="Nutrition tips" settingKey="nutritionTips" />
-                    <ToggleItem label="Hydration reminders" settingKey="hydrationReminders" />
+                            <label className="relative inline-block w-12 h-6 flex-shrink-0">
+                                <input
+                                    type="checkbox"
+                                    checked={preferences[type.key as keyof typeof preferences]}
+                                    onChange={(e) => updatePreference(type.key, e.target.checked)}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-full h-full bg-gray-200 rounded-full 
+                              peer-checked:bg-[#F5C518] transition-colors
+                              cursor-pointer border border-transparent shadow-inner">
+                                    <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white 
+                                rounded-full transition-transform shadow-sm
+                                peer-checked:translate-x-6" />
+                                </div>
+                            </label>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
-    );
-};
-
-export default NotificationsScreen;
+    )
+}
