@@ -30,7 +30,7 @@ const LoadingScreen = () => {
 
       const timeoutId = setTimeout(() => {
         setError("Analysis is taking longer than expected. Please try again or use manual entry.");
-      }, 15000);
+      }, 60000);
 
       try {
         setMessagesStr("Analyzing with Calo AI Vision...");

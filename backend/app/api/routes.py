@@ -154,7 +154,7 @@ async def analyze_meal_hybrid(image: UploadFile = File(...)):
         logger.info("=== Trying Roboflow detection ===")
         roboflow_result = detect_tunisian_food(temp_file)
         
-        if roboflow_result and roboflow_result.get('confidence', 0) > 0.6:
+        if roboflow_result and roboflow_result.get('confidence', 0) > 0.4:
             # Tunisian food detected!
             dish_name = roboflow_result.get('dish_name')
             logger.info(f"✅ Roboflow detected: {dish_name}")
