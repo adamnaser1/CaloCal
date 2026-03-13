@@ -24,11 +24,8 @@ const CaptureScreen = () => {
         }
       });
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        setStream(mediaStream);
-        setCameraActive(true);
-      }
+      setStream(mediaStream);
+      setCameraActive(true);
     } catch (error) {
       console.error('Camera access denied:', error);
       alert("Could not access camera. Please allow camera permission.");
@@ -42,6 +39,12 @@ const CaptureScreen = () => {
       setCameraActive(false);
     }
   };
+
+  useEffect(() => {
+    if (cameraActive && videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [cameraActive, stream]);
 
   useEffect(() => {
     return () => {
@@ -164,14 +167,6 @@ const CaptureScreen = () => {
             </button>
 
             <button
-              onClick={() => fileRef.current?.click()}
-              className="flex h-18 w-18 items-center justify-center rounded-full border-4 border-primary bg-primary"
-              style={{ width: 72, height: 72 }}
-            >
-              <div className="h-14 w-14 rounded-full bg-primary border-2 border-primary-foreground" style={{ width: 56, height: 56 }} />
-            </button>
-
-            <button
               onClick={() => navigate('/scan')}
               className="flex flex-col items-center gap-1"
             >
@@ -182,8 +177,8 @@ const CaptureScreen = () => {
             </button>
 
             <button
-              onClick={() => fileRef.current?.click()}
-              className="flex h-18 w-18 items-center justify-center rounded-full border-4 border-primary bg-primary"
+              onClick={startCamera}
+              className="flex h-18 w-18 items-center justify-center rounded-full border-4 border-primary bg-primary cursor-pointer hover:scale-105 transition-transform"
               style={{ width: 72, height: 72 }}
             >
               <div className="h-14 w-14 rounded-full bg-primary border-2 border-primary-foreground" style={{ width: 56, height: 56 }} />
