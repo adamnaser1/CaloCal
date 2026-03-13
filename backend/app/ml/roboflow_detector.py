@@ -1,4 +1,6 @@
 import requests
+import json
+import os
 from typing import Dict, Optional
 import logging
 
@@ -8,17 +10,34 @@ ROBOFLOW_API_KEY = "pGOBLYVDZWdxjksqY8vJ"
 ROBOFLOW_MODEL = "detection-tunisian-food-2025/5"
 ROBOFLOW_URL = f"https://serverless.roboflow.com/detection-tunisian-food-2025/5"
 
-# Tunisian food database with accurate portions
-TUNISIAN_FOODS = {
-    "brik": {"name_fr": "Brik", "name_ar": "بريك", "avg_portion_g": 120, "kcal_per_100g": 280},
-    "couscous": {"name_fr": "Couscous", "name_ar": "كسكس", "avg_portion_g": 350, "kcal_per_100g": 139},
-    "tajine": {"name_fr": "Tajine", "name_ar": "طاجين", "avg_portion_g": 300, "kcal_per_100g": 180},
-    "lablabi": {"name_fr": "Lablabi", "name_ar": "لبلابي", "avg_portion_g": 300, "kcal_per_100g": 160},
-    "fricasse": {"name_fr": "Fricassé", "name_ar": "فريكاسي", "avg_portion_g": 150, "kcal_per_100g": 220},
-    "mloukhiya": {"name_fr": "Mloukhiya", "name_ar": "ملوخية", "avg_portion_g": 350, "kcal_per_100g": 95},
-    "ojja": {"name_fr": "Ojja", "name_ar": "عجة", "avg_portion_g": 280, "kcal_per_100g": 240},
-    "makroudh": {"name_fr": "Makroudh", "name_ar": "مقروض", "avg_portion_g": 60, "kcal_per_100g": 380},
-}
+# Load Tunisian food database from JSON
+DB_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'tunisian_foods.json')
+
+def load_tunisian_foods():
+    try:
+        with open(DB_PATH, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            foods_map = {}
+            for dish in data.get('dishes', []):
+                dish_info = {
+                    'name_fr': dish.get('names', [''])[0],
+                    'name_ar': dish.get('names', [''])[1] if len(dish.get('names', [])) > 1 else dish.get('names', [''])[0],
+                    'avg_portion_g': dish.get('typical_portion_g', 200),
+                    'kcal_per_100g': dish.get('nutrition_per_100g', {}).get('calories', 100)
+                }
+                for label in dish.get('roboflow_labels', []):
+                    foods_map[label.lower()] = dish_info
+                
+                # Also add id as fallback
+                if dish.get('id'):
+                    foods_map[dish.get('id').lower()] = dish_info
+                
+            return foods_map
+    except Exception as e:
+        logger.error(f"Could not load tunisian_foods.json: {e}")
+        return {}
+
+TUNISIAN_FOODS = load_tunisian_foods()
 
 def detect_tunisian_food(image_path: str) -> Optional[Dict]:
     """
