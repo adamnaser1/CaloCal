@@ -12,6 +12,9 @@ export interface Profile {
     goal_type: string
     activity_level?: string
     onboarding_completed: boolean
+    preferred_language?: string
+    profile_photo_url?: string
+    notification_preferences?: any
     updated_at: string
 }
 

@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Check } from "lucide-react";
 import { getUserProfile, updateUserProfile } from "@/services/profileService";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 const PersonalInfoScreen = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { refreshProfile } = useAuth();
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -52,6 +54,9 @@ const PersonalInfoScreen = () => {
                 current_weight_kg: parseFloat(currentWeight) || 0,
                 target_weight_kg: parseFloat(targetWeight) || 0
             });
+
+            await refreshProfile();
+
             toast({
                 title: "Profile updated ✓",
                 variant: 'success',

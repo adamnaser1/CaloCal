@@ -5,6 +5,7 @@ import { RefreshCw, Trash2, Loader2, Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import BottomNav from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { formatCalories } from "@/lib/utils";
 import FAB from "@/components/FAB";
 import { deleteMealItem } from "@/services/diaryService";
@@ -37,6 +38,7 @@ const getMealTypeDisplay = (mealType: string) => {
 const DiaryScreen = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { t, language } = useLanguage();
 
     const [allMeals, setAllMeals] = useState<any[]>([]);
     const [displayedMeals, setDisplayedMeals] = useState<any[]>([]);
@@ -127,21 +129,30 @@ const DiaryScreen = () => {
 
     // Group meals by date
     const groupedMeals = displayedMeals.reduce((groups, meal) => {
-        const date = new Date(meal.logged_at).toLocaleDateString('en-US', {
+        const d = new Date(meal.logged_at);
+        const dateKey = d.toISOString().split('T')[0]; // Stable key for grouping
+
+        if (!groups[dateKey]) {
+            groups[dateKey] = [];
+        }
+        groups[dateKey].push(meal);
+        return groups;
+    }, {} as Record<string, any[]>);
+
+    const formatDateHeader = (dateStr: string) => {
+        const d = new Date(dateStr);
+        const today = new Date().toISOString().split('T')[0];
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+        if (dateStr === today) return language === 'ar' ? 'اليوم' : (language === 'fr' ? "Aujourd'hui" : 'Today');
+        if (dateStr === yesterday) return language === 'ar' ? 'البارح' : (language === 'fr' ? 'Hier' : 'Yesterday');
+
+        return d.toLocaleDateString(language === 'ar' ? 'ar-TN' : (language === 'fr' ? 'fr-FR' : 'en-US'), {
             weekday: 'long',
-            year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
-
-        if (!groups[date]) {
-            groups[date] = [];
-        }
-
-        groups[date].push(meal);
-
-        return groups;
-    }, {} as Record<string, any[]>);
+    };
 
     const handleDelete = async (itemId: string) => {
         try {
@@ -165,7 +176,7 @@ const DiaryScreen = () => {
             {/* Top Section */}
             <div className="bg-white pb-4 pt-6 shadow-sm sticky top-0 z-10">
                 <div className="px-5 flex justify-between items-center">
-                    <h1 className="font-display text-2xl font-bold text-foreground">My History</h1>
+                    <h1 className="font-display text-2xl font-bold text-foreground">{t('profile')}</h1>
                     <button
                         onClick={handleRefresh}
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/80 active:scale-95"
@@ -176,10 +187,10 @@ const DiaryScreen = () => {
             </div>
 
             <div className="space-y-6 pt-6 pb-24">
-                {Object.entries(groupedMeals).map(([date, meals]: [string, any[]]) => (
-                    <div key={date}>
+                {Object.entries(groupedMeals).map(([dateKey, meals]: [string, any[]]) => (
+                    <div key={dateKey}>
                         <h3 className="text-sm font-semibold text-gray-600 px-6 mb-3">
-                            {date}
+                            {formatDateHeader(dateKey)}
                         </h3>
 
                         <div className="space-y-3 px-6">

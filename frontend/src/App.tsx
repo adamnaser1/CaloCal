@@ -1,3 +1,4 @@
+import { createContext, useContext, useEffect, useState } from 'react'
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,6 +45,16 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const { loading: authLoading, user, profile } = useAuth();
   const location = useLocation();
+
+  // Handle Dark Mode persistence
+  useEffect(() => {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
   if (authLoading) {
     return <LoadingScreen />;
@@ -93,6 +104,8 @@ const AppContent = () => {
           <Route path="/profile/goals" element={<ProtectedRoute><MyGoalsScreen /></ProtectedRoute>} />
           <Route path="/profile/export" element={<ProtectedRoute><ExportDataScreen /></ProtectedRoute>} />
           <Route path="/profile/help" element={<ProtectedRoute><HelpScreen /></ProtectedRoute>} />
+          <Route path="/privacy" element={<ProtectedRoute><HelpScreen /></ProtectedRoute>} />
+          <Route path="/about" element={<ProtectedRoute><HelpScreen /></ProtectedRoute>} />
 
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />

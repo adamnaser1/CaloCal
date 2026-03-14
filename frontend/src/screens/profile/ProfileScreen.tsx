@@ -4,6 +4,7 @@ import {
     Camera, ChevronRight, Globe, Bell, User, Award, LogOut,
     Download, Moon, Sun, Shield, HelpCircle, Info
 } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { getCurrentUser, signOut } from '@/services/authService'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -12,37 +13,11 @@ import { useToast } from '@/hooks/use-toast'
 export default function ProfileScreen() {
     const navigate = useNavigate()
     const { language, setLanguage, t } = useLanguage()
+    const { user, profile, refreshProfile } = useAuth()
     const { toast } = useToast()
 
-    const [profile, setProfile] = useState<any>(null)
     const [uploading, setUploading] = useState(false)
     const [darkMode, setDarkMode] = useState(false)
-
-    useEffect(() => {
-        loadProfile()
-        loadDarkMode()
-    }, [])
-
-    const loadProfile = async () => {
-        try {
-            const user = await getCurrentUser()
-
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single()
-
-            if (error) {
-                console.error('Profile fetch error:', error)
-                return
-            }
-
-            setProfile(data)
-        } catch (error) {
-            console.error('Error loading profile:', error)
-        }
-    }
 
     const loadDarkMode = () => {
         const saved = localStorage.getItem('darkMode')
@@ -78,7 +53,7 @@ export default function ProfileScreen() {
                 .update({ profile_photo_url: publicUrl })
                 .eq('id', user.id)
 
-            setProfile({ ...profile, profile_photo_url: publicUrl })
+            await refreshProfile()
 
             toast({
                 title: 'Success',
@@ -208,7 +183,7 @@ export default function ProfileScreen() {
                 </div>
 
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">{profile?.full_name}</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{profile?.email}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{user?.email}</p>
             </div>
 
             {/* Settings Sections */}
@@ -216,7 +191,7 @@ export default function ProfileScreen() {
                 {/* Account Section */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
                     <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
-                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Account</h3>
+                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('personalInfo')}</h3>
                     </div>
 
                     <button
@@ -226,7 +201,7 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">Personal Information</span>
+                            <span className="font-medium">{t('personalInfo')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -238,7 +213,7 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <Award className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">My Goals</span>
+                            <span className="font-medium">{t('myGoals')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -247,7 +222,7 @@ export default function ProfileScreen() {
                 {/* Preferences Section */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
                     <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
-                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Preferences</h3>
+                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('notifications')}</h3>
                     </div>
 
                     <button
@@ -257,7 +232,7 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">Notifications</span>
+                            <span className="font-medium">{t('notifications')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -266,7 +241,7 @@ export default function ProfileScreen() {
                     <div className="px-6 py-4 border-b dark:border-gray-800">
                         <div className="flex items-center gap-3 mb-4">
                             <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">Language</span>
+                            <span className="font-medium">{t('language')}</span>
                         </div>
 
                         <div className="grid grid-cols-3 gap-2">
@@ -296,7 +271,7 @@ export default function ProfileScreen() {
                             ) : (
                                 <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                             )}
-                            <span className="font-medium">Dark Mode</span>
+                            <span className="font-medium">{t('darkMode')}</span>
                         </div>
 
                         <label className="relative inline-block w-12 h-6 flex-shrink-0">
@@ -320,17 +295,17 @@ export default function ProfileScreen() {
                 {/* Data & Privacy Section */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
                     <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
-                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Data & Privacy</h3>
+                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('dataPrivacy')}</h3>
                     </div>
 
                     <button
-                        onClick={exportData}
+                        onClick={() => navigate('/profile/export')}
                         className="w-full px-6 py-4 flex items-center justify-between 
                      border-b dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                         <div className="flex items-center gap-3">
                             <Download className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">Export My Data</span>
+                            <span className="font-medium">{t('exportData')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -342,7 +317,7 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <Shield className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">Privacy Policy</span>
+                            <span className="font-medium">{t('privacyPolicy')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -351,17 +326,17 @@ export default function ProfileScreen() {
                 {/* Support Section */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
                     <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
-                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Support</h3>
+                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('helpCenter')}</h3>
                     </div>
 
                     <button
-                        onClick={() => navigate('/help')}
+                        onClick={() => navigate('/profile/help')}
                         className="w-full px-6 py-4 flex items-center justify-between 
                      border-b dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                         <div className="flex items-center gap-3">
                             <HelpCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">Help Center</span>
+                            <span className="font-medium">{t('helpCenter')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -373,12 +348,11 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <Info className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">About Calo Cal</span>
+                            <span className="font-medium">{t('aboutApp')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
                 </div>
-
                 {/* Logout */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm">
                     <button
@@ -387,7 +361,7 @@ export default function ProfileScreen() {
                      text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors font-bold"
                     >
                         <LogOut className="w-5 h-5" />
-                        <span>Logout</span>
+                        <span>{t('logout')}</span>
                     </button>
                 </div>
             </div>

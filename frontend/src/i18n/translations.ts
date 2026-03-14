@@ -34,6 +34,12 @@ export const translations = {
         language: 'Language',
         changePhoto: 'Change photo',
         logout: 'Logout',
+        darkMode: 'Dark Mode',
+        dataPrivacy: 'Data & Privacy',
+        exportData: 'Export My Data',
+        helpCenter: 'Help Center',
+        aboutApp: 'About Calo Cal',
+        privacyPolicy: 'Privacy Policy',
 
         // Notifications
         mealReminders: 'Meal reminders',
@@ -99,6 +105,12 @@ export const translations = {
         language: 'Langue',
         changePhoto: 'Changer la photo',
         logout: 'Déconnexion',
+        darkMode: 'Mode Sombre',
+        dataPrivacy: 'Données et Confidentialité',
+        exportData: 'Exporter mes données',
+        helpCenter: "Centre d'aide",
+        aboutApp: 'À propos de Calo Cal',
+        privacyPolicy: 'Politique de confidentialité',
 
         // Notifications
         mealReminders: 'Rappels de repas',
@@ -164,6 +176,12 @@ export const translations = {
         language: 'اللغة',
         changePhoto: 'بدل الصورة',
         logout: 'تسجيل الخروج',
+        darkMode: 'الوضع المظلم',
+        dataPrivacy: 'البيانات والخصوصية',
+        exportData: 'تصدير بياناتي',
+        helpCenter: 'مركز المساعدة',
+        aboutApp: 'حول التطبيق',
+        privacyPolicy: 'سياسة الخصوصية',
 
         // Notifications
         mealReminders: 'تذكير بالوجبات',

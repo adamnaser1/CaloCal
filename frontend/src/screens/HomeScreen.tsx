@@ -15,24 +15,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatCalories } from "@/lib/utils";
 import { useEncouragement } from "@/utils/encouragement";
 import { getStreak } from "@/services/progressService";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const {
     meals,
-    totalCalories, // This comes from context, but context might check meals array. 
-    // The prompt asked to memoize totalCalories calculation in HomeScreen if we were calculating it here. 
-    // Since it's from useMealLog, let's assume useMealLog handles it or we calculate local totals if needed.
-    // Checking useMealLog usage... it returns totalCalories directly.
-    // But let's memoize macros/totals if we were doing custom math. 
-    // Actually, let's just use what we have but apply formatting.
+    totalCalories,
     totalProteins,
     totalCarbs,
     totalFats,
     loading: mealsLoading,
     refreshMeals
   } = useMealLog();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const [dailyGoal, setDailyGoal] = useState(2000);
   const [firstName, setFirstName] = useState("");
@@ -49,23 +46,16 @@ const HomeScreen = () => {
   useEffect(() => {
     // Set greeting based on time
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) setGreeting("Good morning");
-    else if (hour >= 12 && hour < 18) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
+    if (hour >= 5 && hour < 12) setGreeting(t('greeting.morning'));
+    else if (hour >= 12 && hour < 18) setGreeting(t('greeting.afternoon'));
+    else setGreeting(t('greeting.evening'));
 
-    // Fetch profile
-    const fetchProfile = async () => {
-      if (user) {
-        const profile = await getUserProfile();
-        if (profile) {
-          if (profile.daily_calorie_goal) setDailyGoal(profile.daily_calorie_goal);
-          if (profile.full_name) {
-            setFirstName(profile.full_name.split(" ")[0]);
-          }
-        }
+    if (profile) {
+      if (profile.daily_calorie_goal) setDailyGoal(profile.daily_calorie_goal);
+      if (profile.full_name) {
+        setFirstName(profile.full_name.split(" ")[0]);
       }
-    };
-    fetchProfile();
+    }
 
     const fetchStreak = async () => {
       try {
@@ -76,7 +66,7 @@ const HomeScreen = () => {
       } catch (err) { }
     };
     fetchStreak();
-  }, [user]);
+  }, [user, profile, t]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -122,7 +112,7 @@ const HomeScreen = () => {
           <h1 className="text-xl font-display font-bold text-foreground">
             {greeting} {firstName && `, ${firstName}`} 👋
           </h1>
-          <p className="text-sm text-muted-foreground">Let's hit your goals today</p>
+          <p className="text-sm text-muted-foreground">{t('todaysMeals')}</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -133,9 +123,15 @@ const HomeScreen = () => {
           </button>
           <button
             onClick={() => navigate('/profile')}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary overflow-hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary overflow-hidden shadow-sm"
           >
-            {user ? (
+            {profile?.profile_photo_url ? (
+              <img
+                src={profile.profile_photo_url}
+                alt="Profile"
+                className="h-full w-full object-cover"
+              />
+            ) : user ? (
               <div className="h-full w-full flex items-center justify-center bg-[#F5C518] text-white font-bold text-xs">
                 {firstName ? firstName.charAt(0) : "U"}
               </div>

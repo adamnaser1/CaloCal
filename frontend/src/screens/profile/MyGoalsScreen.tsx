@@ -9,7 +9,7 @@ import { updateUserProfile } from "@/services/profileService";
 
 export default function MyGoalsScreen() {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, refreshProfile } = useAuth();
     const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -67,6 +67,8 @@ export default function MyGoalsScreen() {
                 activity_level: activityLevel,
                 daily_calorie_goal: newTarget
             });
+
+            await refreshProfile();
 
             toast({ title: "Goals updated ✓", description: `New target: ${newTarget} kcal` });
             setProfile({ ...profile, daily_calorie_goal: newTarget });

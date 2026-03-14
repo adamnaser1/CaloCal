@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { supabase } from '@/lib/supabase'
-import { getCurrentUser } from '@/services/authService'
+import { useAuth } from '@/context/AuthContext'
 import { translate as t, Language } from '@/i18n/translations'
 
 interface LanguageContextType {
@@ -12,40 +12,29 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
+    const { user, profile, refreshProfile } = useAuth()
     const [language, setLanguageState] = useState<Language>('en')
 
+    // Update local state when profile loads/changes
     useEffect(() => {
-        loadUserLanguage()
-    }, [])
-
-    const loadUserLanguage = async () => {
-        try {
-            const user = await getCurrentUser()
-
-            const { data } = await supabase
-                .from('profiles')
-                .select('preferred_language')
-                .eq('id', user.id)
-                .single()
-
-            if (data?.preferred_language) {
-                setLanguageState(data.preferred_language as Language)
-            }
-        } catch (error) {
-            console.error('Error loading language:', error)
+        if (profile?.preferred_language) {
+            setLanguageState(profile.preferred_language as Language)
         }
-    }
+    }, [profile])
 
     const setLanguage = async (lang: Language) => {
         try {
-            const user = await getCurrentUser()
+            if (!user) return
 
-            await supabase
+            const { error } = await supabase
                 .from('profiles')
                 .update({ preferred_language: lang })
                 .eq('id', user.id)
 
+            if (error) throw error
+
             setLanguageState(lang)
+            await refreshProfile() // Sync global auth profile
         } catch (error) {
             console.error('Error saving language:', error)
         }
