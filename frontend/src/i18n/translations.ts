@@ -30,12 +30,6 @@ export const translations = {
             dinner: 'Dinner',
             snack: 'Snack',
         },
-        mealTypes: { // For backward compatibility
-            breakfast: 'Breakfast',
-            lunch: 'Lunch',
-            dinner: 'Dinner',
-            snack: 'Snack',
-        },
 
         // Macros
         macros: {
@@ -125,7 +119,59 @@ export const translations = {
         'about.ourMission': 'Our Mission',
         'about.missionDesc': 'Calo Cal was built to simplify nutrition tracking in Tunisia. We combine advanced AI to help you reach your goals.',
 
-        // ... rest as before
+        // Bottom Navigation
+        nav: {
+            home: 'Home',
+            diary: 'Diary',
+            capture: 'Capture',
+            progress: 'Progress',
+            profile: 'Profile',
+        },
+
+        // Progress
+        progress: {
+            title: 'Your Progress',
+            subtitle: 'Keep pushing, you\'re doing great!',
+            week: 'Week',
+            month: 'Month',
+            threeMonths: '3 Months',
+            dayStreak: 'Day Streak',
+            avgCalories: 'Avg. Calories',
+            weightLog: 'Weight Log',
+            calorieTrend: 'Calorie Trend',
+            target: 'Target',
+            logWeight: 'Log my weight',
+            noWeightData: 'No weight data yet',
+            noWeightSubtitle: 'Log your first weigh-in to track your progress',
+            noMealsTrend: 'No meals logged yet',
+            noMealsTrendSubtitle: 'Start tracking your meals to see your calorie trends',
+        },
+
+        // Weight Modal
+        weightModal: {
+            title: 'Log your weight',
+            hint: 'Tap the number to type it directly',
+            tapToType: 'tap to type',
+            placeholder: 'How are you feeling today? (optional)',
+            saveEntry: 'Save entry ✓',
+            success: 'Weight logged ✓',
+            error: 'Something went wrong. Please try again.',
+        },
+
+        // Encouraging messages
+        encouragement: {
+            streakStart: "Great start! Keep it up! 🔥",
+            streakContinue: "You're on fire! {days} days streak! 🚀",
+            goalProgress: "You're {percent}% to your goal! 💪",
+            perfectDay: "Perfect day! All macros on target! 🎯",
+            waterReminder: "Don't forget to drink water! 💧",
+            exerciseBonus: "Exercise tracked! You earned {calories} extra calories! 🏃",
+            weeklyWin: "You crushed this week! {daysOnTrack}/7 days on track! 🏆",
+            firstMeal: "Good choice for your first meal today! 🌟",
+            balancedMeal: "Well balanced meal! Great job! ⚖️",
+            lowCalorie: "Smart choice! Low calorie option! 🎉",
+            proteinGoal: "Protein goal reached for today! 💪",
+        }
     },
 
     fr: {
@@ -154,12 +200,6 @@ export const translations = {
 
         // Meal types
         mealType: {
-            breakfast: 'Petit-déjeuner',
-            lunch: 'Déjeuner',
-            dinner: 'Dîner',
-            snack: 'Collation',
-        },
-        mealTypes: { // For backward compatibility
             breakfast: 'Petit-déjeuner',
             lunch: 'Déjeuner',
             dinner: 'Dîner',
@@ -254,7 +294,59 @@ export const translations = {
         'about.ourMission': 'Notre Mission',
         'about.missionDesc': 'Calo Cal a été conçu pour simplifier le suivi nutritionnel en Tunisie.',
 
-        // ... rest as before
+        // Bottom Navigation
+        nav: {
+            home: 'Accueil',
+            diary: 'Journal',
+            capture: 'Photo',
+            progress: 'Progrès',
+            profile: 'Profil',
+        },
+
+        // Progress
+        progress: {
+            title: 'Votre Progrès',
+            subtitle: 'Continuez comme ça, vous faites du bon travail !',
+            week: 'Semaine',
+            month: 'Mois',
+            threeMonths: '3 Mois',
+            dayStreak: 'Jours consécutifs',
+            avgCalories: 'Calories Moy.',
+            weightLog: 'Suivi du poids',
+            calorieTrend: 'Tendance calorique',
+            target: 'Cible',
+            logWeight: 'Enregistrer mon poids',
+            noWeightData: 'Aucune donnée de poids',
+            noWeightSubtitle: 'Enregistrez votre première pesée pour suivre votre progression',
+            noMealsTrend: 'Aucun repas enregistré',
+            noMealsTrendSubtitle: 'Commencez à suivre vos repas pour voir vos tendances caloriques',
+        },
+
+        // Weight Modal
+        weightModal: {
+            title: 'Enregistrez votre poids',
+            hint: 'Appuyez sur le chiffre pour le taper directement',
+            tapToType: 'appuyez pour taper',
+            placeholder: 'Comment vous sentez-vous aujourd\'hui ? (optionnel)',
+            saveEntry: 'Enregistrer ✓',
+            success: 'Poids enregistré ✓',
+            error: 'Une erreur est survenue. Veuillez réessayer.',
+        },
+
+        // Encouraging messages
+        encouragement: {
+            streakStart: "Excellent début ! Continuez comme ça ! 🔥",
+            streakContinue: "Vous assurez ! Série de {days} jours ! 🚀",
+            goalProgress: "Vous êtes à {percent}% de votre objectif ! 💪",
+            perfectDay: "Journée parfaite ! Tous les macros sont respectés ! 🎯",
+            waterReminder: "N'oubliez pas de boire de l'eau ! 💧",
+            exerciseBonus: "Exercice enregistré ! Vous avez gagné {calories} calories de plus ! 🏃",
+            weeklyWin: "Semaine réussie ! {daysOnTrack}/7 jours respectés ! 🏆",
+            firstMeal: "Bon choix pour votre premier repas de la journée ! 🌟",
+            balancedMeal: "Repas bien équilibré ! Beau travail ! ⚖️",
+            lowCalorie: "Choix intelligent ! Option faible en calories ! 🎉",
+            proteinGoal: "Objectif protéines atteint pour aujourd'hui ! 💪",
+        }
     },
 
     ar: {
@@ -283,12 +375,6 @@ export const translations = {
 
         // Meal types
         mealType: {
-            breakfast: 'فطور صباح',
-            lunch: 'غداء',
-            dinner: 'عشاء',
-            snack: 'لمجة',
-        },
-        mealTypes: { // For backward compatibility
             breakfast: 'فطور صباح',
             lunch: 'غداء',
             dinner: 'عشاء',
@@ -382,6 +468,60 @@ export const translations = {
         // About
         'about.ourMission': 'مهمتنا',
         'about.missionDesc': 'تم بناء Calo Cal لتبسيط تتبع التغذية في تونس.',
+
+        // Bottom Navigation
+        nav: {
+            home: 'الرئيسية',
+            diary: 'اليوميات',
+            capture: 'تصوير',
+            progress: 'تقدمي',
+            profile: 'ملفي',
+        },
+
+        // Progress
+        progress: {
+            title: 'تقدمك',
+            subtitle: 'واصل، قاعد تعمل في مجهود باهي !',
+            week: 'أسبوع',
+            month: 'شهر',
+            threeMonths: '3 أشهر',
+            dayStreak: 'أيام متتالية',
+            avgCalories: 'معدل الكالوري',
+            weightLog: 'سجل الوزن',
+            calorieTrend: 'تطور الكالوري',
+            target: 'الهدف',
+            logWeight: 'سجل وزني',
+            noWeightData: 'ما فما حتى سجل وزن',
+            noWeightSubtitle: 'سجل أول وزن ليك باش تتبع تقدمك',
+            noMealsTrend: 'ما فما حتى وجبة مسجلة',
+            noMealsTrendSubtitle: 'ابدأ سجل وجباتك باش تشوف تطور الكالوري',
+        },
+
+        // Weight Modal
+        weightModal: {
+            title: 'سجل وزنك',
+            hint: 'انزل على الرقم باش تكتبو ديراكت',
+            tapToType: 'انزل باش تكتب',
+            placeholder: 'كيفاش حاسس روحك اليوم ؟ (إختياري)',
+            saveEntry: 'حفظ ✓',
+            success: 'تم تسجيل الوزن ✓',
+            error: 'فما حاجة غالطة صارت. عاود جرب.',
+        },
+
+        // Encouraging messages
+        encouragement: {
+            streakStart: "بداية هايلة! واصل! 🔥",
+            streakContinue: "إنت طيارة! {days} أيام ورا بعضهم! 🚀",
+            goalProgress: "وصلت لـ {percent}% من هدفك! 💪",
+            perfectDay: "يوم مثالي! الماكرو الكل مريغلين! 🎯",
+            waterReminder: "ما تنساش تشرب الماء! 💧",
+            exerciseBonus: "تم تسجيل الرياضة! ربحت {calories} كالوري زايدين! 🏃",
+            weeklyWin: "أسبوع ممتاز! {daysOnTrack}/7 أيام مريغلين! 🏆",
+            firstMeal: "إختيار باهي لأول وجبة اليوم! 🌟",
+            balancedMeal: "وجبة متوازنة! يعطيك الصحة! ⚖️",
+            lowCalorie: "إختيار ذكي! وجبة فيها شوية كالوري! 🎉",
+            proteinGoal: "وصلت لهدف البروتين لليوم! 💪",
+        }
     }
 }
 

@@ -8,6 +8,7 @@ import BottomNav from "@/components/BottomNav";
 import WeightLogModal from "@/components/WeightLogModal";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { formatCalories } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
     getWeightLogs,
     getCalorieSummaryByDay,
@@ -18,6 +19,9 @@ import { getUserProfile, Profile } from "@/services/profileService";
 
 const ProgressScreen = () => {
     const navigate = useNavigate();
+    const { t, language } = useLanguage();
+    const isAr = language === 'ar';
+
     const [view, setView] = useState<'week' | 'month' | '3M'>('week');
     const [loading, setLoading] = useState(true);
     const [showWeightModal, setShowWeightModal] = useState(false);
@@ -44,7 +48,7 @@ const ProgressScreen = () => {
 
             // Process Weight Data
             const wData = logs.map(l => ({
-                day: new Date(l.logged_at).toLocaleDateString('en', { day: 'numeric', month: 'short' }),
+                day: new Date(l.logged_at).toLocaleDateString(language, { day: 'numeric', month: 'short' }),
                 weight: l.weight_kg
             }));
             setWeightData(wData);
@@ -85,19 +89,20 @@ const ProgressScreen = () => {
 
     useEffect(() => {
         fetchData();
-    }, [view]);
+    }, [view, language]);
 
     return (
         <motion.div
-            className="min-h-screen bg-background pb-28"
+            className={`min-h-screen bg-background pb-28 ${isAr ? 'rtl' : 'ltr'}`}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
+            style={{ direction: isAr ? 'rtl' : 'ltr' }}
         >
             <header className="px-5 pt-8 pb-4">
-                <h1 className="font-display text-2xl font-bold text-foreground">Your Progress</h1>
-                <p className="text-sm text-muted-foreground">Keep pushing, you're doing great!</p>
+                <h1 className="font-display text-2xl font-bold text-foreground">{t('progress.title')}</h1>
+                <p className="text-sm text-muted-foreground">{t('progress.subtitle')}</p>
             </header>
 
             {/* Time toggles */}
@@ -110,7 +115,7 @@ const ProgressScreen = () => {
                             className={`flex-1 rounded-lg py-1.5 text-xs font-bold transition-all ${view === v ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground'
                                 }`}
                         >
-                            {v === '3M' ? '3 Months' : v.charAt(0).toUpperCase() + v.slice(1)}
+                            {v === '3M' ? t('progress.threeMonths') : v === 'week' ? t('progress.week') : t('progress.month')}
                         </button>
                     ))}
                 </div>
@@ -120,35 +125,35 @@ const ProgressScreen = () => {
             <div className="grid grid-cols-2 gap-4 px-5 mb-8">
                 {/* Streak */}
                 <div className="rounded-3xl bg-orange-50 p-5">
-                    <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+                    <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 ${isAr ? 'mr-0 ml-auto' : ''}`}>
                         <Flame className="h-5 w-5 text-orange-500" />
                     </div>
                     <div className="font-display text-2xl font-bold text-foreground">{streak}</div>
-                    <div className="text-xs font-medium text-muted-foreground">Day Streak</div>
+                    <div className="text-xs font-medium text-muted-foreground">{t('progress.dayStreak')}</div>
                 </div>
 
                 {/* Avg Calories */}
                 <div className="rounded-3xl bg-green-50 p-5">
-                    <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+                    <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-green-100 ${isAr ? 'mr-0 ml-auto' : ''}`}>
                         <Target className="h-5 w-5 text-green-600" />
                     </div>
                     <div className="font-display text-2xl font-bold text-foreground">{formatCalories(avgCalories)}</div>
-                    <div className="text-xs font-medium text-muted-foreground">Avg. Calories</div>
+                    <div className="text-xs font-medium text-muted-foreground">{t('progress.avgCalories')}</div>
                 </div>
             </div>
 
             {/* Weight Chart Section */}
             <section className="px-5 mb-8">
                 <div className="mb-4 flex items-center justify-between">
-                    <div>
-                        <h2 className="font-display text-lg font-bold text-foreground">Weight Log</h2>
+                    <div className={isAr ? 'text-right' : 'text-left'}>
+                        <h2 className="font-display text-lg font-bold text-foreground">{t('progress.weightLog')}</h2>
                         {targetWeight > 0 && (
-                            <p className="text-xs text-muted-foreground">Target: {targetWeight} kg</p>
+                            <p className="text-xs text-muted-foreground">{t('progress.target')}: {targetWeight} kg</p>
                         )}
                     </div>
                     <button
                         onClick={() => setShowWeightModal(true)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:scale-105 active:scale-95 transition-transform"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F5C518] text-[#1A1A1A] shadow-sm hover:scale-105 active:scale-95 transition-transform"
                     >
                         <Plus className="h-5 w-5" />
                     </button>
@@ -158,11 +163,11 @@ const ProgressScreen = () => {
                     <SkeletonLoader variant="chart" className="h-64 rounded-3xl" />
                 ) : weightData.length > 0 ? (
                     <div className="h-64 w-full rounded-3xl bg-white p-4 shadow-sm">
-                        <div className="mb-4 flex items-baseline gap-2">
+                        <div className={`mb-4 flex items-baseline gap-2 ${isAr ? 'flex-row-reverse' : ''}`}>
                             <span className="font-display text-3xl font-bold">{currentWeight}</span>
                             <span className="text-sm font-medium text-muted-foreground">kg</span>
                         </div>
-                        <div className="h-40 w-full">
+                        <div className="h-40 w-full" style={{ direction: 'ltr' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={weightData}>
                                     <defs>
@@ -190,10 +195,10 @@ const ProgressScreen = () => {
                 ) : (
                     <EmptyState
                         emoji="⚖️"
-                        title="No weight data yet"
-                        subtitle="Log your first weigh-in to track your progress"
+                        title={t('progress.noWeightData')}
+                        subtitle={t('progress.noWeightSubtitle')}
                         primaryAction={{
-                            label: "Log my weight",
+                            label: t('progress.logWeight'),
                             onClick: () => setShowWeightModal(true)
                         }}
                     />
@@ -202,12 +207,12 @@ const ProgressScreen = () => {
 
             {/* Calorie Trend Section */}
             <section className="px-5 mb-8">
-                <h2 className="mb-4 font-display text-lg font-bold text-foreground">Calorie Trend</h2>
+                <h2 className={`mb-4 font-display text-lg font-bold text-foreground ${isAr ? 'text-right' : ''}`}>{t('progress.calorieTrend')}</h2>
                 {loading ? (
                     <SkeletonLoader variant="chart" className="h-64 rounded-3xl" />
                 ) : calorieData.length > 0 ? (
                     <div className="h-64 w-full rounded-3xl bg-white p-4 shadow-sm">
-                        <div className="h-full w-full">
+                        <div className="h-full w-full" style={{ direction: 'ltr' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={calorieData}>
                                     <XAxis
@@ -236,10 +241,10 @@ const ProgressScreen = () => {
                 ) : (
                     <EmptyState
                         emoji="📊"
-                        title="No meals logged yet"
-                        subtitle="Start tracking your meals to see your calorie trends"
+                        title={t('progress.noMealsTrend')}
+                        subtitle={t('progress.noMealsTrendSubtitle')}
                         primaryAction={{
-                            label: "📷 Snap a meal",
+                            label: t('capture.title'),
                             onClick: () => navigate("/capture")
                         }}
                     />

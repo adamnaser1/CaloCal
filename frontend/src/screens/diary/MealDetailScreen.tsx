@@ -6,20 +6,7 @@ import { getMealLogById, updateMealItemQuantity, deleteMealItem, deleteMealLog }
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
-// Emoji helper (duplicated from DiaryScreen, maybe extract to utils later)
-const getEmoji = (name: string) => {
-    const lower = name.toLowerCase();
-    if (lower.includes("apple")) return "🍎";
-    if (lower.includes("banana")) return "🍌";
-    if (lower.includes("burger")) return "🍔";
-    if (lower.includes("pizza")) return "🍕";
-    if (lower.includes("salad")) return "🥗";
-    if (lower.includes("coffee")) return "☕";
-    if (lower.includes("egg")) return "🥚";
-    if (lower.includes("chicken")) return "🍗";
-    if (lower.includes("rice")) return "🍚";
-    return "🍽️";
-};
+import { getEmoji, getMealGradient } from "@/lib/ui-utils";
 
 const MealDetailScreen = () => {
     const { mealLogId } = useParams<{ mealLogId: string }>();
@@ -90,13 +77,7 @@ const MealDetailScreen = () => {
     const cPct = totalMacros ? (mealLog.total_carbs / totalMacros) * 100 : 0;
     const fPct = totalMacros ? (mealLog.total_fats / totalMacros) * 100 : 0;
 
-    const getGradient = (type: string) => {
-        const t = type.toLowerCase();
-        if (t === 'breakfast') return 'from-orange-400 to-orange-200';
-        if (t === 'lunch') return 'from-yellow-400 to-yellow-200';
-        if (t === 'dinner') return 'from-blue-400 to-blue-200';
-        return 'from-green-400 to-green-200';
-    }
+    const getGradient = (type: string) => getMealGradient(type);
 
     return (
         <div className="min-h-screen bg-background pb-12">

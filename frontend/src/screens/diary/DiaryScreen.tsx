@@ -10,30 +10,7 @@ import { formatCalories } from "@/lib/utils";
 import FAB from "@/components/FAB";
 import { deleteMealItem } from "@/services/diaryService";
 
-// Helper to get emoji for meal item
-const getEmoji = (name: string) => {
-    const lower = name.toLowerCase();
-    if (lower.includes("apple")) return "🍎";
-    if (lower.includes("banana")) return "🍌";
-    if (lower.includes("burger")) return "🍔";
-    if (lower.includes("pizza")) return "🍕";
-    if (lower.includes("salad")) return "🥗";
-    if (lower.includes("coffee")) return "☕";
-    if (lower.includes("egg")) return "🥚";
-    if (lower.includes("chicken")) return "🍗";
-    if (lower.includes("rice")) return "🍚";
-    return "🍽️";
-};
-
-const getMealTypeDisplay = (mealType: string) => {
-    const types: Record<string, { icon: string, label: string }> = {
-        breakfast: { icon: '🌅', label: 'Breakfast' },
-        lunch: { icon: '☀️', label: 'Lunch' },
-        dinner: { icon: '🌙', label: 'Dinner' },
-        snack: { icon: '🍎', label: 'Snack' }
-    }
-    return types[mealType?.toLowerCase()] || types.snack
-}
+import { safeToLower, getEmoji, getMealTypeDisplay } from "@/lib/ui-utils";
 
 const DiaryScreen = () => {
     const navigate = useNavigate();

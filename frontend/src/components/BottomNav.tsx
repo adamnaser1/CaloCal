@@ -1,18 +1,20 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Camera, ClipboardList, BarChart2, User, CalendarDays } from "lucide-react";
+import { Home, Camera, ClipboardList, BarChart2, User } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const BottomNav = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
+    const { t } = useLanguage();
 
     // Define tabs
     const tabs = [
-        { id: "home", label: "Home", icon: Home, path: "/" },
-        { id: "diary", label: "Diary", icon: ClipboardList, path: "/diary" },
+        { id: "home", label: t('nav.home'), icon: Home, path: "/" },
+        { id: "diary", label: t('nav.diary'), icon: ClipboardList, path: "/diary" },
         { id: "capture", label: "", icon: Camera, path: "/capture", isSpecial: true },
-        { id: "progress", label: "Progress", icon: BarChart2, path: "/progress" },
-        { id: "profile", label: "Profile", icon: User, path: "/profile" },
+        { id: "progress", label: t('nav.progress'), icon: BarChart2, path: "/progress" },
+        { id: "profile", label: t('nav.profile'), icon: User, path: "/profile" },
     ];
 
     const isActive = (path: string) => {
