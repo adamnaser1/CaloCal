@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RefreshCw, Trash2, Loader2 } from "lucide-react";
@@ -9,6 +9,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { formatCalories } from "@/lib/utils";
 import FAB from "@/components/FAB";
 import { deleteMealItem } from "@/services/diaryService";
+import DiaryFilters from "./components/DiaryFilters";
+import { isSameDay } from "date-fns";
 
 import { safeToLower, getEmoji, getMealTypeDisplay } from "@/lib/ui-utils";
 
@@ -18,13 +20,73 @@ const DiaryScreen = () => {
     const { t, language } = useLanguage();
 
     const [allMeals, setAllMeals] = useState<any[]>([]);
-    const [displayedMeals, setDisplayedMeals] = useState<any[]>([]);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
 
+    // Filter states
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filterMode, setFilterMode] = useState<'all' | 'high-calorie'>('all');
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [calorieThreshold] = useState(2000); // Could be fetched from profile
+
     const MEALS_PER_PAGE = 20;
+
+    // Filter all meals
+    const filteredMeals = useMemo(() => {
+        let result = allMeals;
+
+        // Search filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(meal =>
+                meal.meal_name?.toLowerCase().includes(query) ||
+                meal.meal_items?.some((item: any) => item.name?.toLowerCase().includes(query))
+            );
+        }
+
+        // Date filter
+        if (selectedDate) {
+            result = result.filter(meal => isSameDay(new Date(meal.logged_at), selectedDate));
+        }
+
+        return result;
+    }, [allMeals, searchQuery, selectedDate]);
+
+    // Group and apply day-level filters (like high-calorie)
+    const { finalGroupedMeals, hasMoreResults } = useMemo(() => {
+        const isFiltering = searchQuery || selectedDate || filterMode !== 'all';
+
+        // Group them
+        const groups = filteredMeals.reduce((acc, meal) => {
+            const d = new Date(meal.logged_at);
+            const dateKey = d.toISOString().split('T')[0];
+            if (!acc[dateKey]) acc[dateKey] = [];
+            acc[dateKey].push(meal);
+            return acc;
+        }, {} as Record<string, any[]>);
+
+        // Second pass: Filter groups by high calorie threshold if needed
+        let entries = Object.entries(groups);
+        if (filterMode === 'high-calorie') {
+            entries = entries.filter(([_, meals]) => {
+                const mealList = meals as any[];
+                const total = mealList.reduce((sum, m) => sum + (m.total_calories || 0), 0);
+                return total >= calorieThreshold;
+            });
+        }
+
+        // Pagination: only limit if not filtering
+        const totalEntries = entries.length;
+        if (!isFiltering) {
+            entries = entries.slice(0, page * 5); // Limit to 5 days initially
+        }
+
+        return {
+            finalGroupedMeals: Object.fromEntries(entries),
+            hasMoreResults: !isFiltering && (page * 5 < totalEntries)
+        };
+    }, [filteredMeals, filterMode, calorieThreshold, page, searchQuery, selectedDate]);
 
     // Load all meals
     useEffect(() => {
@@ -48,9 +110,7 @@ const DiaryScreen = () => {
             if (error) throw error;
 
             setAllMeals(data || []);
-            setDisplayedMeals(data?.slice(0, MEALS_PER_PAGE) || []);
-            setHasMore(data && data.length > MEALS_PER_PAGE);
-
+            setPage(1);
         } catch (error) {
             console.error('Error loading meals:', error);
         }
@@ -64,20 +124,8 @@ const DiaryScreen = () => {
 
     // Load more meals on scroll
     const loadMore = () => {
-        if (loading || !hasMore) return;
-
-        setLoading(true);
-
-        const nextPage = page + 1;
-        const startIndex = (nextPage - 1) * MEALS_PER_PAGE;
-        const endIndex = startIndex + MEALS_PER_PAGE;
-
-        const newMeals = allMeals.slice(0, endIndex);
-
-        setDisplayedMeals(newMeals);
-        setPage(nextPage);
-        setHasMore(endIndex < allMeals.length);
-        setLoading(false);
+        if (loading || !hasMoreResults) return;
+        setPage(prev => prev + 1);
     };
 
     // Infinite scroll detection
@@ -102,19 +150,7 @@ const DiaryScreen = () => {
                 observer.unobserve(observerTarget.current);
             }
         };
-    }, [loading, hasMore, page]);
-
-    // Group meals by date
-    const groupedMeals = displayedMeals.reduce((groups, meal) => {
-        const d = new Date(meal.logged_at);
-        const dateKey = d.toISOString().split('T')[0]; // Stable key for grouping
-
-        if (!groups[dateKey]) {
-            groups[dateKey] = [];
-        }
-        groups[dateKey].push(meal);
-        return groups;
-    }, {} as Record<string, any[]>);
+    }, [loading, hasMoreResults, page]);
 
     const formatDateHeader = (dateStr: string) => {
         const d = new Date(dateStr);
@@ -168,8 +204,18 @@ const DiaryScreen = () => {
                 </div>
             </div>
 
+            <DiaryFilters
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                filterMode={filterMode}
+                setFilterMode={setFilterMode}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                calorieThreshold={calorieThreshold}
+            />
+
             <div className="pt-4 pb-24">
-                {Object.entries(groupedMeals).length === 0 && !loading ? (
+                {Object.entries(finalGroupedMeals).length === 0 && !loading ? (
                     <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
                         <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mb-4 text-3xl">
                             📖
@@ -178,7 +224,7 @@ const DiaryScreen = () => {
                         <p className="text-muted-foreground">{t('diary.emptySubtitle') || 'Start logging your meals to see them here!'}</p>
                     </div>
                 ) : (
-                    Object.entries(groupedMeals).map(([dateKey, meals]: [string, any[]]) => {
+                    Object.entries(finalGroupedMeals).map(([dateKey, meals]: [string, any[]]) => {
                         // Calculate daily totals
                         const dayCalories = meals.reduce((sum, m) => sum + (m.total_calories || 0), 0);
                         const dayPro = meals.reduce((sum, m) => sum + (m.total_proteins || 0), 0);
@@ -305,7 +351,7 @@ const DiaryScreen = () => {
                 )}
 
                 {/* Loading indicator */}
-                {hasMore && (
+                {hasMoreResults && (
                     <div ref={observerTarget} className="py-8 flex justify-center">
                         {(loading || allMeals.length === 0) && (
                             <div className="w-8 h-8 border-4 border-[#F5C518] 
@@ -315,7 +361,7 @@ const DiaryScreen = () => {
                 )}
 
                 {/* End of history */}
-                {!hasMore && displayedMeals.length > 0 && (
+                {!hasMoreResults && allMeals.length > 0 && (
                     <p className="text-center text-gray-500 py-8 text-sm">
                         📜 You've reached the beginning of your journey
                     </p>

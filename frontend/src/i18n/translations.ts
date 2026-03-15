@@ -46,6 +46,15 @@ export const translations = {
         reachedBeginning: "You've reached the beginning of your journey",
         'diary.emptyTitle': 'Your diary is empty',
         'diary.emptySubtitle': 'Start logging your meals to see them here!',
+        diaryFilters: {
+            searchPlaceholder: 'Search meals...',
+            filter: 'Filter',
+            highCalorieDays: 'High Calorie Days',
+            allDays: 'All Days',
+            selectDate: 'Select Date',
+            clearFilters: 'Clear Filters',
+            highCalorieThreshold: 'Above {kcal} kcal',
+        },
 
         // Capture
         capture: {
@@ -387,6 +396,15 @@ export const translations = {
         reachedBeginning: "Vous avez atteint le début de votre parcours",
         'diary.emptyTitle': 'Votre journal est vide',
         'diary.emptySubtitle': 'Commencez à enregistrer vos repas pour les voir ici !',
+        diaryFilters: {
+            searchPlaceholder: 'Rechercher des repas...',
+            filter: 'Filtrer',
+            highCalorieDays: 'Jours riches en calories',
+            allDays: 'Tous les jours',
+            selectDate: 'Choisir une date',
+            clearFilters: 'Effacer les filtres',
+            highCalorieThreshold: 'Plus de {kcal} kcal',
+        },
 
         // Capture
         capture: {
@@ -728,6 +746,15 @@ export const translations = {
         reachedBeginning: "وصلت لبداية رحلتك",
         'diary.emptyTitle': 'اليوميات فارغة',
         'diary.emptySubtitle': 'ابدأ بتسجيل وجباتك باش تشوفهم هنا !',
+        diaryFilters: {
+            searchPlaceholder: 'ابحث عن وجبات...',
+            filter: 'تصفية',
+            highCalorieDays: 'أيام حرارة عالية',
+            allDays: 'كل الأيام',
+            selectDate: 'اختر تاريخ',
+            clearFilters: 'مسح التصفية',
+            highCalorieThreshold: 'أكثر من {kcal} كالوري',
+        },
 
         // Capture
         capture: {
