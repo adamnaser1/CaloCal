@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     Camera, ChevronRight, Globe, Bell, User, Award, LogOut,
-    Download, Moon, Sun, Shield, HelpCircle, Info
+    Download, Moon, Sun, Shield, HelpCircle, Info, ArrowLeft
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -56,15 +56,15 @@ export default function ProfileScreen() {
             await refreshProfile()
 
             toast({
-                title: 'Success',
-                description: 'Profile photo updated!',
+                title: t('success') || 'Success',
+                description: t('profile.photoUpdated') || 'Profile photo updated!',
             })
 
         } catch (error) {
             console.error('Error uploading photo:', error)
             toast({
-                title: 'Error',
-                description: 'Could not upload photo',
+                title: t('error') || 'Error',
+                description: t('profile.photoUploadError') || 'Could not upload photo',
                 variant: 'destructive'
             })
         } finally {
@@ -85,8 +85,8 @@ export default function ProfileScreen() {
         }
 
         toast({
-            title: newMode ? 'Dark mode enabled' : 'Light mode enabled',
-            description: 'Your preference has been saved',
+            title: newMode ? t('profile.darkModeEnabled') || 'Dark mode enabled' : t('profile.lightModeEnabled') || 'Light mode enabled',
+            description: t('profile.preferenceSaved') || 'Your preference has been saved',
         })
     }
 
@@ -146,8 +146,15 @@ export default function ProfileScreen() {
     return (
         <div className="min-h-screen bg-gray-50 pb-24 dark:bg-gray-950 dark:text-white">
             {/* Header */}
-            <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-6 py-4">
-                <h1 className="text-2xl font-bold">Profile</h1>
+            <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-6 py-4 flex items-center gap-4">
+                <button
+                    onClick={() => navigate('/')}
+                    className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    aria-label={t('backToHome')}
+                >
+                    <ArrowLeft className="w-6 h-6" />
+                </button>
+                <h1 className="text-2xl font-bold">{t('profile')}</h1>
             </header>
 
             {/* Profile Photo */}
@@ -274,21 +281,16 @@ export default function ProfileScreen() {
                             <span className="font-medium">{t('darkMode')}</span>
                         </div>
 
-                        <label className="relative inline-block w-12 h-6 flex-shrink-0">
-                            <input
-                                type="checkbox"
-                                checked={darkMode}
-                                onChange={toggleDarkMode}
-                                className="sr-only peer"
+                        <button
+                            onClick={toggleDarkMode}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:ring-offset-2 ${darkMode ? 'bg-[#F5C518]' : 'bg-gray-200 dark:bg-gray-700'
+                                }`}
+                        >
+                            <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${darkMode ? 'translate-x-6' : 'translate-x-1'
+                                    }`}
                             />
-                            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-full 
-                            peer-checked:bg-[#F5C518] transition-colors
-                            cursor-pointer border border-transparent">
-                                <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white 
-                              rounded-full transition-transform shadow-sm
-                              peer-checked:translate-x-6" />
-                            </div>
-                        </label>
+                        </button>
                     </div>
                 </div>
 

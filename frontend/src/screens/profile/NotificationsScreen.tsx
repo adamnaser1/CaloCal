@@ -51,10 +51,9 @@ export default function NotificationsScreen() {
                 .eq('id', user.id)
 
             setPreferences(newPreferences)
-
             toast({
-                title: t('common.save') !== 'common.save' ? t('common.save') : 'Saved',
-                description: 'Preferences updated',
+                title: t('notificationsSaved'),
+                description: t('notificationsSaved'),
             })
 
         } catch (error) {
@@ -68,20 +67,20 @@ export default function NotificationsScreen() {
     }
 
     const notificationTypes = [
-        { key: 'meal_reminders', label: t('profile.mealReminders') !== 'profile.mealReminders' ? t('profile.mealReminders') : 'Meal reminders', icon: '🍽️' },
-        { key: 'goal_updates', label: t('profile.goalUpdates') !== 'profile.goalUpdates' ? t('profile.goalUpdates') : 'Goal updates', icon: '🎯' },
-        { key: 'weekly_summary', label: t('profile.weeklySummary') !== 'profile.weeklySummary' ? t('profile.weeklySummary') : 'Weekly summary', icon: '📊' },
-        { key: 'push_enabled', label: t('profile.pushNotifications') !== 'profile.pushNotifications' ? t('profile.pushNotifications') : 'Push notifications', icon: '🔔' },
+        { key: 'meal_reminders', label: t('mealReminders'), icon: '🍽️' },
+        { key: 'goal_updates', label: t('goalUpdates'), icon: '🎯' },
+        { key: 'weekly_summary', label: t('weeklySummary'), icon: '📊' },
+        { key: 'push_enabled', label: t('pushNotifications'), icon: '🔔' },
     ]
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-10">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-10">
             {/* Header */}
-            <header className="bg-white border-b px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
-                <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100">
+            <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
+                <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                     <ArrowLeft className="w-6 h-6" />
                 </button>
-                <h1 className="text-xl font-bold font-display">{t('profile.notifications') !== 'profile.notifications' ? t('profile.notifications') : 'Notifications'}</h1>
+                <h1 className="text-xl font-bold font-display">{t('profile.notifications')}</h1>
             </header>
 
             <div className="p-6">
@@ -97,21 +96,16 @@ export default function NotificationsScreen() {
                                 <span className="font-medium text-gray-900">{type.label}</span>
                             </div>
 
-                            <label className="relative inline-block w-12 h-6 flex-shrink-0">
-                                <input
-                                    type="checkbox"
-                                    checked={preferences[type.key as keyof typeof preferences]}
-                                    onChange={(e) => updatePreference(type.key, e.target.checked)}
-                                    className="sr-only peer"
+                            <button
+                                onClick={() => updatePreference(type.key, !preferences[type.key as keyof typeof preferences])}
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:ring-offset-2 ${preferences[type.key as keyof typeof preferences] ? 'bg-[#F5C518]' : 'bg-gray-200'
+                                    }`}
+                            >
+                                <span
+                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${preferences[type.key as keyof typeof preferences] ? 'translate-x-6' : 'translate-x-1'
+                                        }`}
                                 />
-                                <div className="w-full h-full bg-gray-200 rounded-full 
-                              peer-checked:bg-[#F5C518] transition-colors
-                              cursor-pointer border border-transparent shadow-inner">
-                                    <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white 
-                                rounded-full transition-transform shadow-sm
-                                peer-checked:translate-x-6" />
-                                </div>
-                            </label>
+                            </button>
                         </div>
                     ))}
                 </div>

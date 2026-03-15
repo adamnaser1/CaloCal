@@ -108,9 +108,9 @@ const HomeScreen = () => {
 
       {/* Top bar */}
       <header className="flex items-center justify-between px-5 pt-6 pb-2">
-        <div>
+        <div className={language === 'ar' ? 'text-right' : 'text-left'}>
           <h1 className="text-xl font-display font-bold text-foreground">
-            {greeting} {firstName && `, ${firstName}`} 👋
+            {greeting}{firstName && (language === 'ar' ? `، ${firstName}` : `, ${firstName}`)} 👋
           </h1>
           <p className="text-sm text-muted-foreground">{t('todaysMeals')}</p>
         </div>
@@ -132,7 +132,7 @@ const HomeScreen = () => {
                 className="h-full w-full object-cover"
               />
             ) : user ? (
-              <div className="h-full w-full flex items-center justify-center bg-[#F5C518] text-white font-bold text-xs">
+              <div className="h-full w-full flex items-center justify-center bg-[#F5C518] text-white font-bold text-xs ring-2 ring-white/20">
                 {firstName ? firstName.charAt(0) : "U"}
               </div>
             ) : (
@@ -145,12 +145,20 @@ const HomeScreen = () => {
       {/* Banners */}
       <div className="px-5 pt-4 pb-2 flex flex-col gap-3">
         {user && streak > 0 && (
-          <div className="p-4 bg-gradient-to-r from-yellow-400 to-orange-400 
-                        rounded-2xl text-white shadow-sm">
-            <p className="font-semibold text-center font-display">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-4 bg-gradient-to-br from-yellow-400 via-orange-400 to-red-500 
+                        rounded-2xl text-white shadow-lg relative overflow-hidden group"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+              <span className="text-5xl">🔥</span>
+            </div>
+            <h3 className="text-xs uppercase font-black opacity-80 mb-1 tracking-widest">{t('encouragingMessage')}</h3>
+            <p className="font-bold text-lg font-display leading-tight">
               {getStreakMessage(streak)}
             </p>
-          </div>
+          </motion.div>
         )}
         <HomeBanners />
       </div>
@@ -166,22 +174,25 @@ const HomeScreen = () => {
 
       {/* Macros */}
       <div className="grid grid-cols-3 gap-2 px-5">
-        <MacroPill emoji="🥩" label="Proteins" grams={Math.round(totalProteins)} />
-        <MacroPill emoji="🌾" label="Carbs" grams={Math.round(totalCarbs)} />
-        <MacroPill emoji="🥑" label="Fats" grams={Math.round(totalFats)} />
+        <MacroPill emoji="🥩" label={t('macros.proteins')} grams={Math.round(totalProteins)} />
+        <MacroPill emoji="🌾" label={t('macros.carbs')} grams={Math.round(totalCarbs)} />
+        <MacroPill emoji="🥑" label={t('macros.fats')} grams={Math.round(totalFats)} />
       </div>
 
       {/* Meal log */}
       <section className="mt-6 px-5">
-        <h2 className="mb-3 text-base font-display font-semibold text-foreground">Today's meals</h2>
+        <h2 className="mb-3 text-base font-display font-bold text-foreground">{t('todaysMeals')}</h2>
 
         {mealsLoading ? (
           <div className="flex flex-col gap-3">
             <Skeleton variant="card" count={3} />
           </div>
         ) : meals.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center rounded-2xl border border-dashed border-[#E5E7EB] bg-white">
-            <p className="font-display text-sm text-muted-foreground">🍽️ No meals today — tap + to start</p>
+          <div className="flex flex-col items-center justify-center py-10 text-center rounded-3xl border border-dashed border-white/10 bg-secondary/30">
+            <div className="text-3xl mb-2">🍽️</div>
+            <p className="font-bold text-sm text-muted-foreground p-4">
+              {t('noMealsToday')}
+            </p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -194,30 +205,34 @@ const HomeScreen = () => {
                     key={meal.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm"
+                    onClick={() => navigate(`/diary/meal/${meal.id}`)}
+                    className="flex items-center gap-4 p-3 bg-card border border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer group"
                   >
-                    <img
-                      src={meal.image || '/placeholder-food.png'}
-                      alt={meal.name}
-                      className="w-16 h-16 rounded-xl object-cover"
-                    />
+                    <div className="relative">
+                      <img
+                        src={meal.image || '/placeholder-food.png'}
+                        alt={meal.name}
+                        className="w-16 h-16 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs shadow-sm">
+                        {mealTypeDisplay.icon}
+                      </div>
+                    </div>
 
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{meal.name}</h3>
-                      <p className="text-sm text-gray-600 flex items-center gap-1">
-                        {mealTypeDisplay.icon} {mealTypeDisplay.label}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {meal.time}
+                      <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">{meal.name}</h3>
+                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">
+                        {t(`mealType.${meal.meal_type}`) || mealTypeDisplay.label} • {meal.time}
                       </p>
                     </div>
 
                     <div className="text-right">
-                      <p className="text-lg font-bold text-gray-900 line-clamp-1">
+                      <p className="text-lg font-black text-foreground">
                         {meal.calories}
                       </p>
-                      <span className="text-xs text-muted-foreground">kcal</span>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase">kcal</span>
                     </div>
                   </motion.div>
                 )

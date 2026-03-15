@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { RefreshCw, Trash2, Loader2, Plus } from "lucide-react";
+import { RefreshCw, Trash2, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import BottomNav from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
@@ -174,80 +174,158 @@ const DiaryScreen = () => {
             onClick={() => (document.activeElement as HTMLElement)?.blur()}
         >
             {/* Top Section */}
-            <div className="bg-white pb-4 pt-6 shadow-sm sticky top-0 z-10">
+            <div className={`pt-6 pb-4 sticky top-0 z-20 transition-colors duration-200 border-b border-white/10
+                ${language === 'ar' ? 'font-arabic' : ''}`}
+                style={{ backgroundColor: 'var(--background)', backdropFilter: 'blur(8px)' }}
+            >
                 <div className="px-5 flex justify-between items-center">
-                    <h1 className="font-display text-2xl font-bold text-foreground">{t('profile')}</h1>
+                    <h1 className="font-display text-2xl font-bold text-foreground">
+                        {t('diary')}
+                    </h1>
                     <button
                         onClick={handleRefresh}
-                        className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/80 active:scale-95"
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all hover:bg-secondary/80 active:scale-95 shadow-sm"
                     >
-                        <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+                        <RefreshCw className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`} />
                     </button>
                 </div>
             </div>
 
-            <div className="space-y-6 pt-6 pb-24">
-                {Object.entries(groupedMeals).map(([dateKey, meals]: [string, any[]]) => (
-                    <div key={dateKey}>
-                        <h3 className="text-sm font-semibold text-gray-600 px-6 mb-3">
-                            {formatDateHeader(dateKey)}
-                        </h3>
+            <div className="pt-4 pb-24">
+                {Object.entries(groupedMeals).length === 0 && !loading ? (
+                    <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+                        <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mb-4 text-3xl">
+                            📖
+                        </div>
+                        <h2 className="text-xl font-bold text-foreground mb-2">{t('diary.emptyTitle') || 'Your diary is empty'}</h2>
+                        <p className="text-muted-foreground">{t('diary.emptySubtitle') || 'Start logging your meals to see them here!'}</p>
+                    </div>
+                ) : (
+                    Object.entries(groupedMeals).map(([dateKey, meals]: [string, any[]]) => {
+                        // Calculate daily totals
+                        const dayCalories = meals.reduce((sum, m) => sum + (m.total_calories || 0), 0);
+                        const dayPro = meals.reduce((sum, m) => sum + (m.total_proteins || 0), 0);
+                        const dayCarbs = meals.reduce((sum, m) => sum + (m.total_carbs || 0), 0);
+                        const dayFats = meals.reduce((sum, m) => sum + (m.total_fats || 0), 0);
 
-                        <div className="space-y-3 px-6">
-                            {meals.map((meal) => {
-                                const mealTypeDisplay = getMealTypeDisplay(meal.meal_type)
-
-                                return (
-                                    <div
-                                        key={meal.id}
-                                        onClick={() => navigate(`/diary/meal/${meal.id}`)}
-                                        className="bg-white p-4 rounded-xl shadow-sm 
-                                            hover:shadow-md transition-shadow cursor-pointer"
-                                    >
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex-1">
-                                                <h4 className="font-semibold text-gray-900 mb-1">
-                                                    {meal.meal_name || 'Meal'}
-                                                </h4>
-                                                <p className="text-sm text-gray-600">
-                                                    {mealTypeDisplay.icon}{' '}
-                                                    {mealTypeDisplay.label} •{' '}
-                                                    {new Date(meal.logged_at).toLocaleTimeString('en-US', {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
-                                                </p>
-                                            </div>
-
-                                            <div className="text-right">
-                                                <p className="text-lg font-bold text-gray-900">
-                                                    {meal.total_calories}
-                                                </p>
-                                                <p className="text-xs text-gray-500">kcal</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Macros breakdown */}
-                                        <div className="flex gap-4 text-xs font-medium">
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                                <span className="text-gray-600">P: {meal.total_proteins}g</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                                                <span className="text-gray-600">C: {meal.total_carbs}g</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <div className="w-2 h-2 rounded-full bg-green-500" />
-                                                <span className="text-gray-600">F: {meal.total_fats}g</span>
-                                            </div>
+                        return (
+                            <div key={dateKey} className="mb-8">
+                                <div className="px-5 mb-4 sticky top-[73px] z-10 py-2 bg-background/95 backdrop-blur-sm">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                                            {formatDateHeader(dateKey)}
+                                        </h3>
+                                        <div className="text-right">
+                                            <span className="text-lg font-black text-foreground">{dayCalories}</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase ml-1">kcal</span>
                                         </div>
                                     </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                ))}
+
+                                    {/* Daily Macro Summary Bar */}
+                                    <div className="mt-2 grid grid-cols-3 gap-2">
+                                        <div className="bg-secondary/50 rounded-lg py-1.5 px-3 flex items-center justify-between">
+                                            <span className="text-[10px] font-bold text-blue-500 uppercase">Pro</span>
+                                            <span className="text-xs font-bold text-foreground">{Math.round(dayPro)}g</span>
+                                        </div>
+                                        <div className="bg-secondary/50 rounded-lg py-1.5 px-3 flex items-center justify-between">
+                                            <span className="text-[10px] font-bold text-yellow-600 uppercase">Carb</span>
+                                            <span className="text-xs font-bold text-foreground">{Math.round(dayCarbs)}g</span>
+                                        </div>
+                                        <div className="bg-secondary/50 rounded-lg py-1.5 px-3 flex items-center justify-between">
+                                            <span className="text-[10px] font-bold text-green-600 uppercase">Fat</span>
+                                            <span className="text-xs font-bold text-foreground">{Math.round(dayFats)}g</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3 px-5">
+                                    {meals.map((meal) => {
+                                        const mealTypeDisplay = getMealTypeDisplay(meal.meal_type)
+
+                                        return (
+                                            <motion.div
+                                                key={meal.id}
+                                                whileHover={{ scale: 1.01 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => navigate(`/diary/meal/${meal.id}`)}
+                                                className="bg-card border border-white/10 p-4 rounded-2xl shadow-sm 
+                                                    hover:shadow-md transition-all cursor-pointer group"
+                                            >
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-xl shadow-inner">
+                                                            {mealTypeDisplay.icon}
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                                                                {meal.meal_name || t('meal')}
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                                                <span className="bg-secondary/80 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">
+                                                                    {t(`mealType.${meal.meal_type}`) || mealTypeDisplay.label}
+                                                                </span>
+                                                                <span className="opacity-40">•</span>
+                                                                {new Date(meal.logged_at).toLocaleTimeString(language === 'ar' ? 'ar-TN' : 'en-US', {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                })}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="text-right">
+                                                        <p className="text-lg font-black text-foreground">
+                                                            {meal.total_calories}
+                                                        </p>
+                                                        <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">kcal</p>
+                                                    </div>
+                                                </div>
+
+                                                {/* Meal Items Preview */}
+                                                {meal.meal_items && meal.meal_items.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1.5 mb-3">
+                                                        {meal.meal_items.slice(0, 3).map((item: any, idx: number) => (
+                                                            <span key={item.id} className="text-[10px] bg-secondary/30 px-2 py-1 rounded-full text-muted-foreground">
+                                                                {getEmoji(item.name)} {item.name}
+                                                            </span>
+                                                        ))}
+                                                        {meal.meal_items.length > 3 && (
+                                                            <span className="text-[10px] text-muted-foreground pt-1">
+                                                                +{meal.meal_items.length - 3} more
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
+
+                                                {/* Macros breakdown */}
+                                                <div className="flex items-center gap-4 pt-3 border-t border-white/5">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/80 shadow-[0_0_4px_rgba(59,130,246,0.5)]" />
+                                                        <span className="text-[11px] font-bold text-muted-foreground">
+                                                            {Math.round(meal.total_proteins)}g
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/80 shadow-[0_0_4px_rgba(234,179,8,0.5)]" />
+                                                        <span className="text-[11px] font-bold text-muted-foreground">
+                                                            {Math.round(meal.total_carbs)}g
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-green-500/80 shadow-[0_0_4px_rgba(34,197,94,0.5)]" />
+                                                        <span className="text-[11px] font-bold text-muted-foreground">
+                                                            {Math.round(meal.total_fats)}g
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
 
                 {/* Loading indicator */}
                 {hasMore && (

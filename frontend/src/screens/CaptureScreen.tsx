@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Image, Lightbulb, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CaptureScreen = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const fileRef = useRef<HTMLInputElement>(null);
   const [showTip, setShowTip] = useState(false);
 
@@ -28,7 +30,7 @@ const CaptureScreen = () => {
       setCameraActive(true);
     } catch (error) {
       console.error('Camera access denied:', error);
-      alert("Could not access camera. Please allow camera permission.");
+      alert(t('camera.denied') || "Could not access camera. Please allow camera permission.");
     }
   };
 
@@ -85,25 +87,25 @@ const CaptureScreen = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-foreground">
+    <div className={`flex min-h-screen flex-col bg-foreground ${language === 'ar' ? 'font-arabic' : ''}`}>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
 
       {/* Top bar */}
       <header className="flex items-center gap-3 px-5 pt-6 pb-4">
-        <button onClick={() => navigate(-1)} className="text-background">
+        <button onClick={() => navigate(-1)} className="text-white p-2 -ml-2">
           <ArrowLeft className="h-6 w-6" />
         </button>
-        <h1 className="text-lg font-display font-bold text-background">Snap your meal</h1>
+        <h1 className="text-xl font-display font-black text-white">{t('capture.title') || "Snap your meal"}</h1>
       </header>
 
       {/* Viewfinder */}
       <div className="flex flex-1 items-center justify-center px-8 relative mt-4 mb-4">
-        <div className="relative flex aspect-[4/3] w-full items-center justify-center rounded-3xl border-2 border-dashed border-muted bg-card overflow-hidden">
+        <div className="relative flex aspect-[4/3] w-full items-center justify-center rounded-[2.5rem] border-2 border-dashed border-white/20 bg-white/5 overflow-hidden shadow-2xl">
           {!cameraActive ? (
             <div className="flex flex-col items-center justify-center h-full p-6">
-              <Camera className="w-16 h-16 text-muted-foreground mb-4 animate-pulse" />
-              <p className="text-muted-foreground text-center">
-                Starting camera...
+              <Camera className="w-16 h-16 text-white/20 mb-4 animate-pulse" />
+              <p className="text-white/40 font-medium text-center">
+                {t('capture.startingCamera') || "Starting camera..."}
               </p>
             </div>
           ) : (
@@ -115,54 +117,58 @@ const CaptureScreen = () => {
                 className="w-full h-full object-cover"
               />
               <canvas ref={canvasRef} className="hidden" />
+              {/* Corner Decorations */}
+              <div className="absolute top-6 left-6 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg" />
+              <div className="absolute top-6 right-6 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg" />
+              <div className="absolute bottom-6 left-6 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg" />
+              <div className="absolute bottom-6 right-6 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg" />
             </div>
           )}
         </div>
       </div>
 
       {/* Action buttons */}
-      <div className="flex items-center justify-center gap-8 py-6">
+      <div className="flex items-center justify-center gap-8 py-8 bg-black/20 backdrop-blur-sm">
         <button
           onClick={() => fileRef.current?.click()}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-2 group"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-card/10">
-            <Image className="h-5 w-5 text-background" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 group-hover:bg-white/20 transition-colors">
+            <Image className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xs text-muted">Gallery</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">{t('capture.gallery') || "Gallery"}</span>
         </button>
 
         <button
           onClick={() => navigate('/scan')}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-2 group"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-card/10">
-            <span className="text-xl">📊</span>
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 group-hover:bg-white/20 transition-colors">
+            <span className="text-2xl">📊</span>
           </div>
-          <span className="text-xs text-muted">Scan</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">{t('capture.scan') || "Scan"}</span>
         </button>
 
         <button
           onClick={cameraActive ? capturePhoto : startCamera}
-          className="flex h-18 w-18 items-center justify-center rounded-full border-4 border-primary bg-primary cursor-pointer hover:scale-105 transition-transform"
-          style={{ width: 72, height: 72 }}
+          className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/20 bg-primary p-1 shadow-2xl active:scale-90 transition-all group"
         >
-          <div className="h-14 w-14 rounded-full bg-primary border-2 border-primary-foreground" style={{ width: 56, height: 56 }} />
+          <div className="h-full w-full rounded-full border-4 border-black/10 group-hover:border-black/20 transition-all" />
         </button>
 
         <button
           onClick={() => navigate('/voice')}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-2 group"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-card/10">
-            <span className="text-xl">🎤</span>
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 group-hover:bg-white/20 transition-colors">
+            <span className="text-2xl">🎤</span>
           </div>
-          <span className="text-xs text-muted">Voice</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">{t('capture.voice') || "Voice"}</span>
         </button>
       </div>
 
-      <p className="pb-8 text-center text-xs text-muted">
-        The clearer the photo, the better the analysis
+      <p className="pb-10 text-center text-xs font-medium text-white/40 px-8 leading-relaxed">
+        {t('capture.hint') || "The clearer the photo, the better the analysis"}
       </p>
 
       {/* Tip bottom sheet */}

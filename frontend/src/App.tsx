@@ -24,12 +24,13 @@ import OnboardingProfileScreen from "./screens/onboarding/ProfileScreen";
 import PersonalInfoScreen from "./screens/profile/PersonalInfoScreen";
 import NotificationsScreen from "./screens/profile/NotificationsScreen";
 import VoiceInputScreen from "./screens/voice/VoiceInputScreen";
-
 import BarcodeScannerScreen from "./screens/barcode/BarcodeScannerScreen";
 import ManualEntryScreen from "./screens/manual/ManualEntryScreen";
 import MyGoalsScreen from "./screens/profile/MyGoalsScreen";
 import ExportDataScreen from "./screens/profile/ExportDataScreen";
 import HelpScreen from "./screens/profile/HelpScreen";
+import PrivacyScreen from './screens/profile/PrivacyScreen';
+import AboutScreen from './screens/profile/AboutScreen';
 
 // Auth & Onboarding
 import LoginScreen from "./screens/auth/LoginScreen";
@@ -98,14 +99,15 @@ const AppContent = () => {
           <Route path="/plans" element={<ProtectedRoute><MealPlansScreen /></ProtectedRoute>} />
           <Route path="/plans/:id" element={<ProtectedRoute><MealPlanDetailScreen /></ProtectedRoute>} />
 
+          {/* Profile Subpages */}
           <Route path="/profile" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />
           <Route path="/profile/info" element={<ProtectedRoute><PersonalInfoScreen /></ProtectedRoute>} />
           <Route path="/profile/notifications" element={<ProtectedRoute><NotificationsScreen /></ProtectedRoute>} />
           <Route path="/profile/goals" element={<ProtectedRoute><MyGoalsScreen /></ProtectedRoute>} />
           <Route path="/profile/export" element={<ProtectedRoute><ExportDataScreen /></ProtectedRoute>} />
           <Route path="/profile/help" element={<ProtectedRoute><HelpScreen /></ProtectedRoute>} />
-          <Route path="/privacy" element={<ProtectedRoute><HelpScreen /></ProtectedRoute>} />
-          <Route path="/about" element={<ProtectedRoute><HelpScreen /></ProtectedRoute>} />
+          <Route path="/privacy" element={<ProtectedRoute><PrivacyScreen /></ProtectedRoute>} />
+          <Route path="/about" element={<ProtectedRoute><AboutScreen /></ProtectedRoute>} />
 
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
