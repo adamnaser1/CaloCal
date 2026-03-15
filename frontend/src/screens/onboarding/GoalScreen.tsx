@@ -2,31 +2,33 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-
-const goals = [
-    {
-        id: "lose",
-        icon: "🔥",
-        title: "Lose weight",
-        subtitle: "Create a calorie deficit",
-    },
-    {
-        id: "maintain",
-        icon: "⚖️",
-        title: "Maintain weight",
-        subtitle: "Stay at your current level",
-    },
-    {
-        id: "gain",
-        icon: "💪",
-        title: "Build muscle",
-        subtitle: "Increase protein intake",
-    },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const GoalScreen = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+
+    const goals = [
+        {
+            id: "lose",
+            icon: "🔥",
+            title: t('onboarding.loseWeight'),
+            subtitle: t('onboarding.loseWeightDesc'),
+        },
+        {
+            id: "maintain",
+            icon: "⚖️",
+            title: t('onboarding.maintainWeight'),
+            subtitle: t('onboarding.maintainWeightDesc'),
+        },
+        {
+            id: "gain",
+            icon: "💪",
+            title: t('onboarding.buildMuscle'),
+            subtitle: t('onboarding.buildMuscleDesc'),
+        },
+    ];
 
     const handleContinue = () => {
         if (selectedGoal) {
@@ -51,8 +53,8 @@ const GoalScreen = () => {
             </header>
 
             <div className="px-5 pt-6">
-                <h1 className="mb-2 font-display text-[28px] font-bold text-foreground">What's your goal?</h1>
-                <p className="mb-8 font-body text-sm text-muted-foreground">We'll personalize your daily targets</p>
+                <h1 className="mb-2 font-display text-[28px] font-bold text-foreground">{t('onboarding.goalTitle')}</h1>
+                <p className="mb-8 font-body text-sm text-muted-foreground">{t('onboarding.goalSubtitle')}</p>
 
                 <div className="flex flex-col gap-4">
                     {goals.map((goal) => (
@@ -61,8 +63,8 @@ const GoalScreen = () => {
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setSelectedGoal(goal.id)}
                             className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${selectedGoal === goal.id
-                                    ? "border-[#F5C518] bg-[#FFF9E0] ring-1 ring-[#F5C518]"
-                                    : "border-border bg-white"
+                                ? "border-[#F5C518] bg-[#FFF9E0] ring-1 ring-[#F5C518]"
+                                : "border-border bg-white"
                                 }`}
                         >
                             <span className="text-2xl">{goal.icon}</span>
@@ -81,7 +83,7 @@ const GoalScreen = () => {
                     disabled={!selectedGoal}
                     className="w-full rounded-full bg-[#F5C518] py-4 font-display font-bold text-foreground transition-opacity disabled:opacity-40"
                 >
-                    Continue →
+                    {t('onboarding.continue')}
                 </button>
             </div>
         </div>

@@ -6,11 +6,16 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { updateUserProfile } from "@/services/profileService";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+
 
 export default function MyGoalsScreen() {
     const navigate = useNavigate();
     const { user, refreshProfile } = useAuth();
     const { toast } = useToast();
+    const { t } = useLanguage();
+
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [profile, setProfile] = useState<any>(null);
@@ -70,11 +75,13 @@ export default function MyGoalsScreen() {
 
             await refreshProfile();
 
-            toast({ title: "Goals updated ✓", description: `New target: ${newTarget} kcal` });
+            toast({ title: t('profile.preferenceSaved'), description: `${t('myGoals.dailyTarget')}: ${newTarget} kcal` });
+
             setProfile({ ...profile, daily_calorie_goal: newTarget });
         } catch (error: any) {
-            toast({ variant: "destructive", title: "Failed to update goals", description: error.message });
+            toast({ variant: "destructive", title: t('common.error'), description: error.message });
         } finally {
+
             setSaving(false);
         }
     };
@@ -94,7 +101,8 @@ export default function MyGoalsScreen() {
                 <button onClick={() => navigate(-1)} className="rounded-full bg-secondary p-2">
                     <ArrowLeft className="h-6 w-6" />
                 </button>
-                <h1 className="font-display text-xl font-bold">My Goals</h1>
+                <h1 className="font-display text-xl font-bold">{t('myGoals.title')}</h1>
+
             </header>
 
             <div className="px-5 space-y-6">
@@ -104,21 +112,25 @@ export default function MyGoalsScreen() {
                         <Target className="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 className="font-bold text-lg capitalize">{goalType.replace('_', ' ')}</h2>
+                        <h2 className="font-bold text-lg capitalize">{t(`onboarding.${goalType}`)}</h2>
+
                         <p className="text-sm text-muted-foreground mt-1">
-                            Daily Target: <span className="font-bold text-foreground">{profile?.daily_calorie_goal} kcal</span>
+                            {t('myGoals.dailyTarget')}: <span className="font-bold text-foreground">{profile?.daily_calorie_goal} kcal</span>
+
                         </p>
                     </div>
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="font-bold text-lg">Update Goal</h3>
+                    <h3 className="font-bold text-lg">{t('myGoals.updateGoal')}</h3>
+
 
                     <div className="grid grid-cols-1 gap-3">
                         {[
-                            { id: 'lose_weight', label: 'Lose Weight', icon: '📉' },
-                            { id: 'maintain', label: 'Maintain Weight', icon: '⚖️' },
-                            { id: 'build_muscle', label: 'Build Muscle', icon: '💪' }
+                            { id: 'lose_weight', label: t('onboarding.loseWeight'), icon: '📉' },
+                            { id: 'maintain', label: t('onboarding.maintainWeight'), icon: '⚖️' },
+                            { id: 'build_muscle', label: t('onboarding.buildMuscle'), icon: '💪' }
+
                         ].map((option) => (
                             <button
                                 key={option.id}
@@ -137,13 +149,15 @@ export default function MyGoalsScreen() {
                         ))}
                     </div>
 
-                    <h3 className="font-bold text-lg pt-4">Activity Level</h3>
+                    <h3 className="font-bold text-lg pt-4">{t('myGoals.activityLevel')}</h3>
+
                     <div className="space-y-2">
                         {[
-                            { id: 'sedentary', label: 'Sedentary' },
-                            { id: 'light', label: 'Lightly Active' },
-                            { id: 'moderate', label: 'Moderately Active' },
-                            { id: 'active', label: 'Very Active' }
+                            { id: 'sedentary', label: t('myGoals.sedentary') },
+                            { id: 'light', label: t('myGoals.light') },
+                            { id: 'moderate', label: t('myGoals.moderate') },
+                            { id: 'active', label: t('myGoals.active') }
+
                         ].map((level) => (
                             <button
                                 key={level.id}
@@ -167,7 +181,8 @@ export default function MyGoalsScreen() {
                     disabled={saving}
                     className="w-full rounded-full bg-[#F5C518] py-4 font-display font-bold text-foreground shadow-lg disabled:opacity-50"
                 >
-                    {saving ? "Updating..." : "Update Goal"}
+                    {saving ? t('myGoals.updating') : t('myGoals.updateGoal')}
+
                 </button>
             </div>
         </div>

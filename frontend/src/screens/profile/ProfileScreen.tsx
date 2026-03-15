@@ -198,7 +198,7 @@ export default function ProfileScreen() {
                 {/* Account Section */}
                 <div className="bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
                     <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
-                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('personalInfo')}</h3>
+                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t('personalInfo.title')}</h3>
                     </div>
 
                     <button
@@ -208,7 +208,7 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">{t('personalInfo')}</span>
+                            <span className="font-medium">{t('personalInfo.title')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>
@@ -220,7 +220,7 @@ export default function ProfileScreen() {
                     >
                         <div className="flex items-center gap-3">
                             <Award className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                            <span className="font-medium">{t('myGoals')}</span>
+                            <span className="font-medium">{t('myGoals.title')}</span>
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
                     </button>

@@ -28,9 +28,10 @@ export default function HelpScreen() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <input
                         type="text"
-                        placeholder="Search for help..."
+                        placeholder={t('help.search')}
                         className="w-full bg-secondary/50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm focus:ring-2 focus:ring-[#F5C518]"
                     />
+
                 </div>
 
                 <motion.div
@@ -43,20 +44,23 @@ export default function HelpScreen() {
                             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg text-[#F5C518]">
                                 <Info className="h-5 w-5" />
                             </div>
-                            <h2 className="font-display text-lg font-bold">Getting Started</h2>
+                            <h2 className="font-display text-lg font-bold">{t('help.gettingStarted')}</h2>
+
                         </div>
                         <Accordion type="single" collapsible className="w-full bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 overflow-hidden shadow-sm">
                             <AccordionItem value="item-1" className="px-4 border-b dark:border-gray-800 last:border-0 hover:bg-secondary/10 transition-colors">
-                                <AccordionTrigger className="text-left font-medium py-5">How do I track a meal?</AccordionTrigger>
+                                <AccordionTrigger className="text-left font-medium py-5">{t('help.faq1Q')}</AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                                    Tap the camera button in the center of the bottom navigation bar. You can take a photo, upload one, scan a barcode, or describe your meal with voice.
+                                    {t('help.faq1A')}
                                 </AccordionContent>
+
                             </AccordionItem>
                             <AccordionItem value="item-2" className="px-4 border-b dark:border-gray-800 last:border-0 hover:bg-secondary/10 transition-colors">
-                                <AccordionTrigger className="text-left font-medium py-5">What if the AI makes a mistake?</AccordionTrigger>
+                                <AccordionTrigger className="text-left font-medium py-5">{t('help.faq2Q')}</AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                                    After the AI estimates your meal, you can verify and edit the ingredients before saving. You can also edit saved meals from your diary.
+                                    {t('help.faq2A')}
                                 </AccordionContent>
+
                             </AccordionItem>
                         </Accordion>
                     </section>
@@ -66,20 +70,23 @@ export default function HelpScreen() {
                             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600">
                                 <span className="text-xl">🍽️</span>
                             </div>
-                            <h2 className="font-display text-lg font-bold">Tunisian Cuisine</h2>
+                            <h2 className="font-display text-lg font-bold">{t('help.tunisianCuisine')}</h2>
+
                         </div>
                         <Accordion type="single" collapsible className="w-full bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 overflow-hidden shadow-sm">
                             <AccordionItem value="item-3" className="px-4 border-b dark:border-gray-800 last:border-0 hover:bg-secondary/10 transition-colors">
-                                <AccordionTrigger className="text-left font-medium py-5">Does it recognize Tunisian food?</AccordionTrigger>
+                                <AccordionTrigger className="text-left font-medium py-5">{t('help.faq3Q')}</AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                                    Yes! Our AI is specifically trained on Tunisian and North African dishes like Couscous, Brik, Lablabi, Ojja, and more.
+                                    {t('help.faq3A')}
                                 </AccordionContent>
+
                             </AccordionItem>
                             <AccordionItem value="item-4" className="px-4 border-b dark:border-gray-800 last:border-0 hover:bg-secondary/10 transition-colors">
-                                <AccordionTrigger className="text-left font-medium py-5">My dish isn't found</AccordionTrigger>
+                                <AccordionTrigger className="text-left font-medium py-5">{t('help.faq4Q')}</AccordionTrigger>
                                 <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                                    If scanning doesn't work, try describing it with Voice Input ("Sahn Tounsi avec thon...") or add it manually using the "Add Custom Ingredient" feature.
+                                    {t('help.faq4A')}
                                 </AccordionContent>
+
                             </AccordionItem>
                         </Accordion>
                     </section>
@@ -90,8 +97,9 @@ export default function HelpScreen() {
                             className="flex w-full items-center justify-center gap-3 rounded-2xl bg-secondary py-5 font-bold text-foreground hover:bg-secondary/80 transition-all active:scale-[0.98]"
                         >
                             <Mail className="h-5 w-5" />
-                            Contact Support
+                            {t('help.contactSupport')}
                         </a>
+
                     </div>
                 </motion.div>
             </div>

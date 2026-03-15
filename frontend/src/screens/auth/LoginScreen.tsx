@@ -5,6 +5,8 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { signInWithGoogle } from "@/services/authService";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 
 const LoginScreen = () => {
     const [email, setEmail] = useState("");
@@ -15,6 +17,8 @@ const LoginScreen = () => {
     const { signIn } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { t } = useLanguage();
+
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,8 +44,9 @@ const LoginScreen = () => {
             <div className="mb-12 flex flex-col items-center gap-2">
                 <span className="text-4xl">🔥</span>
                 <h1 className="font-display text-[28px] font-bold text-foreground">Calo Cal</h1>
-                <p className="font-body text-base text-muted-foreground">Welcome back!</p>
+                <p className="font-body text-base text-muted-foreground">{t('auth.welcome')}</p>
             </div>
+
 
             {/* Google Button */}
             <button
@@ -51,10 +56,11 @@ const LoginScreen = () => {
                         await signInWithGoogle();
                     } catch (error: any) {
                         toast({
-                            title: "Sign in failed",
+                            title: t('common.error'),
                             description: error.message,
                             variant: "destructive"
                         });
+
                     }
                 }}
                 className="flex w-full items-center justify-center gap-3 rounded-xl border border-[#E5E7EB] bg-white py-3 font-body text-[15px] font-medium text-foreground transition-colors hover:bg-gray-50"
@@ -65,24 +71,27 @@ const LoginScreen = () => {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                 </svg>
-                Continue with Google
+                {t('auth.signinWithGoogle')}
             </button>
+
 
             <div className="relative my-6 w-full">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                    <span className="bg-white px-4 text-gray-500">Or continue with email</span>
+                    <span className="bg-white px-4 text-gray-500">{t('auth.orContinue')}</span>
                 </div>
+
             </div>
 
             {/* Form */}
             <form onSubmit={handleLogin} className="flex w-full flex-col gap-4">
                 {/* Email */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Email</label>
+                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('auth.email')}</label>
                     <input
+
                         type="email"
                         placeholder="you@example.com"
                         value={email}
@@ -94,8 +103,9 @@ const LoginScreen = () => {
 
                 {/* Password */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Password</label>
+                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('auth.password')}</label>
                     <div className="relative">
+
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
@@ -132,21 +142,23 @@ const LoginScreen = () => {
                     {loading ? (
                         <>
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            Signing in...
+                            {t('auth.signingIn')}
                         </>
                     ) : (
-                        "Sign in →"
+                        t('auth.signinBtn')
                     )}
                 </button>
+
             </form>
 
 
             <div className="mt-8 text-sm text-foreground">
-                Don't have an account?{" "}
+                {t('auth.noAccount')}{" "}
                 <Link to="/signup" className="font-medium text-[#F5C518] underline decoration-2 underline-offset-4 hover:text-[#dcb015]">
-                    Sign up
+                    {t('auth.signupLink')}
                 </Link>
             </div>
+
         </div>
     );
 };

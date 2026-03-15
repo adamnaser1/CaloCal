@@ -1,17 +1,19 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Minus, User } from "lucide-react";
-
-const activityLevels = [
-    { id: 'sedentary', label: 'Sedentary', desc: 'Little/no exercise' },
-    { id: 'lightly_active', label: 'Lightly Active', desc: '1-3 days/week' },
-    { id: 'moderately_active', label: 'Moderately Active', desc: '3-5 days/week' },
-    { id: 'very_active', label: 'Very Active', desc: '6-7 days/week' },
-    { id: 'extremely_active', label: 'Extremely Active', desc: 'Athlete' }
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ProfileScreen = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
+
+    const activityLevels = [
+        { id: 'sedentary', label: t('onboarding.activityLevels.sedentary.label'), desc: t('onboarding.activityLevels.sedentary.desc') },
+        { id: 'lightly_active', label: t('onboarding.activityLevels.lightly_active.label'), desc: t('onboarding.activityLevels.lightly_active.desc') },
+        { id: 'moderately_active', label: t('onboarding.activityLevels.moderately_active.label'), desc: t('onboarding.activityLevels.moderately_active.desc') },
+        { id: 'very_active', label: t('onboarding.activityLevels.very_active.label'), desc: t('onboarding.activityLevels.very_active.desc') },
+        { id: 'extremely_active', label: t('onboarding.activityLevels.extremely_active.label'), desc: t('onboarding.activityLevels.extremely_active.desc') }
+    ];
     const [formData, setFormData] = useState({
         fullName: "",
         age: 25,
@@ -55,48 +57,48 @@ const ProfileScreen = () => {
         const newErrors: Record<string, string> = {};
 
         if (formData.fullName.length < 2) {
-            newErrors.fullName = "Name must be at least 2 characters.";
+            newErrors.fullName = t('onboarding.errors.nameLength');
         }
         if (formData.age < 13 || formData.age > 100) {
-            newErrors.age = "Age must be between 13 and 100.";
+            newErrors.age = t('onboarding.errors.ageRange');
         }
         if (!formData.sex) {
-            newErrors.sex = "Please select your biological sex.";
+            newErrors.sex = t('onboarding.errors.sexRequired');
         }
 
         const heightVal = parseFloat(formData.height);
         if (isNaN(heightVal)) {
-            newErrors.height = "Height is required.";
+            newErrors.height = t('onboarding.errors.heightRequired');
         } else if (formData.heightUnit === "cm" && (heightVal < 100 || heightVal > 250)) {
-            newErrors.height = "Height must be between 100cm and 250cm.";
+            newErrors.height = t('onboarding.errors.heightRangeCm');
         } else if (formData.heightUnit === "ft" && (heightVal < 3.3 || heightVal > 8.2)) {
-            newErrors.height = "Height must be between 3.3ft and 8.2ft.";
+            newErrors.height = t('onboarding.errors.heightRangeFt');
         }
 
         const cwVal = parseFloat(formData.currentWeight);
         if (isNaN(cwVal)) {
-            newErrors.currentWeight = "Current weight is required.";
+            newErrors.currentWeight = t('onboarding.errors.weightRequired');
         } else if (formData.weightUnit === "kg" && (cwVal < 30 || cwVal > 300)) {
-            newErrors.currentWeight = "Weight must be between 30kg and 300kg.";
+            newErrors.currentWeight = t('onboarding.errors.weightRangeKg');
         } else if (formData.weightUnit === "lbs" && (cwVal < 66 || cwVal > 660)) {
-            newErrors.currentWeight = "Weight must be between 66lbs and 660lbs.";
+            newErrors.currentWeight = t('onboarding.errors.weightRangeLbs');
         }
 
         const twVal = parseFloat(formData.targetWeight);
         if (isNaN(twVal)) {
-            newErrors.targetWeight = "Target weight is required.";
+            newErrors.targetWeight = t('onboarding.errors.targetWeightRequired');
         } else if (formData.targetWeightUnit === "kg" && (twVal < 30 || twVal > 300)) {
-            newErrors.targetWeight = "Target weight must be between 30kg and 300kg.";
+            newErrors.targetWeight = t('onboarding.errors.targetWeightRangeKg');
         } else if (formData.targetWeightUnit === "lbs" && (twVal < 66 || twVal > 660)) {
-            newErrors.targetWeight = "Target weight must be between 66lbs and 660lbs.";
+            newErrors.targetWeight = t('onboarding.errors.targetWeightRangeLbs');
         }
 
         if (weightDifference !== null && (weightDifference < -50 || weightDifference > 50)) {
-            newErrors.targetWeight = "Target weight must be within ±50kg of current weight.";
+            newErrors.targetWeight = t('onboarding.errors.weightDiffRange');
         }
 
         if (!formData.activityLevel) {
-            newErrors.activityLevel = "Please select your activity level.";
+            newErrors.activityLevel = t('onboarding.errors.activityRequired');
         }
 
         setErrors(newErrors);
@@ -153,20 +155,20 @@ const ProfileScreen = () => {
             </header>
 
             <div className="px-5 pt-6">
-                <h1 className="mb-2 font-display text-[28px] font-bold text-foreground">Tell us about you</h1>
-                <p className="mb-8 font-body text-sm text-muted-foreground">Used to personalize your plan.</p>
+                <h1 className="mb-2 font-display text-[28px] font-bold text-foreground">{t('onboarding.profileTitle')}</h1>
+                <p className="mb-8 font-body text-sm text-muted-foreground">{t('onboarding.profileSubtitle')}</p>
 
                 <div className="flex flex-col gap-6">
                     {/* Full Name */}
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Full Name</label>
+                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.fullName')}</label>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                                 👤
                             </span>
                             <input
                                 type="text"
-                                placeholder="Enter your name"
+                                placeholder={t('onboarding.fullNamePlaceholder')}
                                 value={formData.fullName}
                                 onChange={(e) => handleChange("fullName", e.target.value)}
                                 className={`w-full rounded-xl border ${errors.fullName ? "border-red-500" : "border-gray-200"} bg-gray-50 pl-12 pr-4 py-3 font-body outline-none focus:border-[#F5C518] focus:ring-1 focus:ring-[#F5C518]`}
@@ -177,7 +179,7 @@ const ProfileScreen = () => {
 
                     {/* Age */}
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Age</label>
+                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.age')}</label>
                         <div className="flex items-center w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2">
                             <button
                                 onClick={() => handleChange("age", Math.max(13, formData.age - 1))}
@@ -203,7 +205,7 @@ const ProfileScreen = () => {
 
                     {/* Sex */}
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Biological sex</label>
+                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.sex')}</label>
                         <div className="flex gap-3">
                             {(["male", "female"] as const).map((sex) => (
                                 <button
@@ -215,7 +217,7 @@ const ProfileScreen = () => {
                                         }`}
                                 >
                                     <span>{sex === "male" ? "🚹" : "🚺"}</span>
-                                    {sex}
+                                    {sex === "male" ? t('onboarding.male') : t('onboarding.female')}
                                 </button>
                             ))}
                         </div>
@@ -225,7 +227,7 @@ const ProfileScreen = () => {
                     {/* Height */}
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Height</label>
+                            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.height')}</label>
                             <div className="flex bg-gray-100 rounded-md overflow-hidden">
                                 <button
                                     className={`px-3 py-1 text-xs font-bold ${formData.heightUnit === "cm" ? "bg-gray-300 text-gray-800" : "text-gray-500"}`}
@@ -255,7 +257,7 @@ const ProfileScreen = () => {
                     {/* Current Weight */}
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Current weight</label>
+                            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.currentWeight')}</label>
                             <div className="flex bg-gray-100 rounded-md overflow-hidden">
                                 <button
                                     className={`px-3 py-1 text-xs font-bold ${formData.weightUnit === "kg" ? "bg-gray-300 text-gray-800" : "text-gray-500"}`}
@@ -284,7 +286,7 @@ const ProfileScreen = () => {
                     {/* Target Weight */}
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Target weight</label>
+                            <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.targetWeight')}</label>
                             <div className="flex bg-gray-100 rounded-md overflow-hidden">
                                 <button
                                     className={`px-3 py-1 text-xs font-bold ${formData.targetWeightUnit === "kg" ? "bg-gray-300 text-gray-800" : "text-gray-500"}`}
@@ -309,7 +311,10 @@ const ProfileScreen = () => {
                         />
                         {weightDifference !== null && !isNaN(weightDifference) && (
                             <p className="text-xs font-bold text-gray-500 mt-1">
-                                Goal: {weightDifference > 0 ? "+" : ""}{weightDifference.toFixed(1)} kg to {weightDifference > 0 ? "gain" : "lose"}
+                                {t('onboarding.goalDifference', {
+                                    diff: Math.abs(weightDifference).toFixed(1),
+                                    action: weightDifference > 0 ? t('onboarding.gain') : t('onboarding.lose')
+                                })}
                             </p>
                         )}
                         {errors.targetWeight && <p className="text-xs text-red-500">{errors.targetWeight}</p>}
@@ -317,7 +322,7 @@ const ProfileScreen = () => {
 
                     {/* Activity Level */}
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Activity level</label>
+                        <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('onboarding.activityLevel')}</label>
                         <div className="flex flex-col gap-2">
                             {activityLevels.map((level) => (
                                 <button
@@ -344,7 +349,7 @@ const ProfileScreen = () => {
                     disabled={!isFormValid}
                     className="w-full rounded-full bg-[#F5C518] py-4 font-display font-bold text-foreground transition-opacity disabled:opacity-40 shadow-lg"
                 >
-                    Continue →
+                    {t('onboarding.continue')}
                 </button>
             </div>
         </div>

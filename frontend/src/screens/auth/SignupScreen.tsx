@@ -4,6 +4,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff, Loader2, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { signInWithGoogle } from "@/services/authService";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 
 interface PasswordStrength {
     score: 0 | 1 | 2 | 3 | 4;
@@ -26,22 +28,26 @@ const SignupScreen = () => {
     const { signUp } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
+    const { t } = useLanguage();
+
 
     // Password strength logic
     const getPasswordStrength = (pass: string): PasswordStrength => {
-        if (pass.length === 0) return { score: 0, label: "Weak", color: "bg-gray-200" };
-        if (pass.length <= 2) return { score: 0, label: "Weak", color: "bg-gray-200" };
-        if (pass.length <= 5) return { score: 1, label: "Weak", color: "bg-red-500" };
-        if (pass.length <= 7) return { score: 2, label: "Fair", color: "bg-orange-500" };
+        if (pass.length === 0) return { score: 0, label: t('auth.passwordStrength.weak'), color: "bg-gray-200" };
+        if (pass.length <= 2) return { score: 0, label: t('auth.passwordStrength.weak'), color: "bg-gray-200" };
+        if (pass.length <= 5) return { score: 1, label: t('auth.passwordStrength.weak'), color: "bg-red-500" };
+        if (pass.length <= 7) return { score: 2, label: t('auth.passwordStrength.fair'), color: "bg-orange-500" };
+
 
         const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
         const hasNumber = /\d/.test(pass);
 
         if (hasSpecial || hasNumber) {
-            return { score: 4, label: "Strong", color: "bg-green-500" };
+            return { score: 4, label: t('auth.passwordStrength.strong'), color: "bg-green-500" };
         }
 
-        return { score: 3, label: "Good", color: "bg-yellow-500" };
+        return { score: 3, label: t('auth.passwordStrength.good'), color: "bg-yellow-500" };
+
     };
 
     const strength = getPasswordStrength(password);
@@ -52,10 +58,11 @@ const SignupScreen = () => {
         setError(null);
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match");
+            setError(t('auth.passwordsMatchError'));
             setLoading(false);
             return;
         }
+
 
         const { error } = await signUp(email, password, fullName);
 
@@ -66,7 +73,7 @@ const SignupScreen = () => {
         }
 
         setSuccess(true);
-        setTimeout(() => navigate("/welcome"), 2000);
+        setTimeout(() => navigate("/onboarding/goal"), 2000);
     };
 
     if (success) {
@@ -75,11 +82,12 @@ const SignupScreen = () => {
                 <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                     <Check className="h-8 w-8 text-green-600" />
                 </div>
-                <h1 className="mb-2 font-display text-2xl font-bold text-foreground">Account created!</h1>
+                <h1 className="mb-2 font-display text-2xl font-bold text-foreground">{t('auth.accountCreated')}</h1>
                 <p className="font-body text-sm text-muted-foreground">
-                    Welcome to Calo Cal — let's set up your profile
+                    {t('auth.welcomeOnboarding')}
                 </p>
             </div>
+
         );
     }
 
@@ -89,8 +97,9 @@ const SignupScreen = () => {
             <div className="mb-12 flex flex-col items-center gap-2">
                 <span className="text-4xl">🔥</span>
                 <h1 className="font-display text-[28px] font-bold text-foreground">Calo Cal</h1>
-                <p className="font-body text-base text-muted-foreground">Create your account</p>
+                <p className="font-body text-base text-muted-foreground">{t('auth.createAccount')}</p>
             </div>
+
 
             {/* Google Button */}
             <button
@@ -100,10 +109,11 @@ const SignupScreen = () => {
                         await signInWithGoogle();
                     } catch (error: any) {
                         toast({
-                            title: "Sign up failed",
+                            title: t('common.error'),
                             description: error.message,
                             variant: "destructive"
                         });
+
                     }
                 }}
                 className="flex w-full items-center justify-center gap-3 rounded-xl border border-[#E5E7EB] bg-white py-3 font-body text-[15px] font-medium text-foreground transition-colors hover:bg-gray-50"
@@ -114,24 +124,27 @@ const SignupScreen = () => {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                 </svg>
-                Continue with Google
+                {t('auth.signinWithGoogle')}
             </button>
+
 
             <div className="relative my-6 w-full">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                    <span className="bg-white px-4 text-gray-500">Or continue with email</span>
+                    <span className="bg-white px-4 text-gray-500">{t('auth.orContinue')}</span>
                 </div>
+
             </div>
 
             {/* Form */}
             <form onSubmit={handleSignup} className="flex w-full flex-col gap-4">
                 {/* Full Name */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Full name</label>
+                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('auth.fullName')}</label>
                     <input
+
                         type="text"
                         placeholder="Aymen Trabelsi"
                         value={fullName}
@@ -143,8 +156,9 @@ const SignupScreen = () => {
 
                 {/* Email */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Email</label>
+                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('auth.email')}</label>
                     <input
+
                         type="email"
                         placeholder="you@example.com"
                         value={email}
@@ -156,8 +170,9 @@ const SignupScreen = () => {
 
                 {/* Password */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Password</label>
+                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('auth.password')}</label>
                     <div className="relative">
+
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Min. 8 characters"
@@ -194,8 +209,9 @@ const SignupScreen = () => {
 
                 {/* Confirm Password */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Confirm password</label>
+                    <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{t('auth.confirmPassword')}</label>
                     <input
+
                         type="password"
                         placeholder="Repeat password"
                         value={confirmPassword}
@@ -204,9 +220,10 @@ const SignupScreen = () => {
                         required
                     />
                     {password !== confirmPassword && confirmPassword && (
-                        <p className="text-xs text-red-500">Passwords don't match</p>
+                        <p className="text-xs text-red-500">{t('auth.passwordsMatchError')}</p>
                     )}
                 </div>
+
 
                 {/* Terms */}
                 <div className="flex items-start gap-3 px-1">
@@ -218,9 +235,10 @@ const SignupScreen = () => {
                         className="mt-1 h-4 w-4 rounded border-gray-300 text-[#F5C518] focus:ring-[#F5C518]"
                     />
                     <label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed">
-                        I agree to the <span className="text-[#F5C518] underline decoration-yellow-300">Terms of Service</span> and <span className="text-[#F5C518] underline decoration-yellow-300">Privacy Policy</span>
+                        {t('auth.termsAgree')}
                     </label>
                 </div>
+
 
                 {/* Error Banner */}
                 {error && (
@@ -240,20 +258,22 @@ const SignupScreen = () => {
                     {loading ? (
                         <>
                             <Loader2 className="h-5 w-5 animate-spin" />
-                            Creating account...
+                            {t('auth.creatingAccount')}
                         </>
                     ) : (
-                        "Create account →"
+                        t('auth.signupBtn')
                     )}
                 </button>
+
             </form>
 
             <div className="mt-8 text-sm text-foreground">
-                Already have an account?{" "}
+                {t('auth.alreadyAccount')}{" "}
                 <Link to="/login" className="font-medium text-[#F5C518] underline decoration-2 underline-offset-4 hover:text-[#dcb015]">
-                    Sign in
+                    {t('auth.signinBtn').replace(' →', '')}
                 </Link>
             </div>
+
         </div>
     );
 };

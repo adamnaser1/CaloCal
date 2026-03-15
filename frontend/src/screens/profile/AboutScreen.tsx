@@ -49,22 +49,24 @@ const AboutScreen = () => {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="bg-secondary/30 p-5 rounded-2xl border border-white/5 hover:border-primary/20 transition-colors">
                         <Code className="w-6 h-6 text-blue-500 mb-3" />
-                        <h4 className="font-bold text-foreground mb-1">Modern Tech</h4>
-                        <p className="text-xs text-muted-foreground">Built with React, Supabase & AI</p>
+                        <h4 className="font-bold text-foreground mb-1">{t('about.modernTech')}</h4>
+                        <p className="text-xs text-muted-foreground">{t('about.modernTechDesc')}</p>
                     </div>
                     <div className="bg-secondary/30 p-5 rounded-2xl border border-white/5 hover:border-primary/20 transition-colors">
                         <Sparkles className="w-6 h-6 text-yellow-500 mb-3" />
-                        <h4 className="font-bold text-foreground mb-1">Smart Vision</h4>
-                        <p className="text-xs text-muted-foreground">Recognizing your plate in seconds</p>
+                        <h4 className="font-bold text-foreground mb-1">{t('about.smartVision')}</h4>
+                        <p className="text-xs text-muted-foreground">{t('about.smartVisionDesc')}</p>
+
                     </div>
                 </div>
 
                 <div className="pt-8 text-center space-y-2">
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                        <span>Made with</span>
+                        <span>{t('about.madeWith', { emoji: '☕' }).split('{emoji}')[0]}</span>
                         <Coffee className="w-4 h-4 text-orange-500" />
-                        <span>in Tunisia</span>
+                        <span>{t('about.madeWith', { emoji: '☕' }).split('{emoji}')[1]}</span>
                     </div>
+
                     <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-50">
                         &copy; 2024 Calo Cal Team
                     </p>

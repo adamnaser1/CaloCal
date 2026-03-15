@@ -17,10 +17,10 @@ export const translations = {
             afternoon: 'Good afternoon',
             evening: 'Good evening',
         },
-        todaysMeals: "Today's meals",
+        todaysMeals: "Today's Meals",
         addMeal: 'Add meal',
         caloriesRemaining: 'kcal remaining',
-        encouragingMessage: 'Encouraging Message',
+        encouragingMessage: 'Encouraging message',
         noMealsToday: '🍽️ No meals today — tap + to start',
 
         // Meal types
@@ -49,22 +49,25 @@ export const translations = {
 
         // Capture
         capture: {
-            title: 'Snap your meal',
+            title: 'Take a photo of your meal',
             startingCamera: 'Starting camera...',
             gallery: 'Gallery',
             scan: 'Scan',
             voice: 'Voice',
             hint: 'The clearer the photo, the better the analysis',
+            photoTips: 'Photo tips',
+            tip1: 'Good lighting = better results!',
+            tip2: 'Place the dish on a plain surface',
+            tip3: 'Capture the full plate from above',
+            gotIt: 'Got it',
         },
-        'camera.denied': 'Could not access camera. Please allow camera permission.',
+        'camera.denied': 'Could not access camera. Please allow permission.',
 
         // Profile
         profile: 'Profile',
-        personalInfo: 'Personal information',
-        myGoals: 'My goals',
         notifications: 'Notifications',
         language: 'Language',
-        changePhoto: 'Change photo',
+        changePhoto: 'Change Photo',
         logout: 'Logout',
         darkMode: 'Dark Mode',
         dataPrivacy: 'Data & Privacy',
@@ -79,14 +82,14 @@ export const translations = {
         'profile.lightModeEnabled': 'Light mode enabled',
         'profile.preferenceSaved': 'Your preference has been saved',
         'profile.photoUpdated': 'Profile photo updated!',
-        'profile.photoUploadError': 'Could not upload photo',
+        'profile.photoUploadError': 'Failed to upload photo',
 
         // Notifications
-        notificationsSettings: 'Notification Settings',
-        mealReminders: 'Meal reminders',
-        goalUpdates: 'Goal updates',
-        weeklySummary: 'Weekly summary',
-        pushNotifications: 'Push notifications',
+        notificationsSettings: 'Notifications Settings',
+        mealReminders: 'Meal Reminders',
+        goalUpdates: 'Goal Updates',
+        weeklySummary: 'Weekly Summary',
+        pushNotifications: 'Push Notifications',
         notificationsSaved: 'Preferences updated',
 
         // Export
@@ -95,7 +98,7 @@ export const translations = {
         whatsIncluded: "What's included?",
         profileDetails: 'Profile details (height, weight, goals)',
         completeHistory: 'Complete meal history',
-        ingredientBreakdowns: 'Ingredient breakdowns',
+        ingredientBreakdowns: 'Ingredient details',
         analysisTimestamps: 'Analysis timestamps',
         generating: 'Generating...',
         downloadJson: 'Download JSON',
@@ -105,11 +108,11 @@ export const translations = {
 
         // Privacy
         'privacy.title': 'Your Privacy Matters',
-        'privacy.intro': 'At Calo Cal, we believe your health data is personal. This policy outlines how we protect and manage your information.',
+        'privacy.intro': 'At Calo Cal, we believe your health data is personal. This policy outlines how we protect your information.',
         'privacy.dataCollection': 'Data Collection',
-        'privacy.dataCollectionDesc': 'We only collect data necessary for tracking your nutrition goals, including age, weight, height, and meal logs.',
+        'privacy.dataCollectionDesc': 'We only collect data necessary for tracking your nutritional goals, including age, weight, height, and meal logs.',
         'privacy.security': 'Security',
-        'privacy.securityDesc': 'Your data is securely stored in Supabase and is only accessible by you.',
+        'privacy.securityDesc': 'Your data is securely stored in Supabase and only accessible by you.',
         'privacy.sharing': 'Data Sharing',
         'privacy.sharingDesc': 'We never sell your personal data to third parties.',
         'privacy.rights': 'Your Rights',
@@ -117,7 +120,171 @@ export const translations = {
 
         // About
         'about.ourMission': 'Our Mission',
-        'about.missionDesc': 'Calo Cal was built to simplify nutrition tracking in Tunisia. We combine advanced AI to help you reach your goals.',
+        'about.missionDesc': 'Calo Cal was designed to simplify nutritional tracking in Tunisia. We combine AI to help you reach your goals.',
+        'about.modernTech': 'Modern Technology',
+        'about.modernTechDesc': 'Built with React, Supabase, and AI',
+        'about.smartVision': 'Smart Vision',
+        'about.smartVisionDesc': 'Recognize your plate in seconds',
+        'about.madeWith': 'Made with {emoji} in Tunisia',
+
+        // Auth
+        auth: {
+            welcome: 'Welcome back!',
+            signinWithGoogle: 'Continue with Google',
+            orContinue: 'Or continue with email',
+            email: 'Email',
+            password: 'Password',
+            signingIn: 'Signing in...',
+            signinBtn: 'Sign in →',
+            noAccount: "Don't have an account?",
+            signupLink: 'Sign up',
+            createAccount: 'Create your account',
+            fullName: 'Full name',
+            confirmPassword: 'Confirm password',
+            passwordsMatchError: "Passwords don't match",
+            termsAgree: 'I agree to the Terms of Service and Privacy Policy',
+            creatingAccount: 'Creating account...',
+            signupBtn: 'Create account →',
+            accountCreated: 'Account created!',
+            welcomeOnboarding: "Welcome to Calo Cal — let's set up your profile",
+            passwordStrength: {
+                weak: 'Weak',
+                fair: 'Fair',
+                good: 'Good',
+                strong: 'Strong',
+            }
+        },
+
+
+        // Onboarding
+        onboarding: {
+            welcomeTagline: 'Snap it. Know it. Track it.',
+            welcomeTitle: 'Track smarter, eat better',
+            welcomeSubtitle: 'Powered by Adam NASR — built for Tunisian and North African cuisine',
+            getStarted: 'Get Started →',
+            alreadyAccount: 'I already have an account',
+            goalTitle: "What's your goal?",
+            goalSubtitle: "We'll personalize your daily targets",
+            loseWeight: 'Lose weight',
+            loseWeightDesc: 'Create a calorie deficit',
+            maintainWeight: 'Maintain weight',
+            maintainWeightDesc: 'Stay at your current level',
+            buildMuscle: 'Build muscle',
+            buildMuscleDesc: 'Increase protein intake',
+            continue: 'Continue →',
+            profileTitle: 'Tell us about you',
+            profileSubtitle: 'Used to personalize your plan.',
+            fullName: 'Full Name',
+            fullNamePlaceholder: 'Enter your name',
+            age: 'Age',
+            sex: 'Biological sex',
+            male: 'Male',
+            female: 'Female',
+            height: 'Height',
+            currentWeight: 'Current weight',
+            targetWeight: 'Target weight',
+            goalDifference: 'Goal: {diff} kg to {action}',
+            gain: 'gain',
+            lose: 'lose',
+            activityLevel: 'Activity level',
+            activityLevels: {
+                sedentary: { label: 'Sedentary', desc: 'Little/no exercise' },
+                lightly_active: { label: 'Lightly Active', desc: '1-3 days/week' },
+                moderately_active: { label: 'Moderately Active', desc: '3-5 days/week' },
+                very_active: { label: 'Very Active', desc: '6-7 days/week' },
+                extremely_active: { label: 'Extremely Active', desc: 'Athlete' }
+            },
+            caloriesTitle: 'Your daily goal',
+            caloriesSubtitle: 'Based on your profile',
+            kcalPerDay: 'kcal/day',
+            macros: 'Macros',
+            adjustManually: 'Adjust manually',
+            calculationBreakdown: 'Calculation Breakdown',
+            bmr: 'Basal Metabolic Rate (BMR)',
+            activityMultiplier: 'Activity Multiplier',
+            tdee: 'Total Daily Energy Disp. (TDEE)',
+            adjustment: 'Goal Adjustment',
+            finalGoal: 'Final Calorie Goal',
+            startTracking: 'Start tracking! 🚀',
+            errors: {
+                nameLength: 'Name must be at least 2 characters.',
+                ageRange: 'Age must be between 13 and 100.',
+                sexRequired: 'Please select your biological sex.',
+                heightRequired: 'Height is required.',
+                heightRangeCm: 'Height must be between 100cm and 250cm.',
+                heightRangeFt: 'Height must be between 3.3ft and 8.2ft.',
+                weightRequired: 'Current weight is required.',
+                weightRangeKg: 'Weight must be between 30kg and 300kg.',
+                weightRangeLbs: 'Weight must be between 66lbs and 660lbs.',
+                targetWeightRequired: 'Target weight is required.',
+                targetWeightRangeKg: 'Target weight must be between 30kg and 300kg.',
+                targetWeightRangeLbs: 'Target weight must be between 66lbs and 660lbs.',
+                weightDiffRange: 'Target weight must be within ±50kg of current weight.',
+                activityRequired: 'Please select your activity level.',
+                savingError: 'Error saving profile',
+                savingErrorDesc: 'Could not save your plan. Please try again.'
+            }
+        },
+
+
+        // Personal Info
+        personalInfo: {
+            title: 'Personal information',
+            fullName: 'Full Name',
+            age: 'Age',
+            sex: 'Sex',
+            male: 'Male',
+            female: 'Female',
+            height: 'Height (cm)',
+            currentWeight: 'Current weight',
+            targetWeight: 'Target weight',
+            save: 'Save changes',
+        },
+
+        // My Goals
+        myGoals: {
+            title: 'My Goals',
+            dailyTarget: 'Daily Target',
+            updateGoal: 'Update Goal',
+            activityLevel: 'Activity Level',
+            sedentary: 'Sedentary',
+            light: 'Lightly Active',
+            moderate: 'Moderately Active',
+            active: 'Very Active',
+            updating: 'Updating...',
+        },
+
+        // Results
+        results: {
+            analyzing: 'Analyzing your meal...',
+            todayAt: 'Today at',
+            estimatedKcal: 'Estimated for this meal',
+            macrosBreakdown: 'Macros breakdown',
+            detectedIngredients: 'Detected ingredients',
+            correctManually: 'Correct manually →',
+            mealType: 'Meal Type',
+            saveToDiary: 'Save to my diary',
+            retake: 'Retake',
+        },
+
+        // Help
+        help: {
+            search: 'Search for help...',
+            gettingStarted: 'Getting Started',
+            faq1Q: 'How do I track a meal?',
+            faq1A: 'Tap the camera button in the center of the bottom navigation bar. You can take a photo, upload one, scan a barcode, or describe your meal with voice.',
+            faq2Q: 'What if the AI makes a mistake?',
+            faq2A: 'After the AI estimates your meal, you can verify and edit the ingredients before saving. You can also edit saved meals from your diary.',
+            tunisianCuisine: 'Tunisian Cuisine',
+            faq3Q: 'Does it recognize Tunisian food?',
+            faq3A: 'Yes! Our AI is specifically trained on Tunisian and North African dishes like Couscous, Brik, Lablabi, Ojja, and more.',
+            faq4Q: 'My dish isn’t found',
+            faq4A: 'If scanning doesn’t work, try describing it with Voice Input ("Sahn Tounsi avec thon...") or add it manually.',
+            contactSupport: 'Contact Support',
+        },
+
+        // Version
+        'v1.0.0': 'Version 1.2.0',
 
         // Bottom Navigation
         nav: {
@@ -131,29 +298,29 @@ export const translations = {
         // Progress
         progress: {
             title: 'Your Progress',
-            subtitle: 'Keep pushing, you\'re doing great!',
+            subtitle: "Keep it up, you're doing great!",
             week: 'Week',
             month: 'Month',
             threeMonths: '3 Months',
             dayStreak: 'Day Streak',
-            avgCalories: 'Avg. Calories',
+            avgCalories: 'Avg Calories',
             weightLog: 'Weight Log',
             calorieTrend: 'Calorie Trend',
             target: 'Target',
             logWeight: 'Log my weight',
             noWeightData: 'No weight data yet',
-            noWeightSubtitle: 'Log your first weigh-in to track your progress',
+            noWeightSubtitle: 'Log your first weight to track progress',
             noMealsTrend: 'No meals logged yet',
-            noMealsTrendSubtitle: 'Start tracking your meals to see your calorie trends',
+            noMealsTrendSubtitle: 'Start tracking meals to see calorie trends',
         },
 
         // Weight Modal
         weightModal: {
             title: 'Log your weight',
-            hint: 'Tap the number to type it directly',
+            hint: 'Tap number to type directly',
             tapToType: 'tap to type',
             placeholder: 'How are you feeling today? (optional)',
-            saveEntry: 'Save entry ✓',
+            saveEntry: 'Save Entry ✓',
             success: 'Weight logged ✓',
             error: 'Something went wrong. Please try again.',
         },
@@ -161,19 +328,18 @@ export const translations = {
         // Encouraging messages
         encouragement: {
             streakStart: "Great start! Keep it up! 🔥",
-            streakContinue: "You're on fire! {days} days streak! 🚀",
-            goalProgress: "You're {percent}% to your goal! 💪",
-            perfectDay: "Perfect day! All macros on target! 🎯",
+            streakContinue: "You're on fire! {days} day streak! 🚀",
+            goalProgress: "You're {percent}% towards your goal! 💪",
+            perfectDay: "Perfect day! All macros on point! 🎯",
             waterReminder: "Don't forget to drink water! 💧",
-            exerciseBonus: "Exercise tracked! You earned {calories} extra calories! 🏃",
-            weeklyWin: "You crushed this week! {daysOnTrack}/7 days on track! 🏆",
-            firstMeal: "Good choice for your first meal today! 🌟",
-            balancedMeal: "Well balanced meal! Great job! ⚖️",
+            exerciseBonus: "Exercise logged! You earned {calories} extra calories! 🏃",
+            weeklyWin: "Great week! {daysOnTrack}/7 days on track! 🏆",
+            firstMeal: "Great choice for your first meal! 🌟",
+            balancedMeal: "Nicely balanced meal! High five! ⚖️",
             lowCalorie: "Smart choice! Low calorie option! 🎉",
-            proteinGoal: "Protein goal reached for today! 💪",
+            proteinGoal: "Hit your protein goal for today! 💪",
         }
     },
-
     fr: {
         // Common
         save: 'Enregistrer',
@@ -230,13 +396,16 @@ export const translations = {
             scan: 'Scanner',
             voice: 'Voix',
             hint: 'Plus la photo est claire, meilleure est l\'analyse',
+            photoTips: 'Conseils photo',
+            tip1: 'Bon éclairage = meilleurs résultats !',
+            tip2: 'Placez le plat sur une surface plane',
+            tip3: 'Capturez toute l\'assiette d\'en haut',
+            gotIt: 'Compris',
         },
         'camera.denied': 'Impossible d\'accéder à la caméra. Veuillez autoriser la permission.',
 
         // Profile
         profile: 'Profil',
-        personalInfo: 'Informations personnelles',
-        myGoals: 'Mes objectifs',
         notifications: 'Notifications',
         language: 'Langue',
         changePhoto: 'Changer la photo',
@@ -280,11 +449,11 @@ export const translations = {
 
         // Privacy
         'privacy.title': 'Votre vie privée compte',
-        'privacy.intro': 'Chez Calo Cal, nous pensons que vos données de santé sont personnelles.',
+        'privacy.intro': 'Chez Calo Cal, nous pensons que vos données de santé sont personnelles. Cette politique décrit comment nous protégeons vos informations.',
         'privacy.dataCollection': 'Collecte de données',
-        'privacy.dataCollectionDesc': 'Nous ne collectons que les données nécessaires au suivi de vos objectifs nutritionnels.',
+        'privacy.dataCollectionDesc': 'Nous ne collectons que les données nécessaires au suivi de vos objectifs nutritionnels, notamment l\'âge, le poids, la taille et les journaux de repas.',
         'privacy.security': 'Sécurité',
-        'privacy.securityDesc': 'Vos données sont stockées en toute sécurité dans Supabase.',
+        'privacy.securityDesc': 'Vos données sont stockées en toute sécurité dans Supabase et ne sont accessibles que par vous.',
         'privacy.sharing': 'Partage de données',
         'privacy.sharingDesc': 'Nous ne vendons jamais vos données personnelles à des tiers.',
         'privacy.rights': 'Vos droits',
@@ -292,7 +461,171 @@ export const translations = {
 
         // About
         'about.ourMission': 'Notre Mission',
-        'about.missionDesc': 'Calo Cal a été conçu pour simplifier le suivi nutritionnel en Tunisie.',
+        'about.missionDesc': 'Calo Cal a été conçu pour simplifier le suivi nutritionnel en Tunisie. Nous combinons l\'IA pour vous aider à atteindre vos objectifs.',
+        'about.modernTech': 'Technologie Moderne',
+        'about.modernTechDesc': 'Construit avec React, Supabase et IA',
+        'about.smartVision': 'Vision Intelligente',
+        'about.smartVisionDesc': 'Reconnaissance de votre assiette en quelques secondes',
+        'about.madeWith': 'Fait avec {emoji} en Tunisie',
+
+        // Auth
+        auth: {
+            welcome: 'Bon retour !',
+            signinWithGoogle: 'Continuer avec Google',
+            orContinue: 'Ou continuer avec email',
+            email: 'Email',
+            password: 'Mot de passe',
+            signingIn: 'Connexion...',
+            signinBtn: 'Se connecter →',
+            noAccount: "Vous n'avez pas de compte ?",
+            signupLink: 'S\'inscrire',
+            createAccount: 'Créez votre compte',
+            fullName: 'Nom complet',
+            confirmPassword: 'Confirmer le mot de passe',
+            passwordsMatchError: 'Les mots de passe ne correspondent pas',
+            termsAgree: 'J\'accepte les conditions d\'utilisation et la politique de confidentialité',
+            creatingAccount: 'Création du compte...',
+            signupBtn: 'Créer un compte →',
+            accountCreated: 'Compte créé !',
+            welcomeOnboarding: "Bienvenue sur Calo Cal — configurons votre profil",
+            passwordStrength: {
+                weak: 'Faible',
+                fair: 'Moyen',
+                good: 'Bon',
+                strong: 'Fort',
+            }
+        },
+
+
+        // Onboarding
+        onboarding: {
+            welcomeTagline: 'Prenez en photo. Identifiez. Suivez.',
+            welcomeTitle: 'Suivez plus intelligemment, mangez mieux',
+            welcomeSubtitle: 'Propulsé par Adam NASR — conçu pour la cuisine tunisienne et nord-africaine',
+            getStarted: 'Commencer →',
+            alreadyAccount: "J'ai déjà un compte",
+            goalTitle: 'Quel est votre objectif ?',
+            goalSubtitle: 'Nous personnaliserons vos objectifs quotidiens',
+            loseWeight: 'Perdre du poids',
+            loseWeightDesc: 'Créer un déficit calorique',
+            maintainWeight: 'Maintenir le poids',
+            maintainWeightDesc: 'Rester à votre niveau actuel',
+            buildMuscle: 'Prendre du muscle',
+            buildMuscleDesc: 'Augmenter l’apport en protéines',
+            continue: 'Continuer →',
+            profileTitle: 'Parlez-nous de vous',
+            profileSubtitle: 'Utilisé pour personnaliser votre plan.',
+            fullName: 'Nom Complet',
+            fullNamePlaceholder: 'Entrez votre nom',
+            age: 'Âge',
+            sex: 'Sexe biologique',
+            male: 'Homme',
+            female: 'Femme',
+            height: 'Taille',
+            currentWeight: 'Poids actuel',
+            targetWeight: 'Poids cible',
+            goalDifference: 'Objectif : {diff} kg à {action}',
+            gain: 'gagner',
+            lose: 'perdre',
+            activityLevel: 'Niveau d’activité',
+            activityLevels: {
+                sedentary: { label: 'Sédentaire', desc: 'Peu/pas d’exercice' },
+                lightly_active: { label: 'Légèrement actif', desc: '1-3 jours/semaine' },
+                moderately_active: { label: 'Modérément actif', desc: '3-5 jours/semaine' },
+                very_active: { label: 'Très actif', desc: '6-7 jours/semaine' },
+                extremely_active: { label: 'Extrément actif', desc: 'Athlète' }
+            },
+            caloriesTitle: 'Votre objectif quotidien',
+            caloriesSubtitle: 'Basé sur votre profil',
+            kcalPerDay: 'kcal/jour',
+            macros: 'Macros',
+            adjustManually: 'Ajuster manuellement',
+            calculationBreakdown: 'Détail du calcul',
+            bmr: 'Métabolisme de base (MB)',
+            activityMultiplier: 'Multiplicateur d’activité',
+            tdee: 'Dépense énergétique journalière totale (DEJT)',
+            adjustment: 'Ajustement de l’objectif',
+            finalGoal: 'Objectif calorique final',
+            startTracking: 'Commencer à suivre ! 🚀',
+            errors: {
+                nameLength: 'Le nom doit comporter au moins 2 caractères.',
+                ageRange: 'L’âge doit être compris entre 13 et 100 ans.',
+                sexRequired: 'Veuillez sélectionner votre sexe biologique.',
+                heightRequired: 'La taille est requise.',
+                heightRangeCm: 'La taille doit être comprise entre 100cm et 250cm.',
+                heightRangeFt: 'La taille doit être comprise entre 3.3ft et 8.2ft.',
+                weightRequired: 'Le poids actuel est requis.',
+                weightRangeKg: 'Le poids doit être compris entre 30kg et 300kg.',
+                weightRangeLbs: 'Le poids doit être compris entre 66lbs et 660lbs.',
+                targetWeightRequired: 'Le poids cible est requis.',
+                targetWeightRangeKg: 'Le poids cible doit être compris entre 30kg et 300kg.',
+                targetWeightRangeLbs: 'Le poids cible doit être compris entre 66lbs et 660lbs.',
+                weightDiffRange: 'Le poids cible doit être à +/- 50kg du poids actuel.',
+                activityRequired: 'Veuillez sélectionner votre niveau d’activité.',
+                savingError: 'Erreur lors de l’enregistrement du profil',
+                savingErrorDesc: 'Impossible d’enregistrer votre plan. Veuillez réessayer.'
+            }
+        },
+
+
+        // Personal Info
+        personalInfo: {
+            title: 'Informations personnelles',
+            fullName: 'Nom complet',
+            age: 'Âge',
+            sex: 'Sexe',
+            male: 'Homme',
+            female: 'Femme',
+            height: 'Taille (cm)',
+            currentWeight: 'Poids actuel',
+            targetWeight: 'Poids cible',
+            save: 'Enregistrer les modifications',
+        },
+
+        // My Goals
+        myGoals: {
+            title: 'Mes Objectifs',
+            dailyTarget: 'Cible Quotidienne',
+            updateGoal: 'Mettre à jour l\'objectif',
+            activityLevel: 'Niveau d\'activité',
+            sedentary: 'Sédentaire',
+            light: 'Légèrement Actif',
+            moderate: 'Modérément Actif',
+            active: 'Très Actif',
+            updating: 'Mise à jour...',
+        },
+
+        // Results
+        results: {
+            analyzing: 'Analyse de votre repas...',
+            todayAt: 'Aujourd\'hui à',
+            estimatedKcal: 'Estimé pour ce repas',
+            macrosBreakdown: 'Détails des macros',
+            detectedIngredients: 'Ingrédients détectés',
+            correctManually: 'Corriger manuellement →',
+            mealType: 'Type de repas',
+            saveToDiary: 'Enregistrer dans mon journal',
+            retake: 'Reprendre',
+        },
+
+        // Help
+        help: {
+            search: 'Rechercher de l\'aide...',
+            gettingStarted: 'Commencer',
+            faq1Q: 'Comment suivre un repas ?',
+            faq1A: 'Appuyez sur le bouton photo au centre de la barre de navigation. Vous pouvez prendre une photo, en charger une, scanner un code-barres ou décrire votre repas à la voix.',
+            faq2Q: 'Et si l\'IA fait une erreur ?',
+            faq2A: 'Après l\'analyse, vous pouvez vérifier et modifier les ingrédients avant d\'enregistrer. Vous pouvez aussi modifier vos repas enregistrés dans votre journal.',
+            tunisianCuisine: 'Cuisine Tunisienne',
+            faq3Q: 'Reconnaît-il la cuisine tunisienne ?',
+            faq3A: 'Oui ! Notre IA est spécifiquement formée sur les plats tunisiens comme le Couscous, Brik, Lablabi, Ojja, etc.',
+            faq4Q: 'Mon plat n’est pas trouvé',
+            faq4A: 'Si le scan ne fonctionne pas, essayez de le décrire par la voix ("Sahn Tounsi avec thon...") ou ajoutez-le manuellement.',
+            contactSupport: 'Contacter le support',
+        },
+
+        // Version
+        'v1.0.0': 'Version 1.2.0',
 
         // Bottom Navigation
         nav: {
@@ -348,7 +681,6 @@ export const translations = {
             proteinGoal: "Objectif protéines atteint pour aujourd'hui ! 💪",
         }
     },
-
     ar: {
         // Common
         save: 'حفظ',
@@ -405,13 +737,16 @@ export const translations = {
             scan: 'سكان',
             voice: 'صوت',
             hint: 'كل ما كانت الصورة أوضح، كل ما كان التحليل أدق',
+            photoTips: 'نصائح التصوير',
+            tip1: 'إضاءة باهية = نتائج خير !',
+            tip2: 'حط الصحن على بلاصة مستوية',
+            tip3: 'صور الصحن كامل من الفوق',
+            gotIt: 'مريغل',
         },
         'camera.denied': 'ما نجمناش ندخلوا للكاميرا. من فضلك وافق على الصلاحيات.',
 
         // Profile
         profile: 'الملف الشخصي',
-        personalInfo: 'المعلومات الشخصية',
-        myGoals: 'أهدافي',
         notifications: 'الإشعارات',
         language: 'اللغة',
         changePhoto: 'بدل الصورة',
@@ -455,19 +790,183 @@ export const translations = {
 
         // Privacy
         'privacy.title': 'خصوصيتك تهمنا',
-        'privacy.intro': 'في Calo Cal، نؤمن أن بياناتك الصحية شخصية.',
+        'privacy.intro': 'في Calo Cal، نؤمن أن بياناتك الصحية شخصية. السياسة هذي توضح كيفاش نحميو بياناتك.',
         'privacy.dataCollection': 'جمع البيانات',
-        'privacy.dataCollectionDesc': 'نجمع فقط البيانات الضرورية لتتبع أهدافك الغذائية.',
+        'privacy.dataCollectionDesc': 'نجمعو كان البيانات اللازمة باش تتبع أهدافك، كيف العمر، الميزان، والطول.',
         'privacy.security': 'الأمان',
-        'privacy.securityDesc': 'بياناتك مخزنة بأمان في Supabase.',
+        'privacy.securityDesc': 'بياناتك مخزنة بأمان في Supabase وإنت كهو تنجم تشوفها.',
         'privacy.sharing': 'مشاركة البيانات',
-        'privacy.sharingDesc': 'لا نبيع بياناتك الشخصية لأطراف ثالثة أبداً.',
+        'privacy.sharingDesc': 'عمرنا ما نبيعو بياناتك الشخصية لأطراف أخرى.',
         'privacy.rights': 'حقوقك',
-        'privacy.rightsDesc': 'يمكنك تصدير بياناتك في أي وقت من قسم التصدير.',
+        'privacy.rightsDesc': 'تنجم تخرج بياناتك في أي وقت من قسم التصدير.',
 
         // About
         'about.ourMission': 'مهمتنا',
-        'about.missionDesc': 'تم بناء Calo Cal لتبسيط تتبع التغذية في تونس.',
+        'about.missionDesc': 'Calo Cal تخدمت باش تسهل تتبع التغذية في تونس. نستخدمو الذكاء الاصطناعي باش نعاونوك توصل لأهدافك.',
+        'about.modernTech': 'تكنولوجيا حديثة',
+        'about.modernTechDesc': 'مخدوم بـ React و Supabase وذكاء اصطناعي',
+        'about.smartVision': 'رؤية ذكية',
+        'about.smartVisionDesc': 'يعرف شنوة في صحنك في ثواني',
+        'about.madeWith': 'تخدم بـ {emoji} في تونس',
+
+        // Auth
+        auth: {
+            welcome: 'مرحبا بيك من جديد !',
+            signinWithGoogle: 'واصل بجوجل',
+            orContinue: 'والا كمل بالإيميل',
+            email: 'الإيميل',
+            password: 'كلمة السر',
+            signingIn: 'جاري الدخول...',
+            signinBtn: 'سجل دخولك ←',
+            noAccount: 'ما عندكش حساب ؟',
+            signupLink: 'سجل توا',
+            createAccount: 'حل حساب جديد',
+            fullName: 'الإسم الكامل',
+            confirmPassword: 'تأكيد كلمة السر',
+            passwordsMatchError: 'كلمات السر موش كيف كيف',
+            termsAgree: 'أنا موافق على شروط الخدمة وسياسة الخصوصية',
+            creatingAccount: 'جاري فتح الحساب...',
+            signupBtn: 'حل حساب ←',
+            accountCreated: 'تم فتح الحساب !',
+            welcomeOnboarding: 'مرحبا بيك في Calo Cal — خلينا نحضرو ملفك الشخصي',
+            passwordStrength: {
+                weak: 'ضعيف',
+                fair: 'متوسط',
+                good: 'باهي',
+                strong: 'قوي',
+            }
+        },
+
+
+        // Onboarding
+        onboarding: {
+            welcomeTagline: 'صور. أعرف. قيد.',
+            welcomeTitle: 'تبع ماكلتك بذكاء، وعيش خير',
+            welcomeSubtitle: 'بفضل Adam NASR — مخدوم للماكلة التونسية والمغاربية',
+            getStarted: 'أبدا توة ←',
+            alreadyAccount: 'عندي حساب ديجا',
+            goalTitle: 'شنوة هدفك؟',
+            goalSubtitle: 'باش نحضرو أهدافك اليومية بدقة',
+            loseWeight: 'نقص في الميزان',
+            loseWeightDesc: 'نقص في الكالوري',
+            maintainWeight: 'حافظ على الميزان',
+            maintainWeightDesc: 'بقى في مستواك الحالي',
+            buildMuscle: 'أعمل عضلات',
+            buildMuscleDesc: 'زيد في البروتين',
+            continue: 'كمل ←',
+            profileTitle: 'أحكيلنا على روحك',
+            profileSubtitle: 'باش نحضرو البرنامج المناسب ليك.',
+            fullName: 'الإسم الكامل',
+            fullNamePlaceholder: 'أكتب إسمك',
+            age: 'العمر',
+            sex: 'الجنس البيولوجي',
+            male: 'راجل',
+            female: 'مرة',
+            height: 'الطول',
+            currentWeight: 'الميزان توة',
+            targetWeight: 'الميزان إلي تحب عليه',
+            goalDifference: 'الهدف: {diff} كغ باش {action}',
+            gain: 'تزيد',
+            lose: 'تنقص',
+            activityLevel: 'مستوى النشاط',
+            activityLevels: {
+                sedentary: { label: 'راقد', desc: 'ماتعملش برشة سبور' },
+                lightly_active: { label: 'نشاط خفيف', desc: '1-3 أيام في الجمعة' },
+                moderately_active: { label: 'نشاط متوسط', desc: '3-5 أيام في الجمعة' },
+                very_active: { label: 'ناشط برشة', desc: '6-7 أيام في الجمعة' },
+                extremely_active: { label: 'رياضي محترف', desc: 'أثليت' }
+            },
+            caloriesTitle: 'هدفك اليومي من الكالوري',
+            caloriesSubtitle: 'حسب معلوماتك الشخصية',
+            kcalPerDay: 'كالوري/يوم',
+            macros: 'المكونات الأساسية',
+            adjustManually: 'عدل وحدك',
+            calculationBreakdown: 'تفاصيل الحساب',
+            bmr: 'معدل الأيض الأساسي (BMR)',
+            activityMultiplier: 'معامل النشاط',
+            tdee: 'إستهلاك الطاقة اليومي (TDEE)',
+            adjustment: 'تعديل الهدف',
+            finalGoal: 'الهدف النهائي من الكالوري',
+            startTracking: 'أبدا قيد ماكلتك! 🚀',
+            errors: {
+                nameLength: 'الإسم لازم يكون فيه زوز حروف على الأقل.',
+                ageRange: 'العمر لازم يكون بين 13 و 100 سنة.',
+                sexRequired: 'أختار جنسك البيولوجي.',
+                heightRequired: 'الطول لازم.',
+                heightRangeCm: 'الطول لازم يكون بين 100سم و 250سم.',
+                heightRangeFt: 'الطول لازم يكون بين 3.3 قدم و 8.2 قدم.',
+                weightRequired: 'الميزان توة لازم تكتبو.',
+                weightRangeKg: 'الميزان لازم يكون بين 30 كغ و 300 كغ.',
+                weightRangeLbs: 'الميزان لازم يكون بين 66 و 660 باوند.',
+                targetWeightRequired: 'الميزان إلي تحب عليه لازم تكتبو.',
+                targetWeightRangeKg: 'الميزان المستهدف لازم يكون بين 30 كغ و 300 كغ.',
+                targetWeightRangeLbs: 'الميزان المستهدف لازم يكون بين 66 و 660 باوند.',
+                weightDiffRange: 'الميزان المستهدف لازم يكون في حدود +/- 50 كغ من ميزانك توة.',
+                activityRequired: 'أختار مستوى نشاطك.',
+                savingError: 'غلطة في خزن المعلومات',
+                savingErrorDesc: 'منجمناش نخزنو برنامجك. عاود جرب.'
+            }
+        },
+
+
+        // Personal Info
+        personalInfo: {
+            title: 'المعلومات الشخصية',
+            fullName: 'الإسم الكامل',
+            age: 'العمر',
+            sex: 'الجنس',
+            male: 'راجل',
+            female: 'مرا',
+            height: 'الطول (صم)',
+            currentWeight: 'الوزن الحالي',
+            targetWeight: 'الوزن المستهدف',
+            save: 'حفظ التغييرات',
+        },
+
+        // My Goals
+        myGoals: {
+            title: 'أهدافي',
+            dailyTarget: 'الهدف اليومي',
+            updateGoal: 'تحديث الهدف',
+            activityLevel: 'مستوى النشاط',
+            sedentary: 'نشاط قليل',
+            light: 'نشاط خفيف',
+            moderate: 'نشاط متوسط',
+            active: 'نشاط كبير',
+            updating: 'جاري التحديث...',
+        },
+
+        // Results
+        results: {
+            analyzing: 'جاري تحليل وجبتك...',
+            todayAt: 'اليوم مع',
+            estimatedKcal: 'الكالوري المقدر للوجبة هذي',
+            macrosBreakdown: 'تفاصيل الماكرو',
+            detectedIngredients: 'المكونات اللي لقيناها',
+            correctManually: 'صلح وحدك ←',
+            mealType: 'نوع الوجبة',
+            saveToDiary: 'سجلها في يومياتي',
+            retake: 'عاود صور',
+        },
+
+        // Help
+        help: {
+            search: 'لوج على مساعدة...',
+            gettingStarted: 'البداية',
+            faq1Q: 'كيفاش نتبع وجبة ؟',
+            faq1A: 'انزل على زر الكاميرا في الوسط. تنجم تصور، تحمل صورة، تعمل سكان، والا توصف ماكلتك بالصوت.',
+            faq2Q: 'شنوة يصير لو الذكاء الاصطناعي يغلط ؟',
+            faq2A: 'بعد التحليل، تنجم تثبت وتصلح المكونات قبل ما تسجل. وتنجم زادة تبدل الوجبات المسجلة من اليوميات.',
+            tunisianCuisine: 'الماكلة التونسية',
+            faq3Q: 'يعرف الماكلة التونسية ؟',
+            faq3A: 'إي ! الذكاء الاصطناعي متاعنا مدرب على الماكلة التونسية كيف الكسكسي، البريك، اللبلابي، العجة، وغيرها.',
+            faq4Q: 'ماكلتي ما لقيهاش',
+            faq4A: 'لو السكان ما خدمش، جرب أوصفها بالصوت ("صحن تونسي بالتن...") والا زيدها وحدك.',
+            contactSupport: 'إتصل بالدعم',
+        },
+
+        // Version
+        'v1.0.0': 'نسخة 1.2.0',
 
         // Bottom Navigation
         nav: {
@@ -523,21 +1022,21 @@ export const translations = {
             proteinGoal: "وصلت لهدف البروتين لليوم! 💪",
         }
     }
-}
+};
 
-export type Language = 'en' | 'fr' | 'ar'
+export type Language = 'en' | 'fr' | 'ar';
 
 export function translate(key: string, lang: Language, params?: Record<string, any>): string {
-    const keys = key.split('.')
-    let value: any = translations[lang]
+    const keys = key.split('.');
+    let value: any = translations[lang];
 
     for (const k of keys) {
-        value = value?.[k]
+        value = value?.[k];
     }
 
     if (typeof value === 'string' && params) {
-        return value.replace(/{(\w+)}/g, (_, key) => params[key] ?? `{${key}}`)
+        return value.replace(/{(\w+)}/g, (_, k) => params[k] ?? `{${k}}`);
     }
 
-    return value || key
+    return value || key;
 }

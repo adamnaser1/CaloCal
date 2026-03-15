@@ -4,11 +4,15 @@ import { ArrowLeft, Loader2, Check } from "lucide-react";
 import { getUserProfile, updateUserProfile } from "@/services/profileService";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 
 const PersonalInfoScreen = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
     const { refreshProfile } = useAuth();
+    const { t } = useLanguage();
+
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -35,8 +39,9 @@ const PersonalInfoScreen = () => {
                 }
             } catch (error) {
                 console.error(error);
-                toast({ variant: "destructive", title: "Error", description: "Failed to load profile." });
+                toast({ variant: "destructive", title: t('common.error'), description: t('error.profileLoad') });
             } finally {
+
                 setLoading(false);
             }
         };
@@ -58,19 +63,21 @@ const PersonalInfoScreen = () => {
             await refreshProfile();
 
             toast({
-                title: "Profile updated ✓",
+                title: t('profile.photoUpdated'),
                 variant: 'success',
                 duration: 3000
             });
+
             navigate(-1);
         } catch (error) {
             console.error(error);
             toast({
                 variant: "destructive",
-                title: "Something went wrong.",
-                description: "Please try again.",
+                title: t('common.error'),
+                description: t('error.tryAgain'),
                 duration: 5000
             });
+
         } finally {
             setSaving(false);
         }
@@ -90,14 +97,16 @@ const PersonalInfoScreen = () => {
                 <button onClick={() => navigate(-1)} className="rounded-full bg-secondary p-2">
                     <ArrowLeft className="h-5 w-5 text-foreground" />
                 </button>
-                <h1 className="font-display text-lg font-bold text-foreground">Personal information</h1>
+                <h1 className="font-display text-lg font-bold text-foreground">{t('personalInfo.title')}</h1>
+
             </header>
 
             <div className="px-5 pt-4">
                 <div className="space-y-6">
                     {/* Full Name */}
                     <div>
-                        <label className="mb-2 block text-sm font-bold text-foreground">Full Name</label>
+                        <label className="mb-2 block text-sm font-bold text-foreground">{t('personalInfo.fullName')}</label>
+
                         <input
                             type="text"
                             value={fullName}
@@ -109,7 +118,8 @@ const PersonalInfoScreen = () => {
                     {/* Age & Sex Row */}
                     <div className="flex gap-4">
                         <div className="flex-1">
-                            <label className="mb-2 block text-sm font-bold text-foreground">Age</label>
+                            <label className="mb-2 block text-sm font-bold text-foreground">{t('personalInfo.age')}</label>
+
                             <input
                                 type="number"
                                 value={age}
@@ -118,7 +128,8 @@ const PersonalInfoScreen = () => {
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="mb-2 block text-sm font-bold text-foreground">Sex</label>
+                            <label className="mb-2 block text-sm font-bold text-foreground">{t('personalInfo.sex')}</label>
+
                             <div className="flex rounded-2xl bg-secondary p-1">
                                 <button
                                     onClick={() => setSex("male")}
@@ -127,7 +138,8 @@ const PersonalInfoScreen = () => {
                                         : "text-muted-foreground"
                                         }`}
                                 >
-                                    Male
+                                    {t('personalInfo.male')}
+
                                 </button>
                                 <button
                                     onClick={() => setSex("female")}
@@ -136,7 +148,8 @@ const PersonalInfoScreen = () => {
                                         : "text-muted-foreground"
                                         }`}
                                 >
-                                    Female
+                                    {t('personalInfo.female')}
+
                                 </button>
                             </div>
                         </div>
@@ -144,7 +157,8 @@ const PersonalInfoScreen = () => {
 
                     {/* Height & Weights */}
                     <div>
-                        <label className="mb-2 block text-sm font-bold text-foreground">Height (cm)</label>
+                        <label className="mb-2 block text-sm font-bold text-foreground">{t('personalInfo.height')}</label>
+
                         <input
                             type="number"
                             value={height}
@@ -155,7 +169,8 @@ const PersonalInfoScreen = () => {
 
                     <div className="flex gap-4">
                         <div className="flex-1">
-                            <label className="mb-2 block text-sm font-bold text-foreground">Current weight</label>
+                            <label className="mb-2 block text-sm font-bold text-foreground">{t('personalInfo.currentWeight')}</label>
+
                             <input
                                 type="number"
                                 value={currentWeight}
@@ -164,7 +179,8 @@ const PersonalInfoScreen = () => {
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="mb-2 block text-sm font-bold text-foreground">Target weight</label>
+                            <label className="mb-2 block text-sm font-bold text-foreground">{t('personalInfo.targetWeight')}</label>
+
                             <input
                                 type="number"
                                 value={targetWeight}
@@ -180,7 +196,8 @@ const PersonalInfoScreen = () => {
                     disabled={saving}
                     className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-display font-bold text-primary-foreground shadow-fab active:scale-[0.98] disabled:opacity-70"
                 >
-                    {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : "Save changes"}
+                    {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : t('personalInfo.save')}
+
                     {!saving && <Check className="h-5 w-5" />}
                 </button>
             </div>

@@ -5,11 +5,13 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { updateUserProfile } from "@/services/profileService";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CalorieTargetScreen = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
     const { refreshProfile } = useAuth();
+    const { t } = useLanguage();
     const [dailyGoal, setDailyGoal] = useState(2000);
     const [initialGoal, setInitialGoal] = useState(2000); // For animation base
     const [isAnimating, setIsAnimating] = useState(true);
@@ -117,8 +119,8 @@ const CalorieTargetScreen = () => {
         } catch (error) {
             toast({
                 variant: "destructive",
-                title: "Error saving profile",
-                description: "Could not save your plan. Please try again.",
+                title: t('onboarding.errors.savingError'),
+                description: t('onboarding.errors.savingErrorDesc'),
             });
         } finally {
             setIsSaving(false);
@@ -146,8 +148,8 @@ const CalorieTargetScreen = () => {
             </header>
 
             <div className="px-5 pt-6 text-center">
-                <h1 className="mb-2 font-display text-[28px] font-bold text-foreground">Your daily goal</h1>
-                <p className="mb-8 font-body text-sm text-muted-foreground">Based on your profile</p>
+                <h1 className="mb-2 font-display text-[28px] font-bold text-foreground">{t('onboarding.caloriesTitle')}</h1>
+                <p className="mb-8 font-body text-sm text-muted-foreground">{t('onboarding.caloriesSubtitle')}</p>
 
                 {/* Hero Number */}
                 <div className="mb-8 flex flex-col items-center justify-center">
@@ -159,7 +161,7 @@ const CalorieTargetScreen = () => {
                         >
                             <CountUp end={dailyGoal} duration={1.2} />
                         </motion.span>
-                        <span className="font-body text-lg text-muted-foreground">kcal/day</span>
+                        <span className="font-body text-lg text-muted-foreground">{t('onboarding.kcalPerDay')}</span>
                     </div>
                 </div>
 
@@ -188,7 +190,7 @@ const CalorieTargetScreen = () => {
                             />
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-sm font-bold text-muted-foreground">Macros</span>
+                            <span className="text-sm font-bold text-muted-foreground">{t('onboarding.macros')}</span>
                         </div>
                     </div>
                 </div>
@@ -217,7 +219,7 @@ const CalorieTargetScreen = () => {
                     >
                         <Minus className="h-4 w-4" />
                     </button>
-                    <span className="text-sm font-medium text-muted-foreground">Adjust manually</span>
+                    <span className="text-sm font-medium text-muted-foreground">{t('onboarding.adjustManually')}</span>
                     <button
                         onClick={() => adjustGoal(50)}
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground hover:bg-secondary/80"
@@ -228,27 +230,27 @@ const CalorieTargetScreen = () => {
 
                 {/* Breakdown */}
                 <div className="rounded-2xl bg-gray-50 p-5 text-left text-sm mb-4 border border-gray-100">
-                    <h3 className="font-bold text-foreground mb-3 text-base">Calculation Breakdown</h3>
+                    <h3 className="font-bold text-foreground mb-3 text-base">{t('onboarding.calculationBreakdown')}</h3>
                     <div className="flex justify-between mb-2">
-                        <span className="text-muted-foreground">Basal Metabolic Rate (BMR)</span>
+                        <span className="text-muted-foreground">{t('onboarding.bmr')}</span>
                         <span className="font-medium">{breakdown.bmr} kcal</span>
                     </div>
                     <div className="flex justify-between mb-2">
-                        <span className="text-muted-foreground">Activity Multiplier</span>
+                        <span className="text-muted-foreground">{t('onboarding.activityMultiplier')}</span>
                         <span className="font-medium">x {breakdown.activityMultiplier}</span>
                     </div>
                     <div className="flex justify-between mb-3 pb-3 border-b border-gray-200">
-                        <span className="text-muted-foreground">Total Daily Energy Disp. (TDEE)</span>
+                        <span className="text-muted-foreground">{t('onboarding.tdee')}</span>
                         <span className="font-medium">{breakdown.tdee} kcal</span>
                     </div>
                     <div className="flex justify-between mb-2 font-medium">
-                        <span className="text-muted-foreground">Goal Adjustment</span>
+                        <span className="text-muted-foreground">{t('onboarding.adjustment')}</span>
                         <span className={`${breakdown.adjustment > 0 ? "text-green-600" : breakdown.adjustment < 0 ? "text-orange-500" : "text-gray-500"}`}>
                             {breakdown.adjustment > 0 ? "+" : ""}{breakdown.adjustment} kcal
                         </span>
                     </div>
                     <div className="flex justify-between font-bold text-base mt-2 pt-2 border-t border-gray-200">
-                        <span>Final Calorie Goal</span>
+                        <span>{t('onboarding.finalGoal')}</span>
                         <span className="text-[#dcb015]">{dailyGoal} kcal/day</span>
                     </div>
                 </div>
@@ -261,7 +263,7 @@ const CalorieTargetScreen = () => {
                     className="flex w-full items-center justify-center gap-2 rounded-full bg-[#F5C518] py-4 font-display font-bold text-foreground transition-opacity disabled:opacity-70"
                 >
                     {isSaving && <Loader2 className="h-5 w-5 animate-spin" />}
-                    Start tracking! 🚀
+                    {t('onboarding.startTracking')}
                 </button>
             </div>
         </div>
