@@ -10,14 +10,16 @@ import httpx
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+from ..config import settings
+
 # Configure Gemini
 try:
-    import os
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-    if GEMINI_API_KEY:
-        genai.configure(api_key=GEMINI_API_KEY)
+    if settings.gemini_api_key:
+        genai.configure(api_key=settings.gemini_api_key)
+    else:
+        logger.warning("Gemini API key not configured in settings")
 except Exception as e:
-    logger.warning(f"Gemini API key not configured: {e}")
+    logger.warning(f"Gemini API key configuration failed: {e}")
 
 class ChatRequest(BaseModel):
     conversation_id: Optional[str] = None
@@ -108,7 +110,7 @@ async def chat(request: ChatRequest):
     """
     try:
         # Build conversation with Gemini
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         # Add user context
         context = f"{SYSTEM_PROMPT}\n\nUSER_ID: {request.user_id}\nLANGUAGE: {request.language}\n\n"
