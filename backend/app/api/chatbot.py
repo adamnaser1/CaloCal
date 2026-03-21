@@ -148,7 +148,7 @@ async def chat(request: ChatRequest):
         user_context = await get_user_context(request.user_id)
         
         # Build conversation with Gemini
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         # Add user context to prompt
         context = f"""{SYSTEM_PROMPT}
