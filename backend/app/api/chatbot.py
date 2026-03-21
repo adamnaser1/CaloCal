@@ -62,8 +62,6 @@ async def get_user_context(user_id: str) -> Dict:
         today_fats = sum(meal['total_fats'] or 0 for meal in meals.data)
         
         return {
-            'user_id': user_id,
-            'full_name': profile.data.get('full_name', 'User'),
             'daily_calorie_goal': profile.data.get('daily_calorie_goal', 2000),
             'preferred_language': profile.data.get('preferred_language', 'en'),
             'today_calories': today_calories,
@@ -151,10 +149,9 @@ async def chat(request: ChatRequest):
         model = genai.GenerativeModel('gemini-2.5-flash')
         
         # Add user context to prompt
-        context = f"""{SYSTEM_PROMPT}
+        context = SYSTEM_PROMPT + f"""
 
 USER CONTEXT (Use this real data in your responses):
-- Name: {user_context.get('full_name', 'User')}
 - Daily Goal: {user_context.get('daily_calorie_goal', 2000)} kcal
 - Today's Calories: {user_context.get('today_calories', 0)} kcal
 - Today's Protein: {user_context.get('today_proteins', 0)}g
