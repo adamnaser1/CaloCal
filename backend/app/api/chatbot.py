@@ -2,24 +2,29 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
 import google.generativeai as genai
-from datetime import datetime
+from datetime import datetime, date
 import json
 import logging
 import httpx
+from supabase import create_client, Client
+from ..config import settings
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
-
-from ..config import settings
 
 # Configure Gemini
 try:
     if settings.gemini_api_key:
         genai.configure(api_key=settings.gemini_api_key)
-    else:
-        logger.warning("Gemini API key not configured in settings")
 except Exception as e:
-    logger.warning(f"Gemini API key configuration failed: {e}")
+    logger.warning(f"Gemini API key not configured: {e}")
+
+# Configure Supabase
+try:
+    supabase: Client = create_client(settings.supabase_url, settings.supabase_key)
+except Exception as e:
+    logger.warning(f"Supabase not configured: {e}")
+    supabase = None
 
 class ChatRequest(BaseModel):
     conversation_id: Optional[str] = None
@@ -33,7 +38,45 @@ class ChatResponse(BaseModel):
     action: Optional[Dict[str, Any]] = None
     metadata: Optional[Dict[str, Any]] = None
 
-# System prompt
+async def get_user_context(user_id: str) -> Dict:
+    """Get user data from Supabase"""
+    try:
+        if not supabase:
+            return {}
+        
+        # Get user profile
+        profile = supabase.table('profiles').select('*').eq('id', user_id).single().execute()
+        
+        # Get today's meals
+        today = date.today().isoformat()
+        meals = supabase.table('meal_logs')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .gte('logged_at', today)\
+            .execute()
+        
+        # Calculate today's totals
+        today_calories = sum(meal['total_calories'] or 0 for meal in meals.data)
+        today_proteins = sum(meal['total_proteins'] or 0 for meal in meals.data)
+        today_carbs = sum(meal['total_carbs'] or 0 for meal in meals.data)
+        today_fats = sum(meal['total_fats'] or 0 for meal in meals.data)
+        
+        return {
+            'user_id': user_id,
+            'full_name': profile.data.get('full_name', 'User'),
+            'daily_calorie_goal': profile.data.get('daily_calorie_goal', 2000),
+            'preferred_language': profile.data.get('preferred_language', 'en'),
+            'today_calories': today_calories,
+            'today_proteins': today_proteins,
+            'today_carbs': today_carbs,
+            'today_fats': today_fats,
+            'meals_today': len(meals.data),
+            'remaining_calories': (profile.data.get('daily_calorie_goal', 2000) - today_calories)
+        }
+    except Exception as e:
+        logger.error(f"Error getting user context: {e}")
+        return {}
+
 SYSTEM_PROMPT = """You are Calo Cal AI Assistant, a helpful nutrition chatbot for a Tunisian food tracking app.
 
 CAPABILITIES:
@@ -45,22 +88,22 @@ CAPABILITIES:
 
 RULES:
 - Be friendly and use emojis appropriately
-- For Tunisian dishes, use local names (brik, couscous, lablabi, mloukhiya, etc.)
+- For Tunisian dishes, use local names (brik, couscous, lablabi, mloukhiya, ojja, etc.)
 - When user wants to log a meal, respond with an action
 - Always respond in the user's language
+- Use the user's actual data from their profile
 
 ACTION FORMAT:
 When you need to perform an action, respond with JSON:
 {
   "action": {
-    "type": "add_meal" | "get_stats" | "modify_meal",
+    "type": "add_meal" | "get_stats",
     "params": {
       "meal_name": "dish name",
-      "meal_type": "breakfast|lunch|dinner|snack",
-      "portion": "optional portion size"
+      "meal_type": "breakfast|lunch|dinner|snack"
     }
   },
-  "response": "Your friendly message"
+  "response": "Your friendly message to user"
 }
 
 EXAMPLES:
@@ -75,7 +118,7 @@ Assistant:
       "meal_type": "breakfast"
     }
   },
-  "response": "Got it! Logging a brik for breakfast 🥟 A typical brik has around 280 kcal with 12g protein. Let me save that for you!"
+  "response": "Got it! Logging a brik for breakfast 🥟 A typical brik has around 280 kcal with 12g protein. You have {remaining_calories} kcal left for today!"
 }
 
 User: "كليت كسكس نهار"
@@ -88,36 +131,43 @@ Assistant:
       "meal_type": "lunch"
     }
   },
-  "response": "باهي! نسجل الكسكس متاع الغذاء 🍲 الكسكس العادي فيه تقريبا 500 كالوري. باهي هكذا؟"
+  "response": "باهي! نسجل الكسكس متاع الغذاء 🍲 فيه تقريبا 500 كالوري."
 }
 
 User: "How am I doing today?"
-Assistant:
-{
-  "action": {
-    "type": "get_stats"
-  },
-  "response": "Let me check your progress for today! 📊"
-}
+Assistant: Based on your progress today, you've consumed {today_calories} out of {daily_goal} kcal! You have {remaining_calories} kcal remaining. You're doing great! 💪
 
-Be conversational and helpful!
+Be conversational, encouraging, and use the REAL user data provided!
 """
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """
-    Main chatbot endpoint
-    """
+    """Main chatbot endpoint with real data access"""
     try:
-        # Build conversation with Gemini
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # Get user context from Supabase
+        user_context = await get_user_context(request.user_id)
         
-        # Add user context
-        context = f"{SYSTEM_PROMPT}\n\nUSER_ID: {request.user_id}\nLANGUAGE: {request.language}\n\n"
+        # Build conversation with Gemini
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Add user context to prompt
+        context = f"""{SYSTEM_PROMPT}
+
+USER CONTEXT (Use this real data in your responses):
+- Name: {user_context.get('full_name', 'User')}
+- Daily Goal: {user_context.get('daily_calorie_goal', 2000)} kcal
+- Today's Calories: {user_context.get('today_calories', 0)} kcal
+- Today's Protein: {user_context.get('today_proteins', 0)}g
+- Today's Carbs: {user_context.get('today_carbs', 0)}g
+- Today's Fats: {user_context.get('today_fats', 0)}g
+- Meals Today: {user_context.get('meals_today', 0)}
+- Remaining Calories: {user_context.get('remaining_calories', 2000)} kcal
+- Language: {request.language}
+"""
         
         chat_session = model.start_chat(history=[
             {"role": "user", "parts": [context]},
-            {"role": "model", "parts": ["I understand. Ready to help!"]}
+            {"role": "model", "parts": ["I understand. I have access to the user's real data and will use it in my responses. Ready to help!"]}
         ])
         
         response = chat_session.send_message(request.message)
@@ -134,6 +184,11 @@ async def chat(request: ChatRequest):
                 if "action" in action_data:
                     action = action_data["action"]
                     response_text = action_data.get("response", response_text)
+                    
+                    # Replace placeholders with real data
+                    response_text = response_text.replace('{remaining_calories}', str(user_context.get('remaining_calories', 0)))
+                    response_text = response_text.replace('{today_calories}', str(user_context.get('today_calories', 0)))
+                    response_text = response_text.replace('{daily_goal}', str(user_context.get('daily_calorie_goal', 2000)))
         except Exception as e:
             logger.warning(f"Could not parse action: {e}")
         
@@ -146,13 +201,6 @@ async def chat(request: ChatRequest):
             if action_result and action_result.get("success"):
                 if action["type"] == "add_meal":
                     response_text += f"\n\n✅ Meal saved successfully!"
-                elif action["type"] == "get_stats":
-                    stats = action_result.get("stats", {})
-                    response_text += f"\n\n📊 Today's stats:\n"
-                    response_text += f"🔥 {stats.get('today_calories', 0)} / {stats.get('daily_goal', 2000)} kcal\n"
-                    response_text += f"💪 Protein: {stats.get('today_proteins', 0)}g\n"
-                    response_text += f"🍽️ Meals logged: {stats.get('meals_today', 0)}\n"
-                    response_text += f"🔥 Streak: {stats.get('current_streak', 0)} days"
         
         conversation_id = request.conversation_id or f"conv_{datetime.utcnow().timestamp()}"
         
@@ -163,24 +211,36 @@ async def chat(request: ChatRequest):
             metadata={
                 "user_id": request.user_id,
                 "timestamp": datetime.utcnow().isoformat(),
-                "action_executed": action_result is not None
+                "action_executed": action_result is not None,
+                "user_context": user_context
             }
         )
         
     except Exception as e:
         logger.error(f"Chatbot error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        # Fallback response
+        fallback = {
+            'en': "Hi! I'm your Calo Cal assistant 🤖 How can I help you today?",
+            'fr': "Salut! Je suis ton assistant Calo Cal 🤖 Comment puis-je t'aider?",
+            'ar': "أهلا! أنا مساعدك Calo Cal 🤖 كيف نجمك اليوم؟"
+        }
+        
+        return ChatResponse(
+            conversation_id=f"conv_{datetime.utcnow().timestamp()}",
+            response=fallback.get(request.language, fallback['en']),
+            action=None,
+            metadata={
+                "error": str(e),
+                "fallback": True
+            }
+        )
 
 async def execute_action(action: Dict, user_id: str) -> Optional[Dict]:
-    """
-    Execute chatbot action via n8n webhook
-    """
-    N8N_CHATBOT_WEBHOOK = "https://cooper-uncalculating-parthenia.ngrok-free.dev/webhook/chatbot-action"
-    
+    """Execute chatbot action via n8n webhook"""
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                N8N_CHATBOT_WEBHOOK,
+                settings.N8N_CHATBOT_WEBHOOK,
                 json={
                     "type": action["type"],
                     "user_id": user_id,
@@ -193,8 +253,8 @@ async def execute_action(action: Dict, user_id: str) -> Optional[Dict]:
                 return response.json()
             else:
                 logger.error(f"n8n webhook failed: {response.status_code}")
-                return None
+                return {"success": False, "error": "Webhook failed"}
                 
     except Exception as e:
         logger.error(f"Action execution failed: {e}")
-        return None
+        return {"success": False, "error": str(e)}
