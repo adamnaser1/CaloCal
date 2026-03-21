@@ -19,7 +19,6 @@ No need to get a new key!
 
 ## 3. Get Gemini API Key (FREE)
 
-GEMINI_API_KEY=AIzaSyBF3jOU-rzuf7oL1A5JDYeRTtj_DIIdh9Q 
 FREE TIER:
 - 1,500 requests per day
 - No credit card required
