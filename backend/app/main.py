@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .api import routes
-from .api import chatbot
+# from .api import chatbot  # ← Comment this out for now
 from .config import settings
 import logging
 
@@ -53,7 +53,7 @@ app.add_middleware(
 
 # Include routes
 app.include_router(routes.router)
-app.include_router(chatbot.router, prefix="/api/chat", tags=["chatbot"])
+# app.include_router(chatbot.router, prefix="/api/chat", tags=["chatbot"])  # ← Comment out
 
 @app.get("/")
 async def root():
