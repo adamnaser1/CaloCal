@@ -4,6 +4,7 @@ import { ArrowLeft, Send, Mic, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { getCurrentUser } from '@/services/authService'
+import { supabase } from '@/lib/supabase'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -62,6 +63,8 @@ export default function ChatbotScreen() {
          throw new Error('Not authenticated')
       }
       
+      const { data: { session } } = await supabase.auth.getSession()
+      
       const response = await fetch(`${API_URL}/api/chat/chat`, {
         method: 'POST',
         headers: {
@@ -70,7 +73,8 @@ export default function ChatbotScreen() {
         body: JSON.stringify({
           conversation_id: conversationId,
           message: input,
-          user_id: user.id
+          user_id: user.id,
+          access_token: session?.access_token
         })
       })
       

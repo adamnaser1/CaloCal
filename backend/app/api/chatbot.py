@@ -31,6 +31,7 @@ class ChatRequest(BaseModel):
     message: str
     user_id: str
     language: Optional[str] = 'en'
+    access_token: Optional[str] = None
 
 class ChatResponse(BaseModel):
     conversation_id: str
@@ -38,38 +39,51 @@ class ChatResponse(BaseModel):
     action: Optional[Dict[str, Any]] = None
     metadata: Optional[Dict[str, Any]] = None
 
-async def get_user_context(user_id: str) -> Dict:
+async def get_user_context(user_id: str, access_token: str = None) -> Dict:
     """Get user data from Supabase"""
     try:
-        if not supabase:
-            return {}
+        headers = {
+            "apikey": settings.supabase_key,
+            "Authorization": f"Bearer {access_token}" if access_token else f"Bearer {settings.supabase_key}"
+        }
         
-        # Get user profile
-        profile = supabase.table('profiles').select('*').eq('id', user_id).single().execute()
-        
-        # Get today's meals
-        today = date.today().isoformat()
-        meals = supabase.table('meal_logs')\
-            .select('*')\
-            .eq('user_id', user_id)\
-            .gte('logged_at', today)\
-            .execute()
+        async with httpx.AsyncClient() as client:
+            # Get user profile
+            profile_resp = await client.get(
+                f"{settings.supabase_url}/rest/v1/profiles?id=eq.{user_id}&select=*&limit=1",
+                headers=headers
+            )
+            profile_data = profile_resp.json()
+            if not profile_data or not isinstance(profile_data, list):
+                profile = {}
+            else:
+                profile = profile_data[0]
+            
+            # Get today's meals
+            today = date.today().isoformat()
+            meals_resp = await client.get(
+                f"{settings.supabase_url}/rest/v1/meal_logs?user_id=eq.{user_id}&logged_at=gte.{today}&select=*",
+                headers=headers
+            )
+            meals_data = meals_resp.json()
+            if not isinstance(meals_data, list):
+                meals_data = []
         
         # Calculate today's totals
-        today_calories = sum(meal['total_calories'] or 0 for meal in meals.data)
-        today_proteins = sum(meal['total_proteins'] or 0 for meal in meals.data)
-        today_carbs = sum(meal['total_carbs'] or 0 for meal in meals.data)
-        today_fats = sum(meal['total_fats'] or 0 for meal in meals.data)
+        today_calories = sum(meal.get('total_calories', 0) or 0 for meal in meals_data)
+        today_proteins = sum(meal.get('total_proteins', 0) or 0 for meal in meals_data)
+        today_carbs = sum(meal.get('total_carbs', 0) or 0 for meal in meals_data)
+        today_fats = sum(meal.get('total_fats', 0) or 0 for meal in meals_data)
         
         return {
-            'daily_calorie_goal': profile.data.get('daily_calorie_goal', 2000),
-            'preferred_language': profile.data.get('preferred_language', 'en'),
+            'daily_calorie_goal': profile.get('daily_calorie_goal', 2000),
+            'preferred_language': profile.get('preferred_language', 'en'),
             'today_calories': today_calories,
             'today_proteins': today_proteins,
             'today_carbs': today_carbs,
             'today_fats': today_fats,
-            'meals_today': len(meals.data),
-            'remaining_calories': (profile.data.get('daily_calorie_goal', 2000) - today_calories)
+            'meals_today': len(meals_data),
+            'remaining_calories': max(0, profile.get('daily_calorie_goal', 2000) - today_calories)
         }
     except Exception as e:
         logger.error(f"Error getting user context: {e}")
@@ -143,7 +157,7 @@ async def chat(request: ChatRequest):
     """Main chatbot endpoint with real data access"""
     try:
         # Get user context from Supabase
-        user_context = await get_user_context(request.user_id)
+        user_context = await get_user_context(request.user_id, request.access_token)
         
         # Build conversation with Gemini
         model = genai.GenerativeModel('gemini-2.5-flash')
@@ -192,7 +206,7 @@ USER CONTEXT (Use this real data in your responses):
         # Execute action if present
         action_result = None
         if action:
-            action_result = await execute_action(action, request.user_id)
+            action_result = await execute_action(action, request.user_id, request.access_token)
             
             # Append result to response
             if action_result and action_result.get("success"):
@@ -232,7 +246,7 @@ USER CONTEXT (Use this real data in your responses):
             }
         )
 
-async def execute_action(action: Dict, user_id: str) -> Optional[Dict]:
+async def execute_action(action: Dict, user_id: str, access_token: str = None) -> Optional[Dict]:
     """Execute chatbot action via n8n webhook"""
     try:
         async with httpx.AsyncClient() as client:
@@ -241,6 +255,7 @@ async def execute_action(action: Dict, user_id: str) -> Optional[Dict]:
                 json={
                     "type": action["type"],
                     "user_id": user_id,
+                    "access_token": access_token,
                     "params": action.get("params", {})
                 },
                 timeout=30.0
