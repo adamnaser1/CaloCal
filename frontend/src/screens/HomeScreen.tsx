@@ -6,8 +6,7 @@ import { getUserProfile } from "@/services/profileService";
 import CalorieRing from "@/components/CalorieRing";
 import MacroPill from "@/components/MacroPill";
 import MealCard from "@/components/MealCard";
-import FAB from "@/components/FAB";
-import { User, RefreshCw } from "lucide-react";
+import { User, RefreshCw, MessageCircle } from "lucide-react";
 import { SkeletonLoader as Skeleton } from "@/components/SkeletonLoader"; // Using alias to match prev code usage or just replace
 import BottomNav from "@/components/BottomNav";
 import HomeBanners from "@/components/HomeBanners";
@@ -243,7 +242,17 @@ const HomeScreen = () => {
       </section>
 
       {/* Floating Action Button (only if logged in) */}
-      {user && <FAB onClick={() => navigate("/capture")} />}
+      {user && (
+        <button
+          onClick={() => navigate('/chatbot')}
+          className="fixed bottom-24 right-6 w-14 h-14 rounded-full
+                   bg-[#F5C518] text-white shadow-lg
+                   flex items-center justify-center
+                   hover:scale-110 transition-transform z-50"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </button>
+      )}
       <BottomNav />
     </motion.div>
   );

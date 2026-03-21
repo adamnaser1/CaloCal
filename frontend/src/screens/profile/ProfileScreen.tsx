@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase'
 import { getCurrentUser, signOut } from '@/services/authService'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useToast } from '@/hooks/use-toast'
+import BadgesDisplay from '@/components/BadgesDisplay'
 
 export default function ProfileScreen() {
     const navigate = useNavigate()
@@ -292,6 +293,14 @@ export default function ProfileScreen() {
                             />
                         </button>
                     </div>
+                </div>
+
+                {/* Achievements */}
+                <div className="bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
+                    <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
+                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Achievements</h3>
+                    </div>
+                    <BadgesDisplay />
                 </div>
 
                 {/* Data & Privacy Section */}

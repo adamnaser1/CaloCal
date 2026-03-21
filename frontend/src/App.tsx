@@ -31,6 +31,7 @@ import ExportDataScreen from "./screens/profile/ExportDataScreen";
 import HelpScreen from "./screens/profile/HelpScreen";
 import PrivacyScreen from './screens/profile/PrivacyScreen';
 import AboutScreen from './screens/profile/AboutScreen';
+import ChatbotScreen from './screens/chatbot/ChatbotScreen';
 
 // Auth & Onboarding
 import LoginScreen from "./screens/auth/LoginScreen";
@@ -98,6 +99,8 @@ const AppContent = () => {
 
           <Route path="/plans" element={<ProtectedRoute><MealPlansScreen /></ProtectedRoute>} />
           <Route path="/plans/:id" element={<ProtectedRoute><MealPlanDetailScreen /></ProtectedRoute>} />
+
+          <Route path="/chatbot" element={<ProtectedRoute><ChatbotScreen /></ProtectedRoute>} />
 
           {/* Profile Subpages */}
           <Route path="/profile" element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} />

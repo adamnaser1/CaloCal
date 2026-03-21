@@ -79,6 +79,17 @@ export async function saveMealLog(input: MealLogInput) {
 
     if (itemsError) throw itemsError
 
+    // Trigger badge check via backend
+    try {
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/api/trigger-badge-check`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: user.id, meal_id: mealLog.id })
+        })
+    } catch (e) {
+        console.error('Badge check failed to trigger', e)
+    }
+
     return mealLog
 }
 

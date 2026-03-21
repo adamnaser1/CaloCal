@@ -4,12 +4,41 @@ import io
 import tempfile
 import os
 import logging
+import httpx
+from pydantic import BaseModel
+from ..config import settings
 from ..ml.gemini_vision import gemini_vision
 from ..ml.roboflow_detector import detect_tunisian_food
 from ..utils.image import preprocess_image
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["analysis"])
+
+async def trigger_badge_check(user_id: str, meal_id: str):
+    """
+    Trigger n8n badge check workflow
+    """
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                settings.N8N_BADGE_WEBHOOK,
+                json={
+                    "user_id": user_id,
+                    "meal_id": meal_id
+                },
+                timeout=5.0
+            )
+    except Exception as e:
+        logger.warning(f"Badge webhook failed: {e}")
+
+class BadgeCheckBody(BaseModel):
+    user_id: str
+    meal_id: str
+
+@router.post("/trigger-badge-check")
+async def trigger_badge_endpoint(payload: BadgeCheckBody):
+    await trigger_badge_check(payload.user_id, payload.meal_id)
+    return {"status": "triggered"}
 
 @router.post("/analyze-meal")
 async def analyze_meal(image: UploadFile = File(...)):
