@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Image, Lightbulb, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import BottomNav from "@/components/BottomNav";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const CaptureScreen = () => {
@@ -205,8 +204,6 @@ const CaptureScreen = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <BottomNav />
     </div>
   );
 };
