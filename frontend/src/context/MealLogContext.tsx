@@ -66,7 +66,7 @@ export const MealLogProvider = ({ children }: { children: ReactNode }) => {
       const data = await getTodayMealLogs();
       const mappedMeals: Meal[] = data.map((log: any) => ({
         id: log.id,
-        name: log.meal_type.charAt(0).toUpperCase() + log.meal_type.slice(1), // Simple name from type
+        name: log.meal_name || (log.meal_type.charAt(0).toUpperCase() + log.meal_type.slice(1)), 
         time: new Date(log.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         calories: log.total_calories,
         proteins: log.total_proteins,

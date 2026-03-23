@@ -91,6 +91,7 @@ const ResultsScreen = () => {
       }));
 
       const input: MealLogInput = {
+        meal_name: result.mealName || result.name || "Meal",
         meal_type: selectedMealType,
         photo_url: image,
         total_calories: result.totalCalories || result.calories,

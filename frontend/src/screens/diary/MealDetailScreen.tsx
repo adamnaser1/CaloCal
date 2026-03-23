@@ -87,7 +87,7 @@ const MealDetailScreen = () => {
                     <ArrowLeft className="h-6 w-6 text-foreground" />
                 </button>
                 <h1 className="font-display text-lg font-bold capitalize text-foreground">
-                    {mealLog.meal_items[0]?.custom_name || `${mealLog.meal_type} · ${new Date(mealLog.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                    {mealLog.meal_name || mealLog.meal_items[0]?.custom_name || `${mealLog.meal_type} · ${new Date(mealLog.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                 </h1>
                 <button className="rounded-full bg-white p-2 shadow-sm">
                     <MoreHorizontal className="h-6 w-6 text-foreground" />

@@ -15,6 +15,7 @@ export interface MealItem {
 export interface MealLog {
     id: string
     user_id: string
+    meal_name: string | null
     meal_type: string
     photo_url: string | null
     total_calories: number

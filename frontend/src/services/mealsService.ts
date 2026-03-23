@@ -11,6 +11,7 @@ export interface MealItemInput {
 }
 
 export interface MealLogInput {
+    meal_name?: string
     meal_type: 'breakfast' | 'lunch' | 'dinner' | 'snack'
     photo_url?: string
     total_calories: number
@@ -47,6 +48,7 @@ export async function saveMealLog(input: MealLogInput) {
         .from('meal_logs')
         .insert({
             user_id: user.id,
+            meal_name: input.meal_name || null,
             meal_type: input.meal_type,
             photo_url: input.photo_url ?? null,
             total_calories: Math.round(input.total_calories || 0),
