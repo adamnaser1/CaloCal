@@ -152,18 +152,83 @@ Assistant: Based on your progress today, you've consumed {today_calories} out of
 Be conversational, encouraging, and use the REAL user data provided!
 """
 
+async def save_message(conversation_id: str, user_id: str, role: str, content: str):
+    """Save message to Supabase"""
+    try:
+        if not supabase:
+            return
+        
+        supabase.table('chat_messages').insert({
+            'conversation_id': conversation_id,
+            'user_id': user_id,
+            'role': role,
+            'content': content
+        }).execute()
+    except Exception as e:
+        logger.error(f"Error saving message: {e}")
+
+async def get_conversation_history(conversation_id: str) -> list:
+    """Get conversation history from Supabase"""
+    try:
+        if not supabase:
+            return []
+        
+        # Get messages from last 24 hours
+        from datetime import timedelta
+        cutoff_time = (datetime.utcnow() - timedelta(hours=24)).isoformat()
+        
+        result = supabase.table('chat_messages')\
+            .select('*')\
+            .eq('conversation_id', conversation_id)\
+            .gte('created_at', cutoff_time)\
+            .order('created_at')\
+            .execute()
+        
+        # Convert to Gemini format
+        history = []
+        for msg in result.data:
+            history.append({
+                "role": msg['role'],
+                "parts": [msg['content']]
+            })
+        
+        return history
+    except Exception as e:
+        logger.error(f"Error getting conversation history: {e}")
+        return []
+
+async def ensure_conversation_exists(conversation_id: str, user_id: str):
+    """Create conversation record if it doesn't exist"""
+    try:
+        if not supabase:
+            return
+        
+        supabase.table('chat_conversations').upsert({
+            'id': conversation_id,
+            'user_id': user_id,
+            'updated_at': datetime.utcnow().isoformat()
+        }, on_conflict='id').execute()
+    except Exception as e:
+        logger.error(f"Error ensuring conversation: {e}")
+
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """Main chatbot endpoint with real data access"""
+    """Main chatbot endpoint with real data access and persistence"""
     try:
+        # Generate conversation ID if not provided
+        conversation_id = request.conversation_id or f"conv_{request.user_id}_{datetime.utcnow().timestamp()}"
+        
+        # Ensure conversation exists
+        await ensure_conversation_exists(conversation_id, request.user_id)
+        
         # Get user context from Supabase
         user_context = await get_user_context(request.user_id, request.access_token)
         
-        # Build conversation with Gemini
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # Build conversation with Gemini 2.5 Flash
+        model = genai.GenerativeModel('gemini-2.5-flash-exp')
         
         # Add user context to prompt
-        context = SYSTEM_PROMPT + f"""
+        context = f"""{SYSTEM_PROMPT}
 
 USER CONTEXT (Use this real data in your responses):
 - Daily Goal: {user_context.get('daily_calorie_goal', 2000)} kcal
@@ -176,13 +241,25 @@ USER CONTEXT (Use this real data in your responses):
 - Language: {request.language}
 """
         
-        chat_session = model.start_chat(history=[
-            {"role": "user", "parts": [context]},
-            {"role": "model", "parts": ["I understand. I have access to the user's real data and will use it in my responses. Ready to help!"]}
-        ])
+        # Get conversation history from database
+        history = await get_conversation_history(conversation_id)
         
+        # If no history, add system context
+        if not history:
+            history = [
+                {"role": "user", "parts": [context]},
+                {"role": "model", "parts": ["I understand. I have access to the user's real data and will use it in my responses. Ready to help!"]}
+            ]
+        
+        # Start chat with history
+        chat_session = model.start_chat(history=history)
+        
+        # Send user message
         response = chat_session.send_message(request.message)
         response_text = response.text
+        
+        # Save user message to database
+        await save_message(conversation_id, request.user_id, 'user', request.message)
         
         # Try to parse action
         action = None
@@ -206,14 +283,15 @@ USER CONTEXT (Use this real data in your responses):
         # Execute action if present
         action_result = None
         if action:
-            action_result = await execute_action(action, request.user_id, request.access_token)
+            action_result = await execute_action(action, request.user_id)
             
             # Append result to response
             if action_result and action_result.get("success"):
                 if action["type"] == "add_meal":
-                    response_text += f"\n\n✅ Meal saved successfully!"
+                    response_text += "\n\n✅ Meal saved successfully!"
         
-        conversation_id = request.conversation_id or f"conv_{datetime.utcnow().timestamp()}"
+        # Save assistant message to database
+        await save_message(conversation_id, request.user_id, 'assistant', response_text)
         
         return ChatResponse(
             conversation_id=conversation_id,
@@ -223,7 +301,8 @@ USER CONTEXT (Use this real data in your responses):
                 "user_id": request.user_id,
                 "timestamp": datetime.utcnow().isoformat(),
                 "action_executed": action_result is not None,
-                "user_context": user_context
+                "user_context": user_context,
+                "model": "gemini-2.5-flash-exp"
             }
         )
         
@@ -236,8 +315,10 @@ USER CONTEXT (Use this real data in your responses):
             'ar': "أهلا! أنا مساعدك Calo Cal 🤖 كيف نجمك اليوم؟"
         }
         
+        conversation_id = request.conversation_id or f"conv_{request.user_id}_{datetime.utcnow().timestamp()}"
+        
         return ChatResponse(
-            conversation_id=f"conv_{datetime.utcnow().timestamp()}",
+            conversation_id=conversation_id,
             response=fallback.get(request.language, fallback['en']),
             action=None,
             metadata={
@@ -246,26 +327,57 @@ USER CONTEXT (Use this real data in your responses):
             }
         )
 
-async def execute_action(action: Dict, user_id: str, access_token: str = None) -> Optional[Dict]:
-    """Execute chatbot action via n8n webhook"""
+async def execute_action(action: Dict, user_id: str) -> Optional[Dict]:
+    """Execute chatbot action - save meal directly to Supabase"""
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                settings.N8N_CHATBOT_WEBHOOK,
-                json={
-                    "type": action["type"],
-                    "user_id": user_id,
-                    "access_token": access_token,
-                    "params": action.get("params", {})
-                },
-                timeout=30.0
-            )
+        if action["type"] == "add_meal":
+            # Get meal info from Gemini
+            meal_name = action["params"].get("meal_name", "Meal")
+            meal_type = action["params"].get("meal_type", "snack")
             
-            if response.status_code == 200:
-                return response.json()
+            # Use Gemini to estimate nutrition
+            model = genai.GenerativeModel('gemini-2.5-flash-exp')
+            nutrition_prompt = f"""Estimate nutritional values for this meal: {meal_name}
+
+Provide ONLY a JSON response with this exact format (no markdown, no extra text):
+{{
+  "total_calories": number,
+  "total_proteins": number,
+  "total_carbs": number,
+  "total_fats": number
+}}"""
+            
+            response = model.generate_content(nutrition_prompt)
+            nutrition_text = response.text.strip()
+            
+            # Extract JSON
+            json_start = nutrition_text.find("{")
+            if json_start >= 0:
+                json_end = nutrition_text.rfind("}") + 1
+                nutrition_data = json.loads(nutrition_text[json_start:json_end])
             else:
-                logger.error(f"n8n webhook failed: {response.status_code}")
-                return {"success": False, "error": "Webhook failed"}
+                nutrition_data = {}
+            
+            # Save to Supabase
+            if supabase:
+                result = supabase.table('meal_logs').insert({
+                    'user_id': user_id,
+                    'meal_name': meal_name,
+                    'meal_type': meal_type,
+                    'total_calories': nutrition_data.get('total_calories', 0),
+                    'total_proteins': nutrition_data.get('total_proteins', 0),
+                    'total_carbs': nutrition_data.get('total_carbs', 0),
+                    'total_fats': nutrition_data.get('total_fats', 0),
+                    'logged_at': datetime.utcnow().isoformat()
+                }).execute()
+                
+                return {"success": True, "meal_id": result.data[0]['id']}
+        
+        elif action["type"] == "get_stats":
+            # Stats are already in the response
+            return {"success": True, "stats": {}}
+        
+        return {"success": False, "error": "Unknown action type"}
                 
     except Exception as e:
         logger.error(f"Action execution failed: {e}")

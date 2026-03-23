@@ -276,15 +276,23 @@ const DiaryScreen = () => {
                                             >
                                                 <div className="flex items-center justify-between mb-3">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-xl shadow-inner">
-                                                            {mealTypeDisplay.icon}
-                                                        </div>
+                                                        {meal.photo_url ? (
+                                                            <img
+                                                                src={meal.photo_url}
+                                                                alt={meal.meal_name || t('meal')}
+                                                                className="w-16 h-16 rounded-xl object-cover shadow-inner"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-16 h-16 rounded-xl bg-secondary flex items-center justify-center text-3xl shadow-inner">
+                                                                {mealTypeDisplay.icon}
+                                                            </div>
+                                                        )}
                                                         <div>
-                                                            <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                                                            <h4 className="font-bold text-foreground group-hover:text-primary transition-colors text-lg">
                                                                 {meal.meal_name || t('meal')}
                                                             </h4>
-                                                            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                                                                <span className="bg-secondary/80 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">
+                                                            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
+                                                                <span className="bg-secondary/80 px-2 py-0.5 rounded text-xs font-bold uppercase">
                                                                     {t(`mealType.${meal.meal_type}`) || mealTypeDisplay.label}
                                                                 </span>
                                                                 <span className="opacity-40">•</span>
@@ -297,10 +305,10 @@ const DiaryScreen = () => {
                                                     </div>
 
                                                     <div className="text-right">
-                                                        <p className="text-lg font-black text-foreground">
+                                                        <p className="text-xl font-black text-foreground">
                                                             {meal.total_calories}
                                                         </p>
-                                                        <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">kcal</p>
+                                                        <p className="text-xs font-bold text-muted-foreground uppercase opacity-60">kcal</p>
                                                     </div>
                                                 </div>
 

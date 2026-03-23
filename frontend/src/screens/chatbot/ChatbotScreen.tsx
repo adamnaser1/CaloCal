@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { getCurrentUser } from '@/services/authService'
+import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -20,6 +20,8 @@ export default function ChatbotScreen() {
   const navigate = useNavigate()
   const { t } = useLanguage()
   
+  const { user } = useAuth()
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -32,6 +34,50 @@ export default function ChatbotScreen() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [conversationId, setConversationId] = useState<string | null>(null)
+  
+  // Set initial conversation ID when user loads
+  useEffect(() => {
+    if (user && !conversationId) {
+      const savedConvId = localStorage.getItem(`chatbot_conversation_${user.id}`)
+      if (savedConvId) {
+        setConversationId(savedConvId)
+      }
+    }
+  }, [user])
+
+  // Save conversation ID when it changes
+  useEffect(() => {
+    if (conversationId && user) {
+      localStorage.setItem(`chatbot_conversation_${user.id}`, conversationId)
+    }
+  }, [conversationId, user])
+
+  // Clean up old conversations (24h+)
+  useEffect(() => {
+    const checkConversationAge = () => {
+      const timestamp = conversationId?.split('_').pop()
+      if (timestamp) {
+        const age = Date.now() - parseFloat(timestamp) * 1000
+        const twentyFourHours = 24 * 60 * 60 * 1000
+        
+        if (age > twentyFourHours) {
+          // Start new conversation
+          setConversationId(null)
+          if (user) {
+             localStorage.removeItem(`chatbot_conversation_${user.id}`)
+          }
+          setMessages([{
+            id: '1',
+            role: 'assistant',
+            content: 'Hi! I\'m your Calo Cal assistant 🤖 How can I help you today?',
+            timestamp: new Date()
+          }])
+        }
+      }
+    }
+    
+    checkConversationAge()
+  }, [conversationId, user])
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
@@ -58,7 +104,6 @@ export default function ChatbotScreen() {
     setLoading(true)
     
     try {
-      const user = await getCurrentUser()
       if (!user) {
          throw new Error('Not authenticated')
       }

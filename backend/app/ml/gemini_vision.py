@@ -52,7 +52,7 @@ class GeminiVisionAnalyzer:
             prompt = """You are a nutrition expert. Analyze this food photo.
 
 Identify:
-1. Main dish name (give real name for tunisian meals)
+1. Main dish name. Identify the specific dish name (e.g., 'Tunisian Tajine', 'Grilled Chicken Salad', 'Brik with Egg') and include it in the dish_name field.
 2. ALL visible ingredients
 3. Portion size for EACH ingredient in grams
 4. Calories and macros for EACH ingredient

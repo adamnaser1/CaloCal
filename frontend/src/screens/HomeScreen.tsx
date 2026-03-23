@@ -210,14 +210,22 @@ const HomeScreen = () => {
                     className="flex items-center gap-4 p-3 bg-card border border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer group"
                   >
                     <div className="relative">
-                      <img
-                        src={meal.image || '/placeholder-food.png'}
-                        alt={meal.name}
-                        className="w-16 h-16 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform"
-                      />
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs shadow-sm">
-                        {mealTypeDisplay.icon}
-                      </div>
+                      {meal.image ? (
+                        <img
+                          src={meal.image}
+                          alt={meal.name}
+                          className="w-16 h-16 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-xl bg-secondary flex items-center justify-center text-3xl shadow-sm group-hover:scale-105 transition-transform">
+                          {mealTypeDisplay.icon}
+                        </div>
+                      )}
+                      {meal.image && (
+                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs shadow-sm">
+                          {mealTypeDisplay.icon}
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex-1">
